@@ -1,0 +1,21 @@
+{
+  "region_id": "elbrus",
+  "name": "Elbrus",
+
+  "center": {
+    "lon": 42.4361,
+    "lat": 43.3538
+  },
+
+  "radius_m": 70000,
+
+  "dem": {
+    "resolution": "01s",
+    "filename": "dem.tif"
+  },
+
+  "tiles": {
+    "min_zoom": 8,
+    "max_zoom": 14
+  }
+}
