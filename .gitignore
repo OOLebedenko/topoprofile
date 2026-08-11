@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+
+# IDE: PyCharm
+.idea/
+*.iml
+
+# Generated data
+data/**
+
+# Keep directory structure
+!data/
+!data/**/
+!data/**/.gitkeep
