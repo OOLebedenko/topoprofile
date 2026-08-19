@@ -1,20 +1,3 @@
-const map = new maplibregl.Map({
-    container: "map",
+import { createMap } from "./js/map.js";
 
-    style: {
-        version: 8,
-        sources: {},
-        layers: [
-            {
-                id: "background",
-                type: "background",
-                paint: {
-                    "background-color": "#e8edf2",
-                },
-            },
-        ],
-    },
-
-    center: [0, 0],
-    zoom: 1,
-});
+const map = createMap("map");
