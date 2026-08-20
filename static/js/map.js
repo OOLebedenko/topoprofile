@@ -7,5 +7,6 @@ export function createMap(container) {
         center: MAP_CONFIG.center,
         zoom: MAP_CONFIG.zoom,
         pitch: MAP_CONFIG.pitch,
+        maxPitch: MAP_CONFIG.maxPitch,
     });
 }

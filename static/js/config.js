@@ -14,7 +14,11 @@ export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
     center: TERRAIN_REGION.center,
     zoom: 10,
+    minPitch: 0,
+    maxPitch: 85,
+    pitchStep: 10,
     pitch: 60,
+    rotationStep: 20,
 };
 
 export const TERRAIN_CONFIG = {

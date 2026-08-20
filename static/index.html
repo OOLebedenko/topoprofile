@@ -22,7 +22,7 @@
             class="map-control-button"
             type="button"
             aria-label="Reset north"
-            title="Reset north"
+            data-tooltip="Reset north"
     >
         <svg
                 class="compass-icon"
@@ -41,25 +41,95 @@
         </svg>
     </button>
 
-    <button
-            id="zoom-in"
-            class="map-control-button"
-            type="button"
-            aria-label="Zoom in"
-            title="Zoom in"
-    >
-        +
-    </button>
+    <div class="map-control-group">
+        <button
+                id="zoom-in"
+                class="map-control-button"
+                type="button"
+                aria-label="Zoom in"
+                data-tooltip="Zoom in"
+        >
+            +
+        </button>
 
-    <button
-            id="zoom-out"
-            class="map-control-button"
-            type="button"
-            aria-label="Zoom out"
-            title="Zoom out"
-    >
-        −
-    </button>
+        <button
+                id="zoom-out"
+                class="map-control-button"
+                type="button"
+                aria-label="Zoom out"
+                data-tooltip="Zoom out"
+        >
+            −
+        </button>
+
+        <button
+                id="rotate-left"
+                class="map-control-button"
+                type="button"
+                aria-label="Rotate left"
+                data-tooltip="Rotate left"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M18 8 A7 7 0 1 0 18 16" />
+                <path d="M18 4 L18 8 L14 8" />
+            </svg>
+        </button>
+
+        <button
+                id="rotate-right"
+                class="map-control-button"
+                type="button"
+                aria-label="Rotate right"
+                data-tooltip="Rotate right"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M6 8 A7 7 0 1 1 6 16" />
+                <path d="M6 4 L6 8 L10 8" />
+            </svg>
+        </button>
+
+        <button
+                id="tilt-up"
+                class="map-control-button"
+                type="button"
+                aria-label="Tilt camera up"
+                data-tooltip="Tilt camera up"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M7 18 C7 12 10 8 16 8" />
+                <path d="M12 5 L16 8 L13 12" />
+            </svg>
+        </button>
+
+        <button
+                id="tilt-down"
+                class="map-control-button"
+                type="button"
+                aria-label="Tilt camera down"
+                data-tooltip="Tilt camera down"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M17 6 C17 12 14 16 8 16" />
+                <path d="M12 19 L8 16 L11 12" />
+            </svg>
+        </button>
+    </div>
 </div>
 
 <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
