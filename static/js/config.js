@@ -20,6 +20,7 @@ export const MAP_CONFIG = {
     pitch: 0,
     pitch3D: 60,
     rotationStep: 20,
+    viewTransitionDuration: 1000,
 };
 
 export const TERRAIN_CONFIG = {
