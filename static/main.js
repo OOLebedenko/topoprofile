@@ -1,9 +1,7 @@
 import { addAtmosphere } from "./js/atmosphere.js";
+import { setupViewToggle } from "./js/controls.js";
 import { createMap } from "./js/map.js";
-import {
-    setupNavigationControls,
-    setupViewToggle,
-} from "./js/controls.js";
+import { setupNavigationControls } from "./js/navigation.js";
 import { addTerrainSource } from "./js/terrain.js";
 
 const map = createMap("map");
