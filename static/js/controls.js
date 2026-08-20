@@ -59,40 +59,26 @@ export function setupNavigationControls(map) {
     });
 }
 
+function updateViewToggleButton(button, is3D) {
+    const targetView = is3D ? "2D" : "3D";
+    button.textContent = targetView;
+    button.dataset.tooltip = `Switch to ${targetView}`;
+    button.setAttribute("aria-label", `Switch to ${targetView} view`);
+}
+
 export function setupViewToggle(map) {
     const viewToggleButton = document.getElementById("view-toggle");
-
     let is3D = false;
 
     viewToggleButton.addEventListener("click", () => {
         if (is3D) {
             disableTerrain(map);
-
-            map.easeTo({
-                pitch: MAP_CONFIG.pitch,
-            });
-
-            viewToggleButton.textContent = "3D";
-            viewToggleButton.dataset.tooltip = "Switch to 3D";
-            viewToggleButton.setAttribute(
-                "aria-label",
-                "Switch to 3D view",
-            );
+            map.setPitch(MAP_CONFIG.pitch);
         } else {
             enableTerrain(map);
-
-            map.easeTo({
-                pitch: MAP_CONFIG.pitch3D,
-            });
-
-            viewToggleButton.textContent = "2D";
-            viewToggleButton.dataset.tooltip = "Switch to 2D";
-            viewToggleButton.setAttribute(
-                "aria-label",
-                "Switch to 2D view",
-            );
+            map.setPitch(MAP_CONFIG.pitch3D);
         }
-
         is3D = !is3D;
+        updateViewToggleButton(viewToggleButton, is3D);
     });
 }
