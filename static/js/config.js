@@ -17,7 +17,8 @@ export const MAP_CONFIG = {
     minPitch: 0,
     maxPitch: 85,
     pitchStep: 10,
-    pitch: 60,
+    pitch: 0,
+    pitch3D: 60,
     rotationStep: 20,
 };
 

@@ -138,3 +138,8 @@ body {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.view-toggle-button {
+    font-size: 14px;
+    font-weight: 600;
+}

@@ -2,7 +2,7 @@ import { TERRAIN_CONFIG } from "./config.js";
 
 const TERRAIN_SOURCE_ID = "terrain-dem";
 
-export function addTerrain(map) {
+export function addTerrainSource(map) {
     map.addSource(TERRAIN_SOURCE_ID, {
         type: "raster-dem",
         tiles: TERRAIN_CONFIG.tiles,
@@ -12,8 +12,14 @@ export function addTerrain(map) {
         encoding: TERRAIN_CONFIG.encoding,
         bounds: TERRAIN_CONFIG.bounds,
     });
+}
 
+export function enableTerrain(map) {
     map.setTerrain({
         source: TERRAIN_SOURCE_ID,
     });
+}
+
+export function disableTerrain(map) {
+    map.setTerrain(null);
 }
