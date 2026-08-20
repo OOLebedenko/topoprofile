@@ -32,3 +32,12 @@ export const TERRAIN_CONFIG = {
     encoding: "terrarium",
     bounds: TERRAIN_REGION.bounds,
 };
+
+export const ATMOSPHERE_CONFIG = {
+    skyColor: "#88c6fc",
+    horizonColor: "#ffffff",
+    fogColor: "#ffffff",
+    skyHorizonBlend: 0.8,
+    horizonFogBlend: 0.8,
+    fogGroundBlend: 0.5,
+};

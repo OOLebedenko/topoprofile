@@ -1,3 +1,4 @@
+import { addAtmosphere } from "./js/atmosphere.js";
 import { createMap } from "./js/map.js";
 import {
     setupNavigationControls,
@@ -11,5 +12,6 @@ setupNavigationControls(map);
 
 map.on("load", () => {
     addTerrainSource(map);
+    addAtmosphere(map);
     setupViewToggle(map);
 });
