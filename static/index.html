@@ -7,16 +7,62 @@
     <title>TopoProfile</title>
 
     <link
-        rel="stylesheet"
-        href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
+            rel="stylesheet"
+            href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
     >
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div id="map"></div>
+<div id="map"></div>
 
-    <script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
-    <script type="module" src="main.js"></script>
+<div id="map-controls">
+    <button
+            id="reset-north"
+            class="map-control-button"
+            type="button"
+            aria-label="Reset north"
+            title="Reset north"
+    >
+        <svg
+                class="compass-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+        >
+            <path
+                    class="compass-north"
+                    d="M12 2 L17 12 L7 12 Z"
+            />
+
+            <path
+                    class="compass-south"
+                    d="M7 12 L17 12 L12 22 Z"
+            />
+        </svg>
+    </button>
+
+    <button
+            id="zoom-in"
+            class="map-control-button"
+            type="button"
+            aria-label="Zoom in"
+            title="Zoom in"
+    >
+        +
+    </button>
+
+    <button
+            id="zoom-out"
+            class="map-control-button"
+            type="button"
+            aria-label="Zoom out"
+            title="Zoom out"
+    >
+        −
+    </button>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script type="module" src="main.js"></script>
 </body>
 </html>
