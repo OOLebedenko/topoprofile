@@ -1,4 +1,4 @@
-import { MAP_CONFIG } from "./config.js";
+import { MAP_CONFIG } from "../config.js";
 
 export function setupNavigationControls(map) {
     const resetNorthButton = document.getElementById("reset-north");

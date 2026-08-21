@@ -1,4 +1,4 @@
-import { ATMOSPHERE_CONFIG } from "./config.js";
+import { ATMOSPHERE_CONFIG } from "../config.js";
 
 export function addAtmosphere(map) {
     map.setSky({

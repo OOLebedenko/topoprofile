@@ -1,7 +1,7 @@
 import {
     PEAK_LAYERS,
     PEAKS_SOURCE_ID,
-} from "./layers/peaks/index.js";
+} from "./layers/index.js";
 
 
 // Adds a layer only if it has not already been added to the map.

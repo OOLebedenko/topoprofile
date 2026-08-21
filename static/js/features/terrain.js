@@ -1,4 +1,4 @@
-import { TERRAIN_CONFIG } from "./config.js";
+import { TERRAIN_CONFIG } from "../config.js";
 
 const TERRAIN_SOURCE_ID = "terrain-dem";
 

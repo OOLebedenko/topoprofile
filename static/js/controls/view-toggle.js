@@ -1,8 +1,8 @@
-import { MAP_CONFIG } from "./config.js";
+import { MAP_CONFIG } from "../config.js";
 import {
     disableTerrain,
     enableTerrain,
-} from "./terrain.js";
+} from "../features/terrain.js";
 
 function updateViewToggleButton(button, is3D) {
     const targetView = is3D ? "2D" : "3D";
