@@ -1,8 +1,11 @@
+/**
+ * Adds mountain peak markers and labels to the map.
+ */
+
 import {
     PEAK_LAYERS,
     PEAKS_SOURCE_ID,
 } from "./layers/index.js";
-
 
 // Adds a layer only if it has not already been added to the map.
 function addLayer(map, layer) {
@@ -13,8 +16,7 @@ function addLayer(map, layer) {
     map.addLayer(layer);
 }
 
-
-// Adds all peak-related layers to the existing OpenMapTiles source.
+// Adds all peak-related layers using the existing OpenMapTiles source.
 export function addPeaks(map) {
     if (!map.getSource(PEAKS_SOURCE_ID)) {
         throw new Error(

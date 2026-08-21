@@ -1,3 +1,7 @@
+/**
+ * Defines marker layers for important peaks and volcanoes.
+ */
+
 import {
     PEAKS_SOURCE_ID,
     PEAKS_SOURCE_LAYER,
@@ -5,7 +9,6 @@ import {
     RANK1_FILTER,
     VALID_NAME_FILTER,
 } from "./shared.js";
-
 
 // Visual style of peak and volcano markers.
 const MARKER_PAINT = {
@@ -18,10 +21,8 @@ const MARKER_PAINT = {
         14, 5.9,
         17, 6.6,
     ],
-
     "circle-color": "#263238",
     "circle-stroke-color": "#ffffff",
-
     "circle-stroke-width": [
         "interpolate",
         ["linear"],
@@ -30,19 +31,16 @@ const MARKER_PAINT = {
         14, 2.2,
         17, 2.4,
     ],
-
     "circle-opacity": 0.98,
 };
 
-
-// Marks important peaks and volcanoes with circles.
+// Marks important rank 1 peaks and volcanoes with circles.
 export const PEAK_MARKER_LAYER = {
     id: "mountain_peak_points",
     type: "circle",
     source: PEAKS_SOURCE_ID,
     "source-layer": PEAKS_SOURCE_LAYER,
     minzoom: 7,
-
     filter: [
         "all",
         POINT_GEOMETRY_FILTER,
@@ -56,6 +54,5 @@ export const PEAK_MARKER_LAYER = {
         RANK1_FILTER,
         VALID_NAME_FILTER,
     ],
-
     paint: MARKER_PAINT,
 };

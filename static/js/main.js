@@ -1,3 +1,8 @@
+/**
+ * Application entry point.
+ * Initializes the map, controls, and map features.
+ */
+
 import { setupNavigationControls } from "./controls/navigation.js";
 import { setupViewToggle } from "./controls/view-toggle.js";
 
@@ -7,10 +12,13 @@ import { addTerrainSource } from "./features/terrain.js";
 
 import { createMap } from "./map.js";
 
+// Create the main MapLibre map instance.
 const map = createMap("map");
 
+// Navigation controls can be connected immediately after map creation.
 setupNavigationControls(map);
 
+// Add map features after the base style has finished loading.
 map.on("load", () => {
     addTerrainSource(map);
     addAtmosphere(map);

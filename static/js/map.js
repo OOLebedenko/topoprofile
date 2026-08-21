@@ -1,5 +1,10 @@
+/**
+ * Creates the MapLibre map instance using the shared map configuration.
+ */
+
 import { MAP_CONFIG } from "./config.js";
 
+// Creates and returns the main application map.
 export function createMap(container) {
     return new maplibregl.Map({
         container,

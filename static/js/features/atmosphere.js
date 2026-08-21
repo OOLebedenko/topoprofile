@@ -1,5 +1,10 @@
+/**
+ * Configures sky and fog for the 3D map view.
+ */
+
 import { ATMOSPHERE_CONFIG } from "../config.js";
 
+// Applies atmospheric sky and fog settings to the map.
 export function addAtmosphere(map) {
     map.setSky({
         "sky-color": ATMOSPHERE_CONFIG.skyColor,
