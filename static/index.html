@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TopoProfile</title>
+
+    <link
+            rel="stylesheet"
+            href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
+    >
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+<div id="map"></div>
+
+<div id="map-controls">
+    <button
+            id="reset-north"
+            class="map-control-button"
+            type="button"
+            aria-label="Reset north"
+            data-tooltip="Reset north"
+    >
+        <svg
+                class="compass-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+        >
+            <path
+                    class="compass-north"
+                    d="M12 2 L17 12 L7 12 Z"
+            />
+
+            <path
+                    class="compass-south"
+                    d="M7 12 L17 12 L12 22 Z"
+            />
+        </svg>
+    </button>
+
+    <button
+            id="view-toggle"
+            class="map-control-button view-toggle-button"
+            type="button"
+            aria-label="Switch to 3D view"
+            data-tooltip="Switch to 3D"
+    >
+        3D
+    </button>
+
+    <div class="map-control-group">
+        <button
+                id="zoom-in"
+                class="map-control-button"
+                type="button"
+                aria-label="Zoom in"
+                data-tooltip="Zoom in"
+        >
+            +
+        </button>
+
+        <button
+                id="zoom-out"
+                class="map-control-button"
+                type="button"
+                aria-label="Zoom out"
+                data-tooltip="Zoom out"
+        >
+            −
+        </button>
+
+        <button
+                id="rotate-left"
+                class="map-control-button"
+                type="button"
+                aria-label="Rotate left"
+                data-tooltip="Rotate left"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M18 8 A7 7 0 1 0 18 16" />
+                <path d="M18 4 L18 8 L14 8" />
+            </svg>
+        </button>
+
+        <button
+                id="rotate-right"
+                class="map-control-button"
+                type="button"
+                aria-label="Rotate right"
+                data-tooltip="Rotate right"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M6 8 A7 7 0 1 1 6 16" />
+                <path d="M6 4 L6 8 L10 8" />
+            </svg>
+        </button>
+
+        <button
+                id="tilt-up"
+                class="map-control-button"
+                type="button"
+                aria-label="Tilt camera up"
+                data-tooltip="Tilt camera up"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M7 18 C7 12 10 8 16 8" />
+                <path d="M12 5 L16 8 L13 12" />
+            </svg>
+        </button>
+
+        <button
+                id="tilt-down"
+                class="map-control-button"
+                type="button"
+                aria-label="Tilt camera down"
+                data-tooltip="Tilt camera down"
+        >
+            <svg
+                    class="control-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+            >
+                <path d="M17 6 C17 12 14 16 8 16" />
+                <path d="M12 19 L8 16 L11 12" />
+            </svg>
+        </button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
