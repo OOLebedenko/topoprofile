@@ -11,67 +11,6 @@ from topoprofile.domain.terrain import Bounds
 logger = logging.getLogger(__name__)
 
 
-def get_utm_epsg(lon: float, lat: float) -> str:
-    """
-    Return the UTM EPSG code for the given coordinates.
-
-    Args:
-        lon: Longitude in decimal degrees.
-        lat: Latitude in decimal degrees.
-
-    Returns:
-        EPSG string such as "EPSG:32638" for the Northern Hemisphere
-        or "EPSG:32738" for the Southern Hemisphere.
-    """
-    zone = int((lon + 180) / 6) + 1
-
-    if lat >= 0:
-        return f"EPSG:326{zone:02d}"
-
-    return f"EPSG:327{zone:02d}"
-
-
-def get_region_bounds(
-        center_lon: float,
-        center_lat: float,
-        radius_m: float,
-) -> Bounds:
-    """
-    Compute the bounding box around a circular region.
-
-    The center point is converted to a local UTM projection, buffered by
-    the specified radius, and converted back to EPSG:4326.
-
-    Args:
-        center_lon: Center longitude in decimal degrees.
-        center_lat: Center latitude in decimal degrees.
-        radius_m: Region radius in meters.
-
-    Returns:
-        Bounding box as:
-        (min_lon, min_lat, max_lon, max_lat).
-    """
-    center = gpd.GeoDataFrame(
-        geometry=[Point(center_lon, center_lat)],
-        crs="EPSG:4326",
-    )
-
-    buffered_geometry = (
-        center.to_crs(get_utm_epsg(center_lon, center_lat))
-        .geometry.buffer(radius_m)
-        .to_crs("EPSG:4326")
-    )
-
-    min_lon, min_lat, max_lon, max_lat = buffered_geometry.total_bounds
-
-    return Bounds(
-        west=float(min_lon),
-        south=float(min_lat),
-        east=float(max_lon),
-        north=float(max_lat),
-    )
-
-
 def download_dem_by_bounds(
         bounds: Bounds,
         resolution: str,
@@ -132,28 +71,3 @@ def download_dem(
     logger.info("DEM saved: %s", output_path)
 
     return output_path
-
-
-def download_region_dem(
-        region: dict[str, Any],
-        output_dir: Path,
-        force_download: bool = False,
-) -> Path:
-    center_lon = float(region["center"]["lon"])
-    center_lat = float(region["center"]["lat"])
-    radius_m = float(region["radius_m"])
-    resolution = str(region["dem"]["resolution"])
-    filename = str(region["dem"]["filename"])
-
-    bounds = get_region_bounds(
-        center_lon=center_lon,
-        center_lat=center_lat,
-        radius_m=radius_m,
-    )
-
-    return download_dem(
-        bounds=bounds,
-        resolution=resolution,
-        output_path=output_dir / filename,
-        force_download=force_download,
-    )
