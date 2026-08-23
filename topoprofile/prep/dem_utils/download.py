@@ -6,6 +6,8 @@ import geopandas as gpd
 import pygmt
 from shapely.geometry import Point
 
+from topoprofile.domain.terrain import Bounds
+
 logger = logging.getLogger(__name__)
 
 
@@ -102,6 +104,43 @@ def download_dem_by_bounds(
     dem.rio.to_raster(output_path)
 
 
+def download_dem(
+    bounds: Bounds,
+    resolution: str,
+    output_path: Path,
+    force_download: bool = False,
+) -> Path:
+    """Download DEM for geographic bounds or reuse an existing file."""
+    if output_path.is_file() and not force_download:
+        logger.info("Using existing DEM: %s", output_path)
+        return output_path
+
+    logger.info(
+        "Downloading DEM: bounds=%s, resolution=%s",
+        bounds,
+        resolution,
+    )
+
+    try:
+        download_dem_by_bounds(
+            bounds=(
+                bounds.west,
+                bounds.south,
+                bounds.east,
+                bounds.north,
+            ),
+            resolution=resolution,
+            output_path=output_path,
+        )
+    except Exception:
+        logger.exception("Failed to download DEM to %s", output_path)
+        raise
+
+    logger.info("DEM saved: %s", output_path)
+
+    return output_path
+
+
 def download_region_dem(
     region: dict[str, Any],
     output_dir: Path,
@@ -113,38 +152,22 @@ def download_region_dem(
     resolution = str(region["dem"]["resolution"])
     filename = str(region["dem"]["filename"])
 
-    output_path = output_dir / filename
-
-    if output_path.is_file() and not force_download:
-        logger.info("Using existing DEM: %s", output_path)
-        return output_path
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    logger.info(
-        "Downloading DEM: center=(%s, %s), radius=%s m, resolution=%s",
-        center_lon,
-        center_lat,
-        radius_m,
-        resolution,
-    )
-
-    bounds = get_region_bounds(
+    min_lon, min_lat, max_lon, max_lat = get_region_bounds(
         center_lon=center_lon,
         center_lat=center_lat,
         radius_m=radius_m,
     )
 
-    try:
-        download_dem_by_bounds(
-            bounds=bounds,
-            resolution=resolution,
-            output_path=output_path,
-        )
-    except Exception:
-        logger.exception("Failed to download DEM to %s", output_path)
-        raise
+    bounds = Bounds(
+        west=min_lon,
+        south=min_lat,
+        east=max_lon,
+        north=max_lat,
+    )
 
-    logger.info("DEM saved: %s", output_path)
-
-    return output_path
+    return download_dem(
+        bounds=bounds,
+        resolution=resolution,
+        output_path=output_dir / filename,
+        force_download=force_download,
+    )

@@ -1,13 +1,12 @@
 import logging
 
-from topoprofile.prep.dem_utils.convert import convert_dem_to_terrarium
-from topoprofile.prep.dem_utils.download import (
-    download_region_dem,
-)
-from topoprofile.prep.dem_utils.generate import generate_terrain_tiles
+from topoprofile.domain.terrain import Bounds, TerrainRequest
+from topoprofile.prep.dem_utils.download import get_region_bounds
 from topoprofile.prep.dem_utils.load import load_region_config
 from topoprofile.prep.region_paths import get_region_paths
 from topoprofile.prep.settings import REGION_ID
+from topoprofile.prep.terrain_paths import TerrainPaths
+from topoprofile.prep.terrain_pipeline import prepare_terrain
 
 logging.basicConfig(
     level=logging.INFO,
@@ -16,25 +15,37 @@ logging.basicConfig(
 
 
 def prepare_region(region_id: str) -> None:
-    """Run the complete DEM preparation pipeline for one region."""
-    paths = get_region_paths(region_id)
-    region = load_region_config(paths.dem_config)
+    """Prepare terrain using the legacy region configuration."""
+    region_paths = get_region_paths(region_id)
+    region = load_region_config(region_paths.dem_config)
 
-    raw_dem_path = download_region_dem(
-        region=region,
-        output_dir=paths.raw,
+    min_lon, min_lat, max_lon, max_lat = get_region_bounds(
+        center_lon=float(region["center"]["lon"]),
+        center_lat=float(region["center"]["lat"]),
+        radius_m=float(region["radius_m"]),
     )
 
-    terrarium_path = convert_dem_to_terrarium(
-        input_path=raw_dem_path,
-        output_path=paths.prepared / "dem_terrarium.tif",
+    request = TerrainRequest(
+        bounds=Bounds(
+            west=min_lon,
+            south=min_lat,
+            east=max_lon,
+            north=max_lat,
+        ),
+        resolution=str(region["dem"]["resolution"]),
+        min_zoom=int(region["tiles"]["min_zoom"]),
+        max_zoom=int(region["tiles"]["max_zoom"]),
     )
 
-    generate_terrain_tiles(
-        input_path=terrarium_path,
-        output_dir=paths.terrain_tiles,
-        min_zoom=region["tiles"]["min_zoom"],
-        max_zoom=region["tiles"]["max_zoom"],
+    terrain_paths = TerrainPaths(
+        raw_dem=region_paths.raw / str(region["dem"]["filename"]),
+        terrarium_dem=region_paths.prepared / "dem_terrarium.tif",
+        terrain_tiles=region_paths.terrain_tiles,
+    )
+
+    prepare_terrain(
+        request=request,
+        paths=terrain_paths,
     )
 
 
