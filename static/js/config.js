@@ -1,28 +1,27 @@
 /**
- * Shared configuration for the map, terrain region,
- * local DEM tiles, and 3D atmosphere.
+ * Shared configuration for the map, terrain tiles,
+ * and 3D atmosphere.
  */
 
-// Terrain region currently available as local DEM tiles.
-const TERRAIN_REGION = {
-    id: "elbrus",
+// Geographic area currently available as local terrain tiles.
+const TERRAIN_AREA = {
     center: [42.4361, 43.3538],
 
     // Bounds in MapLibre order: west, south, east, north.
     bounds: [
-        41.5706944,
-        42.7206944,
-        43.3001389,
-        43.9876389,
+        42.1875,
+        43.06888777416962,
+        43.59375,
+        44.087585028245165,
     ],
 
-    dataPath: "../data/regions/elbrus",
+    dataPath: "/data/terrain/tiles",
 };
 
 // Base map and camera settings.
 export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
-    center: TERRAIN_REGION.center,
+    center: TERRAIN_AREA.center,
     zoom: 10,
     minPitch: 0,
     maxPitch: 85,
@@ -36,14 +35,14 @@ export const MAP_CONFIG = {
 // Local Terrarium DEM source settings.
 export const TERRAIN_CONFIG = {
     tiles: [
-        `${TERRAIN_REGION.dataPath}/tiles/terrain/{z}/{x}/{y}.png`,
+        `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.png`,
     ],
 
     minZoom: 8,
     maxZoom: 14,
     tileSize: 256,
     encoding: "terrarium",
-    bounds: TERRAIN_REGION.bounds,
+    bounds: TERRAIN_AREA.bounds,
 };
 
 // Sky and fog settings used in the 3D terrain view.

@@ -10,7 +10,6 @@ def generate_terrain_tiles(
     output_dir: Path,
     min_zoom: int = 8,
     max_zoom: int = 14,
-    force_generate: bool = False,
 ) -> Path:
     """
     Generate terrain tiles from a Terrarium-encoded GeoTIFF.
@@ -20,8 +19,6 @@ def generate_terrain_tiles(
         output_dir: Directory where generated tiles will be saved.
         min_zoom: Minimum zoom level.
         max_zoom: Maximum zoom level.
-        force_generate: Regenerate tiles even if the output directory
-            already contains files.
 
     Returns:
         Path to the directory containing generated tiles.
@@ -39,19 +36,6 @@ def generate_terrain_tiles(
 
     if max_zoom < min_zoom:
         raise ValueError("max_zoom must be greater than or equal to min_zoom")
-
-    if output_dir.is_dir() and any(output_dir.iterdir()):
-        if not force_generate:
-            logger.info(
-                "Using existing terrain tiles: %s",
-                output_dir,
-            )
-            return output_dir
-
-        logger.info(
-            "Regenerating terrain tiles: %s",
-            output_dir,
-        )
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
