@@ -10,12 +10,12 @@ class DEMChunkService:
     """Manage DEM chunks used for terrain generation."""
 
     def __init__(
-            self,
-            chunks_root: Path,
-            tiles_root: Path,
-            chunk_zoom: int,
-            resolution: str,
-            max_zoom: int,
+        self,
+        chunks_root: Path,
+        tiles_root: Path,
+        chunk_zoom: int,
+        resolution: str,
+        max_zoom: int,
     ) -> None:
         self._chunks_root = chunks_root
         self._tiles_root = tiles_root
@@ -24,8 +24,8 @@ class DEMChunkService:
         self._max_zoom = max_zoom
 
     def get_chunk_for_tile(
-            self,
-            tile: XYZTile,
+        self,
+        tile: XYZTile,
     ) -> XYZTile:
         """Return the DEM chunk containing the requested tile."""
         return parent_tile(
@@ -34,15 +34,15 @@ class DEMChunkService:
         )
 
     def is_chunk_prepared(
-            self,
-            chunk: XYZTile,
+        self,
+        chunk: XYZTile,
     ) -> bool:
         """Return whether terrain tiles for the DEM chunk are prepared."""
         return self._completion_marker(chunk).is_file()
 
     def prepare_chunk(
-            self,
-            chunk: XYZTile,
+        self,
+        chunk: XYZTile,
     ) -> None:
         """Prepare terrain data for a DEM chunk."""
         if self.is_chunk_prepared(chunk):
@@ -74,13 +74,9 @@ class DEMChunkService:
         marker.touch()
 
     def _completion_marker(
-            self,
-            chunk: XYZTile,
+        self,
+        chunk: XYZTile,
     ) -> Path:
         return (
-                self._chunks_root
-                / str(chunk.z)
-                / str(chunk.x)
-                / str(chunk.y)
-                / ".complete"
+            self._chunks_root / str(chunk.z) / str(chunk.x) / str(chunk.y) / ".complete"
         )

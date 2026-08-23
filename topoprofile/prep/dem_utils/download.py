@@ -1,10 +1,7 @@
 import logging
 from pathlib import Path
-from typing import Any
 
-import geopandas as gpd
 import pygmt
-from shapely.geometry import Point
 
 from topoprofile.domain.terrain import Bounds
 
@@ -12,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 def download_dem_by_bounds(
-        bounds: Bounds,
-        resolution: str,
-        output_path: Path,
+    bounds: Bounds,
+    resolution: str,
+    output_path: Path,
 ) -> None:
     """
     Download a DEM for the given bounding box and save it as GeoTIFF.
@@ -42,10 +39,10 @@ def download_dem_by_bounds(
 
 
 def download_dem(
-        bounds: Bounds,
-        resolution: str,
-        output_path: Path,
-        force_download: bool = False,
+    bounds: Bounds,
+    resolution: str,
+    output_path: Path,
+    force_download: bool = False,
 ) -> Path:
     """Download DEM for geographic bounds or reuse an existing file."""
     if output_path.is_file() and not force_download:

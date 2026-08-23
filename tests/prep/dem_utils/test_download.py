@@ -1,17 +1,13 @@
 from pathlib import Path
 from unittest.mock import Mock
 
-import geopandas as gpd
-import pytest
-from shapely.geometry import box
-
 from topoprofile.domain.terrain import Bounds
 from topoprofile.prep.dem_utils import download
 
 
 def test_download_dem_by_bounds(
-        tmp_path: Path,
-        monkeypatch,
+    tmp_path: Path,
+    monkeypatch,
 ) -> None:
     """
     Test that download_dem_by_bounds calls pygmt with correct parameters,

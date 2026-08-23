@@ -14,17 +14,12 @@ class TerrainPaths:
 
 
 def get_dem_chunk_paths(
-        chunks_root: Path,
-        tiles_root: Path,
-        chunk: XYZTile,
+    chunks_root: Path,
+    tiles_root: Path,
+    chunk: XYZTile,
 ) -> TerrainPaths:
     """Build terrain preparation paths for one DEM chunk."""
-    chunk_root = (
-            chunks_root
-            / str(chunk.z)
-            / str(chunk.x)
-            / str(chunk.y)
-    )
+    chunk_root = chunks_root / str(chunk.z) / str(chunk.x) / str(chunk.y)
 
     return TerrainPaths(
         raw_dem=chunk_root / "raw" / "dem.tif",
