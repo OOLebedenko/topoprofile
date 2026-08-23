@@ -5,8 +5,8 @@ import geopandas as gpd
 import pytest
 from shapely.geometry import box
 
-from topoprofile.prep.dem_utils import download
 from topoprofile.domain.terrain import Bounds
+from topoprofile.prep.dem_utils import download
 
 
 @pytest.mark.parametrize(
@@ -18,9 +18,9 @@ from topoprofile.domain.terrain import Bounds
     ],
 )
 def test_get_utm_epsg(
-        lon: float,
-        lat: float,
-        expected: str,
+    lon: float,
+    lat: float,
+    expected: str,
 ) -> None:
     """Test UTM EPSG code computation for various coordinates."""
     assert download.get_utm_epsg(lon, lat) == expected
@@ -50,10 +50,10 @@ def test_get_region_bounds_contains_center() -> None:
     ],
 )
 def test_get_region_bounds_area(
-        center_lon: float,
-        center_lat: float,
-        radius_m: float,
-        utm_epsg: str,
+    center_lon: float,
+    center_lat: float,
+    radius_m: float,
+    utm_epsg: str,
 ) -> None:
     """
     Test that bounding box area matches expected square area (2*radius)^2
@@ -78,7 +78,6 @@ def test_get_region_bounds_area(
     assert actual_area == pytest.approx(expected_area, rel=0.05)
 
 
-from topoprofile.domain.terrain import Bounds
 
 
 def test_download_dem_by_bounds(

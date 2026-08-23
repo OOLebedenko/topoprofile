@@ -19,3 +19,12 @@ class TerrainRequest:
     resolution: str
     min_zoom: int
     max_zoom: int
+
+
+@dataclass(frozen=True, slots=True)
+class XYZTile:
+    """XYZ terrain tile coordinates."""
+
+    z: int
+    x: int
+    y: int
