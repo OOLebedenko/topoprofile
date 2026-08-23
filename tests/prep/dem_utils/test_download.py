@@ -6,6 +6,7 @@ import pytest
 from shapely.geometry import box
 
 from topoprofile.prep.dem_utils import download
+from topoprofile.domain.terrain import Bounds
 
 
 @pytest.mark.parametrize(
@@ -17,9 +18,9 @@ from topoprofile.prep.dem_utils import download
     ],
 )
 def test_get_utm_epsg(
-    lon: float,
-    lat: float,
-    expected: str,
+        lon: float,
+        lat: float,
+        expected: str,
 ) -> None:
     """Test UTM EPSG code computation for various coordinates."""
     assert download.get_utm_epsg(lon, lat) == expected
@@ -30,14 +31,14 @@ def test_get_region_bounds_contains_center() -> None:
     center_lon = 42.4361
     center_lat = 43.3538
 
-    min_lon, min_lat, max_lon, max_lat = download.get_region_bounds(
+    bounds = download.get_region_bounds(
         center_lon=center_lon,
         center_lat=center_lat,
         radius_m=70_000,
     )
 
-    assert min_lon <= center_lon <= max_lon
-    assert min_lat <= center_lat <= max_lat
+    assert bounds.west <= center_lon <= bounds.east
+    assert bounds.south <= center_lat <= bounds.north
 
 
 @pytest.mark.parametrize(
@@ -49,27 +50,27 @@ def test_get_region_bounds_contains_center() -> None:
     ],
 )
 def test_get_region_bounds_area(
-    center_lon: float,
-    center_lat: float,
-    radius_m: float,
-    utm_epsg: str,
+        center_lon: float,
+        center_lat: float,
+        radius_m: float,
+        utm_epsg: str,
 ) -> None:
     """
     Test that bounding box area matches expected square area (2*radius)^2
     within a 5% relative tolerance after UTM projection.
     """
-    min_lon, min_lat, max_lon, max_lat = download.get_region_bounds(
+    bounds = download.get_region_bounds(
         center_lon=center_lon,
         center_lat=center_lat,
         radius_m=radius_m,
     )
 
-    bounds = gpd.GeoSeries(
-        [box(min_lon, min_lat, max_lon, max_lat)],
+    bounds_geometry = gpd.GeoSeries(
+        [box(bounds.west, bounds.south, bounds.east, bounds.north)],
         crs="EPSG:4326",
     )
 
-    bounds_utm = bounds.to_crs(utm_epsg)
+    bounds_utm = bounds_geometry.to_crs(utm_epsg)
 
     actual_area = bounds_utm.area.iloc[0]
     expected_area = (2 * radius_m) ** 2
@@ -77,9 +78,12 @@ def test_get_region_bounds_area(
     assert actual_area == pytest.approx(expected_area, rel=0.05)
 
 
+from topoprofile.domain.terrain import Bounds
+
+
 def test_download_dem_by_bounds(
-    tmp_path: Path,
-    monkeypatch,
+        tmp_path: Path,
+        monkeypatch,
 ) -> None:
     """
     Test that download_dem_by_bounds calls pygmt with correct parameters,
@@ -98,8 +102,15 @@ def test_download_dem_by_bounds(
         load_earth_relief_mock,
     )
 
+    bounds = Bounds(
+        west=42.0,
+        south=43.0,
+        east=43.0,
+        north=44.0,
+    )
+
     download.download_dem_by_bounds(
-        bounds=(42.0, 43.0, 43.0, 44.0),
+        bounds=bounds,
         resolution="01s",
         output_path=output_path,
     )

@@ -32,10 +32,10 @@ def get_utm_epsg(lon: float, lat: float) -> str:
 
 
 def get_region_bounds(
-    center_lon: float,
-    center_lat: float,
-    radius_m: float,
-) -> tuple[float, float, float, float]:
+        center_lon: float,
+        center_lat: float,
+        radius_m: float,
+) -> Bounds:
     """
     Compute the bounding box around a circular region.
 
@@ -64,18 +64,18 @@ def get_region_bounds(
 
     min_lon, min_lat, max_lon, max_lat = buffered_geometry.total_bounds
 
-    return (
-        float(min_lon),
-        float(min_lat),
-        float(max_lon),
-        float(max_lat),
+    return Bounds(
+        west=float(min_lon),
+        south=float(min_lat),
+        east=float(max_lon),
+        north=float(max_lat),
     )
 
 
 def download_dem_by_bounds(
-    bounds: tuple[float, float, float, float],
-    resolution: str,
-    output_path: Path,
+        bounds: Bounds,
+        resolution: str,
+        output_path: Path,
 ) -> None:
     """
     Download a DEM for the given bounding box and save it as GeoTIFF.
@@ -86,17 +86,15 @@ def download_dem_by_bounds(
         resolution: DEM resolution, for example "01s", "03s" or "15s".
         output_path: Destination GeoTIFF path.
     """
-    min_lon, min_lat, max_lon, max_lat = bounds
-
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     dem = pygmt.datasets.load_earth_relief(
         resolution=resolution,
         region=[
-            min_lon,
-            max_lon,
-            min_lat,
-            max_lat,
+            bounds.west,
+            bounds.east,
+            bounds.south,
+            bounds.north,
         ],
     )
 
@@ -105,10 +103,10 @@ def download_dem_by_bounds(
 
 
 def download_dem(
-    bounds: Bounds,
-    resolution: str,
-    output_path: Path,
-    force_download: bool = False,
+        bounds: Bounds,
+        resolution: str,
+        output_path: Path,
+        force_download: bool = False,
 ) -> Path:
     """Download DEM for geographic bounds or reuse an existing file."""
     if output_path.is_file() and not force_download:
@@ -123,12 +121,7 @@ def download_dem(
 
     try:
         download_dem_by_bounds(
-            bounds=(
-                bounds.west,
-                bounds.south,
-                bounds.east,
-                bounds.north,
-            ),
+            bounds=bounds,
             resolution=resolution,
             output_path=output_path,
         )
@@ -142,9 +135,9 @@ def download_dem(
 
 
 def download_region_dem(
-    region: dict[str, Any],
-    output_dir: Path,
-    force_download: bool = False,
+        region: dict[str, Any],
+        output_dir: Path,
+        force_download: bool = False,
 ) -> Path:
     center_lon = float(region["center"]["lon"])
     center_lat = float(region["center"]["lat"])
@@ -152,17 +145,10 @@ def download_region_dem(
     resolution = str(region["dem"]["resolution"])
     filename = str(region["dem"]["filename"])
 
-    min_lon, min_lat, max_lon, max_lat = get_region_bounds(
+    bounds = get_region_bounds(
         center_lon=center_lon,
         center_lat=center_lat,
         radius_m=radius_m,
-    )
-
-    bounds = Bounds(
-        west=min_lon,
-        south=min_lat,
-        east=max_lon,
-        north=max_lat,
     )
 
     return download_dem(
