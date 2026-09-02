@@ -4,6 +4,7 @@ from pathlib import Path
 from topoprofile.prep.dem_utils.load import load_region_config
 from topoprofile.services.dem_chunk_service import DEMChunkService
 from topoprofile.services.terrain_service import TerrainPreparationService
+from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.terrain.chunks import RegionChunkResolver
 from topoprofile.terrain.paths import TerrainStore
 from topoprofile.workers.worker import SequentialWorker
@@ -38,11 +39,15 @@ def main() -> None:
         root=PROJECT_ROOT / "data" / "terrain",
     )
 
-    dem_chunk_service = DEMChunkService(
+    chunk_builder = TerrainChunkBuilder(
         terrain_store=terrain_store,
-        chunk_zoom=config.chunk_zoom,
         resolution=config.resolution,
         max_zoom=config.max_zoom,
+    )
+
+    dem_chunk_service = DEMChunkService(
+        builder=chunk_builder,
+        chunk_zoom=config.chunk_zoom,
     )
 
     terrain_service = TerrainPreparationService(
