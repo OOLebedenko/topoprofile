@@ -1,6 +1,7 @@
 import math
 
-from topoprofile.domain.terrain import Bounds, XYZTile
+from topoprofile.domain.terrain import XYZTile
+from topoprofile.geo.models import Bounds
 
 
 def xyz_to_bounds(tile: XYZTile) -> Bounds:

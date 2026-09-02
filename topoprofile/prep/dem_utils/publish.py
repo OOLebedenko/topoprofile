@@ -1,7 +1,7 @@
 import shutil
 from pathlib import Path
 
-from topoprofile.domain.terrain import Bounds
+from topoprofile.geo.models import Bounds
 from topoprofile.geo.region_chunks import RegionChunkResolver
 
 

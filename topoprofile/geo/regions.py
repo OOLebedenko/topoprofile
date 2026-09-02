@@ -1,8 +1,7 @@
 import geopandas as gpd
 from shapely.geometry import Point
 
-from topoprofile.domain.geo import GeoPoint
-from topoprofile.domain.terrain import Bounds
+from topoprofile.geo.models import Bounds, GeoPoint
 
 WGS84_CRS = "EPSG:4326"
 

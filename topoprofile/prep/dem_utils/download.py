@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pygmt
 
-from topoprofile.domain.terrain import Bounds
+from topoprofile.geo.models import Bounds
 
 logger = logging.getLogger(__name__)
 

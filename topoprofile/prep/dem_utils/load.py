@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from topoprofile.domain.geo import GeoPoint
+from topoprofile.geo.models import GeoPoint
 
 
 @dataclass(frozen=True, slots=True)
