@@ -1,9 +1,7 @@
-from pathlib import Path
-
 from topoprofile.geo.tiles import XYZTile, parent_tile, xyz_to_bounds
 from topoprofile.prep.terrain_pipeline import prepare_terrain
 from topoprofile.terrain.models import TerrainRequest
-from topoprofile.terrain.paths import get_dem_chunk_paths
+from topoprofile.terrain.paths import TerrainStore
 
 
 class DEMChunkService:
@@ -11,14 +9,12 @@ class DEMChunkService:
 
     def __init__(
         self,
-        chunks_root: Path,
-        tiles_root: Path,
+        terrain_store: TerrainStore,
         chunk_zoom: int,
         resolution: str,
         max_zoom: int,
     ) -> None:
-        self._chunks_root = chunks_root
-        self._tiles_root = tiles_root
+        self._terrain_store = terrain_store
         self._chunk_zoom = chunk_zoom
         self._resolution = resolution
         self._max_zoom = max_zoom
@@ -38,7 +34,9 @@ class DEMChunkService:
         chunk: XYZTile,
     ) -> bool:
         """Return whether terrain tiles for the DEM chunk are prepared."""
-        return self._completion_marker(chunk).is_file()
+        paths = self._terrain_store.chunk_paths(chunk)
+
+        return paths.completion_marker.is_file()
 
     def prepare_chunk(
         self,
@@ -55,28 +53,15 @@ class DEMChunkService:
             max_zoom=self._max_zoom,
         )
 
-        paths = get_dem_chunk_paths(
-            chunks_root=self._chunks_root,
-            tiles_root=self._tiles_root,
-            chunk=chunk,
-        )
+        paths = self._terrain_store.chunk_paths(chunk)
 
         prepare_terrain(
             request=request,
             paths=paths,
         )
 
-        marker = self._completion_marker(chunk)
-        marker.parent.mkdir(
+        paths.completion_marker.parent.mkdir(
             parents=True,
             exist_ok=True,
         )
-        marker.touch()
-
-    def _completion_marker(
-        self,
-        chunk: XYZTile,
-    ) -> Path:
-        return (
-            self._chunks_root / str(chunk.z) / str(chunk.x) / str(chunk.y) / ".complete"
-        )
+        paths.completion_marker.touch()

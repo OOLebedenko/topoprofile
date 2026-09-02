@@ -6,12 +6,12 @@ from topoprofile.prep.dem_utils.download import download_dem
 from topoprofile.prep.dem_utils.generate import generate_terrain_tiles
 from topoprofile.prep.dem_utils.publish import publish_terrain_tiles
 from topoprofile.terrain.models import TerrainRequest
-from topoprofile.terrain.paths import TerrainPaths
+from topoprofile.terrain.paths import TerrainBuildPaths
 
 
 def prepare_terrain(
     request: TerrainRequest,
-    paths: TerrainPaths,
+    paths: TerrainBuildPaths,
 ) -> None:
     """Prepare terrain data for arbitrary geographic bounds."""
     raw_dem = download_dem(
