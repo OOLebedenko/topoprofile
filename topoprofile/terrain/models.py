@@ -11,5 +11,3 @@ class TerrainRequest:
     resolution: str
     min_zoom: int
     max_zoom: int
-
-
