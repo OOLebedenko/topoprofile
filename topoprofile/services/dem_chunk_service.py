@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from topoprofile.domain.terrain import TerrainRequest, XYZTile
-from topoprofile.geo.tiles import parent_tile, xyz_to_bounds
+from topoprofile.domain.terrain import TerrainRequest
+from topoprofile.geo.tiles import XYZTile, parent_tile, xyz_to_bounds
 from topoprofile.prep.terrain_paths import get_dem_chunk_paths
 from topoprofile.prep.terrain_pipeline import prepare_terrain
 

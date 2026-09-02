@@ -1,7 +1,6 @@
 import pytest
 
-from topoprofile.domain.terrain import XYZTile
-from topoprofile.geo.tiles import parent_tile, xyz_to_bounds
+from topoprofile.geo.tiles import XYZTile, parent_tile, xyz_to_bounds
 
 
 def test_xyz_to_bounds_world_tile() -> None:
