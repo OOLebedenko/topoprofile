@@ -2,11 +2,13 @@ import argparse
 from pathlib import Path
 
 from topoprofile.prep.dem_utils.load import load_region_config
-from topoprofile.services.dem_chunk_service import DEMChunkService
-from topoprofile.services.terrain_service import TerrainPreparationService
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.terrain.chunks import RegionChunkResolver
 from topoprofile.terrain.paths import TerrainStore
+from topoprofile.terrain.service import (
+    RegionTerrainProcessor,
+    TerrainChunkManager,
+)
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -45,18 +47,18 @@ def main() -> None:
         max_zoom=config.max_zoom,
     )
 
-    dem_chunk_service = DEMChunkService(
+    chunk_manager = TerrainChunkManager(
         builder=chunk_builder,
         chunk_zoom=config.chunk_zoom,
     )
 
-    terrain_service = TerrainPreparationService(
+    terrain_processor = RegionTerrainProcessor(
         chunk_resolver=RegionChunkResolver(),
-        dem_chunk_service=dem_chunk_service,
+        chunk_manager=chunk_manager,
         worker=SequentialWorker(),
     )
 
-    terrain_service.prepare_region(config)
+    terrain_processor.prepare_region(config)
 
 
 if __name__ == "__main__":
