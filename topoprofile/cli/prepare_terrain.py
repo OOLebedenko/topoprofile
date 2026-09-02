@@ -1,9 +1,9 @@
 import argparse
 from pathlib import Path
 
-from topoprofile.prep.dem_utils.load import load_region_config
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.terrain.chunks import RegionChunkResolver
+from topoprofile.terrain.config import load_region_config
 from topoprofile.terrain.paths import TerrainStore
 from topoprofile.terrain.service import (
     RegionTerrainProcessor,
