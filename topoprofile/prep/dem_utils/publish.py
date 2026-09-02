@@ -2,7 +2,7 @@ import shutil
 from pathlib import Path
 
 from topoprofile.geo.models import Bounds
-from topoprofile.geo.region_chunks import RegionChunkResolver
+from topoprofile.terrain.chunks import RegionChunkResolver
 
 
 def publish_terrain_tiles(

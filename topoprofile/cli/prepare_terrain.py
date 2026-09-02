@@ -1,10 +1,10 @@
 import argparse
 from pathlib import Path
 
-from topoprofile.geo.region_chunks import RegionChunkResolver
 from topoprofile.prep.dem_utils.load import load_region_config
 from topoprofile.services.dem_chunk_service import DEMChunkService
 from topoprofile.services.terrain_service import TerrainPreparationService
+from topoprofile.terrain.chunks import RegionChunkResolver
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]

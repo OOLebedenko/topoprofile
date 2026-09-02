@@ -1,7 +1,7 @@
-from topoprofile.geo.region_chunks import RegionChunkResolver
 from topoprofile.geo.regions import get_region_bounds
 from topoprofile.prep.dem_utils.load import TerrainRegionConfig
 from topoprofile.services.dem_chunk_service import DEMChunkService
+from topoprofile.terrain.chunks import RegionChunkResolver
 from topoprofile.workers.worker import Worker
 
 
