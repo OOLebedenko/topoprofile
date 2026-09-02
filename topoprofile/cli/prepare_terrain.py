@@ -49,7 +49,6 @@ def main() -> None:
 
     chunk_manager = TerrainChunkManager(
         builder=chunk_builder,
-        chunk_zoom=config.chunk_zoom,
     )
 
     terrain_processor = RegionTerrainProcessor(

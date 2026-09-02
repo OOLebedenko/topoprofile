@@ -1,5 +1,5 @@
 from topoprofile.geo.regions import get_region_bounds
-from topoprofile.geo.tiles import XYZTile, parent_tile
+from topoprofile.geo.tiles import XYZTile
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.terrain.chunks import RegionChunkResolver
 from topoprofile.terrain.config import TerrainRegionConfig
@@ -11,19 +11,9 @@ class TerrainChunkManager:
     def __init__(
         self,
         builder: TerrainChunkBuilder,
-        chunk_zoom: int,
     ) -> None:
         self._builder = builder
-        self._chunk_zoom = chunk_zoom
 
-    def get_chunk_for_tile(
-        self,
-        tile: XYZTile,
-    ) -> XYZTile:
-        return parent_tile(
-            tile=tile,
-            target_zoom=self._chunk_zoom,
-        )
 
     def is_prepared(
         self,
