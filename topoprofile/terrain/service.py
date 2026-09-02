@@ -25,17 +25,17 @@ class TerrainChunkManager:
             target_zoom=self._chunk_zoom,
         )
 
-    def is_chunk_prepared(
+    def is_prepared(
         self,
         chunk: XYZTile,
     ) -> bool:
         return self._builder.is_built(chunk)
 
-    def prepare_chunk(
+    def prepare(
         self,
         chunk: XYZTile,
     ) -> None:
-        if self.is_chunk_prepared(chunk):
+        if self.is_prepared(chunk):
             return
 
         self._builder.build(chunk)
@@ -53,7 +53,7 @@ class RegionTerrainProcessor:
         self._chunk_manager = chunk_manager
         self._worker = worker
 
-    def prepare_region(
+    def process(
         self,
         config: TerrainRegionConfig,
     ) -> None:
@@ -68,6 +68,6 @@ class RegionTerrainProcessor:
         )
 
         self._worker.process(
-            self._chunk_manager.prepare_chunk,
+            self._chunk_manager.prepare,
             chunks,
         )

@@ -58,7 +58,7 @@ def main() -> None:
         worker=SequentialWorker(),
     )
 
-    terrain_processor.prepare_region(config)
+    terrain_processor.process(config)
 
 
 if __name__ == "__main__":
