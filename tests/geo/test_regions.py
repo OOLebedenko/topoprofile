@@ -2,8 +2,9 @@ import geopandas as gpd
 import pytest
 from shapely.geometry import box
 
-from topoprofile.domain.geo import GeoPoint
-from topoprofile.geo.regions import get_region_bounds, get_utm_epsg
+from topoprofile.geo.models import GeoPoint
+from topoprofile.geo.projections import get_utm_epsg
+from topoprofile.geo.regions import get_region_bounds
 
 
 @pytest.mark.parametrize(

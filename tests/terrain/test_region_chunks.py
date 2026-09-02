@@ -1,8 +1,8 @@
 import pytest
 
-from topoprofile.domain.terrain import Bounds, XYZTile
-from topoprofile.geo.region_chunks import RegionChunkResolver
-from topoprofile.geo.tiles import xyz_to_bounds
+from topoprofile.geo.models import Bounds
+from topoprofile.geo.tiles import XYZTile, xyz_to_bounds
+from topoprofile.terrain.resolver import RegionChunkResolver
 
 
 def test_resolve_single_chunk() -> None:

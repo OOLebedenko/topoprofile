@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from topoprofile.prep.dem_utils import convert
+from topoprofile.terrain import dem
 
 
 @pytest.fixture
@@ -46,7 +46,7 @@ def test_convert_returns_existing_output(tmp_path: Path) -> None:
     input_path.touch()
     output_path.touch()
 
-    result = convert.convert_dem_to_terrarium(
+    result = dem.convert_dem_to_terrarium(
         input_path=input_path,
         output_path=output_path,
     )
@@ -57,7 +57,7 @@ def test_convert_returns_existing_output(tmp_path: Path) -> None:
 def test_convert_raises_if_input_missing(tmp_path: Path) -> None:
     """Raise FileNotFoundError when input DEM does not exist."""
     with pytest.raises(FileNotFoundError):
-        convert.convert_dem_to_terrarium(
+        dem.convert_dem_to_terrarium(
             input_path=tmp_path / "missing.tif",
             output_path=tmp_path / "dem_terrarium.tif",
         )
@@ -80,18 +80,18 @@ def test_convert_calls_rgbify(
     )
 
     monkeypatch.setattr(
-        convert,
+        dem,
         "CliRunner",
         fake_runner_cls,
     )
 
-    result = convert.convert_dem_to_terrarium(
+    result = dem.convert_dem_to_terrarium(
         input_path=input_path,
         output_path=output_path,
     )
 
     assert result == output_path
-    assert calls["command"] is convert.rgbify
+    assert calls["command"] is dem.rgbify
 
 
 def test_convert_raises_conversion_error(
@@ -112,16 +112,16 @@ def test_convert_raises_conversion_error(
     )
 
     monkeypatch.setattr(
-        convert,
+        dem,
         "CliRunner",
         fake_runner_cls,
     )
 
     with pytest.raises(
-        convert.ConversionError,
+            dem.ConversionError,
         match="rio-rgbify failed with exit code 1",
     ):
-        convert.convert_dem_to_terrarium(
+        dem.convert_dem_to_terrarium(
             input_path=input_path,
             output_path=output_path,
         )
@@ -144,16 +144,16 @@ def test_convert_raises_if_output_not_created(
     )
 
     monkeypatch.setattr(
-        convert,
+        dem,
         "CliRunner",
         fake_runner_cls,
     )
 
     with pytest.raises(
-        convert.ConversionError,
+            dem.ConversionError,
         match="output file was not created",
     ):
-        convert.convert_dem_to_terrarium(
+        dem.convert_dem_to_terrarium(
             input_path=input_path,
             output_path=output_path,
         )

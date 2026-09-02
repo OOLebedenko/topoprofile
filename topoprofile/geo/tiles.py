@@ -1,6 +1,16 @@
 import math
+from dataclasses import dataclass
 
-from topoprofile.domain.terrain import Bounds, XYZTile
+from topoprofile.geo.models import Bounds
+
+
+@dataclass(frozen=True, slots=True)
+class XYZTile:
+    """XYZ terrain tile coordinates."""
+
+    z: int
+    x: int
+    y: int
 
 
 def xyz_to_bounds(tile: XYZTile) -> Bounds:
