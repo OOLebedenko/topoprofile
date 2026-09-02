@@ -1,7 +1,11 @@
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
 from topoprofile.domain.terrain import TerrainRequest
 from topoprofile.prep.dem_utils.convert import convert_dem_to_terrarium
 from topoprofile.prep.dem_utils.download import download_dem
 from topoprofile.prep.dem_utils.generate import generate_terrain_tiles
+from topoprofile.prep.dem_utils.publish import publish_terrain_tiles
 from topoprofile.prep.terrain_paths import TerrainPaths
 
 
@@ -21,9 +25,22 @@ def prepare_terrain(
         output_path=paths.terrarium_dem,
     )
 
-    generate_terrain_tiles(
-        input_path=terrarium_dem,
-        output_dir=paths.terrain_tiles,
-        min_zoom=request.min_zoom,
-        max_zoom=request.max_zoom,
-    )
+    with TemporaryDirectory(
+        prefix="topoprofile-terrain-",
+    ) as temp_dir:
+        generated_tiles = Path(temp_dir)
+
+        generate_terrain_tiles(
+            input_path=terrarium_dem,
+            output_dir=generated_tiles,
+            min_zoom=request.min_zoom,
+            max_zoom=request.max_zoom,
+        )
+
+        publish_terrain_tiles(
+            source_dir=generated_tiles,
+            output_dir=paths.terrain_tiles,
+            bounds=request.bounds,
+            min_zoom=request.min_zoom,
+            max_zoom=request.max_zoom,
+        )
