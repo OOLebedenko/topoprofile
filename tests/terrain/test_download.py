@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest.mock import Mock
 
 from topoprofile.geo.models import Bounds
-from topoprofile.prep.dem_utils import download
+from topoprofile.terrain import dem
 
 
 def test_download_dem_by_bounds(
@@ -21,7 +21,7 @@ def test_download_dem_by_bounds(
     load_earth_relief_mock = Mock(return_value=fake_dem)
 
     monkeypatch.setattr(
-        download.pygmt.datasets,
+        dem.pygmt.datasets,
         "load_earth_relief",
         load_earth_relief_mock,
     )
@@ -33,7 +33,7 @@ def test_download_dem_by_bounds(
         north=44.0,
     )
 
-    download.download_dem_by_bounds(
+    dem.download_dem_by_bounds(
         bounds=bounds,
         resolution="01s",
         output_path=output_path,

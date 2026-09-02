@@ -2,10 +2,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from topoprofile.geo.tiles import XYZTile, xyz_to_bounds
-from topoprofile.prep.dem_utils.convert import convert_dem_to_terrarium
-from topoprofile.prep.dem_utils.download import download_dem
 from topoprofile.prep.dem_utils.generate import generate_terrain_tiles
 from topoprofile.prep.dem_utils.publish import publish_terrain_tiles
+from topoprofile.terrain.dem import convert_dem_to_terrarium, download_dem
 from topoprofile.terrain.models import TerrainRequest
 from topoprofile.terrain.paths import TerrainBuildPaths, TerrainStore
 
