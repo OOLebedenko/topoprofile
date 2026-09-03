@@ -11,33 +11,29 @@ import { addTerrainFeatureLayers } from "./layers/index.js";
 
 // Converts longitude to an XYZ tile X coordinate.
 function lonToTileX(lon, zoom) {
-    return Math.floor(
-        ((lon + 180) / 360) * 2 ** zoom
-    );
+    return ((lon + 180) / 360) * 2 ** zoom;
 }
 
 // Converts latitude to an XYZ tile Y coordinate.
 function latToTileY(lat, zoom) {
     const latRad = lat * Math.PI / 180;
 
-    return Math.floor(
-        (
-            1
-            - Math.asinh(Math.tan(latRad)) / Math.PI
-        )
-        / 2
-        * 2 ** zoom
-    );
+    return (
+        1
+        - Math.asinh(Math.tan(latRad)) / Math.PI
+    )
+    / 2
+    * 2 ** zoom;
 }
 
 // Returns all OSM chunks intersecting the configured terrain bounds.
 function getChunks(bounds, zoom) {
     const [west, south, east, north] = bounds;
 
-    const minX = lonToTileX(west, zoom);
-    const maxX = lonToTileX(east, zoom);
-    const minY = latToTileY(north, zoom);
-    const maxY = latToTileY(south, zoom);
+    const minX = Math.floor(lonToTileX(west, zoom));
+    const maxX = Math.ceil(lonToTileX(east, zoom)) - 1;
+    const minY = Math.floor(latToTileY(north, zoom));
+    const maxY = Math.ceil(latToTileY(south, zoom)) - 1;
 
     const chunks = [];
 
