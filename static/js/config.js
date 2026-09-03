@@ -47,6 +47,15 @@ export const TERRAIN_CONFIG = {
     bounds: TERRAIN_AREA.bounds,
 };
 
+// Local terrain feature source settings.
+export const TERRAIN_FEATURES_SOURCE_ID = "terrain-features";
+
+export const TERRAIN_FEATURES_CONFIG = {
+    dataPath: "/data/osm/chunks",
+    chunkZoom: TERRAIN_CONFIG.minZoom,
+    bounds: TERRAIN_AREA.bounds,
+};
+
 // Local hillshade settings.
 export const HILLSHADE_LAYER_ID = "terrain-hillshade";
 
