@@ -1,3 +1,4 @@
+from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.regions import get_region_bounds
 from topoprofile.geo.tiles import XYZTile
 from topoprofile.terrain.builder import TerrainChunkBuilder
