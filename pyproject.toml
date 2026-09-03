@@ -12,6 +12,7 @@ dependencies = [
     "pygmt==0.19.0",
     "rioxarray==0.23.0",
     "requests==2.34.2",
+    "tqdm==4.70.0",
 ]
 
 [project.optional-dependencies]
