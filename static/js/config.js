@@ -33,6 +33,8 @@ export const MAP_CONFIG = {
 };
 
 // Local Terrarium DEM source settings.
+export const TERRAIN_SOURCE_ID = "terrain-dem";
+
 export const TERRAIN_CONFIG = {
     tiles: [
         `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.png`,
@@ -43,6 +45,13 @@ export const TERRAIN_CONFIG = {
     tileSize: 256,
     encoding: "terrarium",
     bounds: TERRAIN_AREA.bounds,
+};
+
+// Local hillshade settings.
+export const HILLSHADE_LAYER_ID = "terrain-hillshade";
+
+export const HILLSHADE_CONFIG = {
+    exaggeration: 0.15,
 };
 
 // Sky and fog settings used in the 3D terrain view.

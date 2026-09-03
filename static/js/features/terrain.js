@@ -2,10 +2,10 @@
  * Manages the local DEM source and MapLibre terrain rendering.
  */
 
-import { TERRAIN_CONFIG } from "../config.js";
-
-// Internal MapLibre source ID for the local DEM.
-const TERRAIN_SOURCE_ID = "terrain-dem";
+import {
+    TERRAIN_CONFIG,
+    TERRAIN_SOURCE_ID,
+} from "../config.js";
 
 // Adds the local Terrarium DEM source to the map.
 export function addTerrainSource(map) {
