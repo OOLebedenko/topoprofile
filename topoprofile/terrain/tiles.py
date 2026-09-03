@@ -3,8 +3,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.models import Bounds
-from topoprofile.terrain.resolver import RegionChunkResolver
 
 logger = logging.getLogger(__name__)
 

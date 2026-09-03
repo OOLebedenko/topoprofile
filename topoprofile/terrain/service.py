@@ -1,8 +1,8 @@
+from topoprofile.config import RegionConfig
+from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.regions import get_region_bounds
 from topoprofile.geo.tiles import XYZTile
 from topoprofile.terrain.builder import TerrainChunkBuilder
-from topoprofile.terrain.config import TerrainRegionConfig
-from topoprofile.terrain.resolver import RegionChunkResolver
 from topoprofile.workers.worker import Worker
 
 
@@ -45,7 +45,7 @@ class RegionTerrainProcessor:
 
     def process(
         self,
-        config: TerrainRegionConfig,
+        config: RegionConfig,
     ) -> None:
         bounds = get_region_bounds(
             center=config.center,

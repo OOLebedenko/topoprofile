@@ -10,6 +10,7 @@ import { addAtmosphere } from "./features/atmosphere.js";
 import { addHillshade } from "./features/hillshade.js";
 import { addPeaks } from "./features/peaks/peaks.js";
 import { addTerrainSource } from "./features/terrain.js";
+import { addTerrainFeatures } from "./features/terrain-features/terrain-features.js";
 
 import { createMap } from "./map.js";
 
@@ -20,9 +21,10 @@ const map = createMap("map");
 setupNavigationControls(map);
 
 // Add map features after the base style has finished loading.
-map.on("load", () => {
+map.on("load", async () => {
     addTerrainSource(map);
     addHillshade(map);
+    await addTerrainFeatures(map);
     addAtmosphere(map);
     addPeaks(map);
     setupViewToggle(map);

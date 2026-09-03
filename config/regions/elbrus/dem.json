@@ -9,11 +9,8 @@
 
   "radius_km": 100,
 
-  "dem": {
-    "resolution": "01s"
-  },
-
   "terrain": {
+    "resolution": "01s",
     "min_zoom": 8,
     "max_zoom": 14
   }
