@@ -7,6 +7,7 @@ import { setupNavigationControls } from "./controls/navigation.js";
 import { setupViewToggle } from "./controls/view-toggle.js";
 
 import { addAtmosphere } from "./features/atmosphere.js";
+import { addHillshade } from "./features/hillshade.js";
 import { addPeaks } from "./features/peaks/peaks.js";
 import { addTerrainSource } from "./features/terrain.js";
 
@@ -21,6 +22,7 @@ setupNavigationControls(map);
 // Add map features after the base style has finished loading.
 map.on("load", () => {
     addTerrainSource(map);
+    addHillshade(map);
     addAtmosphere(map);
     addPeaks(map);
     setupViewToggle(map);

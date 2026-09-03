@@ -9,10 +9,10 @@ const TERRAIN_AREA = {
 
     // Bounds in MapLibre order: west, south, east, north.
     bounds: [
-        42.1875,
-        43.06888777416962,
-        43.59375,
-        44.087585028245165,
+        40.78125,
+        42.03297433244139,
+        45.0,
+        45.089035564831015,
     ],
 
     dataPath: "/data/terrain/tiles",
@@ -33,6 +33,8 @@ export const MAP_CONFIG = {
 };
 
 // Local Terrarium DEM source settings.
+export const TERRAIN_SOURCE_ID = "terrain-dem";
+
 export const TERRAIN_CONFIG = {
     tiles: [
         `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.png`,
@@ -43,6 +45,13 @@ export const TERRAIN_CONFIG = {
     tileSize: 256,
     encoding: "terrarium",
     bounds: TERRAIN_AREA.bounds,
+};
+
+// Local hillshade settings.
+export const HILLSHADE_LAYER_ID = "terrain-hillshade";
+
+export const HILLSHADE_CONFIG = {
+    exaggeration: 0.15,
 };
 
 // Sky and fog settings used in the 3D terrain view.
