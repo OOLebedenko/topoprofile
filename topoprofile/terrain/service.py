@@ -54,7 +54,7 @@ class RegionTerrainProcessor:
 
         chunks = self._chunk_resolver.resolve(
             bounds=bounds,
-            zoom=config.chunk_zoom,
+            zoom=config.min_zoom,
         )
 
         self._worker.process(

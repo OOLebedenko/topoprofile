@@ -14,7 +14,7 @@
   },
 
   "terrain": {
-    "chunk_zoom": 8,
+    "min_zoom": 8,
     "max_zoom": 14
   }
 }

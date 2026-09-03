@@ -12,7 +12,7 @@ class TerrainRegionConfig:
     center: GeoPoint
     radius_km: float
     resolution: str
-    chunk_zoom: int
+    min_zoom: int
     max_zoom: int
 
 
@@ -31,6 +31,6 @@ def load_region_config(path: Path) -> TerrainRegionConfig:
         ),
         radius_km=data["radius_km"],
         resolution=data["dem"]["resolution"],
-        chunk_zoom=data["terrain"]["chunk_zoom"],
+        min_zoom=data["terrain"]["min_zoom"],
         max_zoom=data["terrain"]["max_zoom"],
     )
