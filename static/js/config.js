@@ -9,10 +9,10 @@ const TERRAIN_AREA = {
 
     // Bounds in MapLibre order: west, south, east, north.
     bounds: [
-        42.1875,
-        43.06888777416962,
-        43.59375,
-        44.087585028245165,
+        40.78125,
+        42.03297433244139,
+        45.0,
+        45.089035564831015,
     ],
 
     dataPath: "/data/terrain/tiles",
