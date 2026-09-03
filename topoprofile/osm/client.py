@@ -3,6 +3,8 @@ from typing import Any
 
 import requests
 
+from topoprofile.osm.geojson import GeoJSONConverter
+
 logger = logging.getLogger(__name__)
 
 OVERPASS_ENDPOINTS = (
@@ -99,3 +101,23 @@ class OverpassClient:
             )
 
         return elements
+
+
+class OverpassGeoJSONClient:
+    """Client for loading OSM data as normalized GeoJSON."""
+
+    def __init__(
+            self,
+            overpass_client: OverpassClient,
+            converter: GeoJSONConverter,
+    ) -> None:
+        self.overpass_client = overpass_client
+        self.converter = converter
+
+    def fetch(
+            self,
+            query: str,
+    ) -> dict[str, Any]:
+        """Fetch OSM data and convert it to normalized GeoJSON."""
+        osm_json = self.overpass_client.download(query)
+        return self.converter.convert(osm_json)
