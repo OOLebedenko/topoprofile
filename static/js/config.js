@@ -32,8 +32,11 @@ export const MAP_CONFIG = {
     viewTransitionDuration: 1000,
 };
 
-// Local Terrarium DEM source settings.
+// Local terrain DEM source settings.
 export const TERRAIN_SOURCE_ID = "terrain-dem";
+
+// Local hillshade DEM source settings.
+export const HILLSHADE_SOURCE_ID = "hillshade-dem";
 
 export const TERRAIN_CONFIG = {
     tiles: [
