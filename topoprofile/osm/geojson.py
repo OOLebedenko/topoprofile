@@ -1,6 +1,9 @@
 from typing import Any
 
 import osm2geojson
+from shapely.geometry import box, mapping, shape
+
+from topoprofile.geo.models import Bounds
 
 
 def geometry_type(
@@ -26,7 +29,7 @@ def has_coordinates(
 
 
 def is_valid_geometry(
-    geometry: Any,
+        geometry: Any,
 ) -> bool:
     """Return whether a GeoJSON geometry has a type and coordinates."""
     return geometry_type(geometry) is not None and has_coordinates(geometry)
@@ -78,3 +81,39 @@ class GeoJSONConverter:
                 properties["osm_type"] = osm_type
             if osm_id is not None:
                 properties["osm_id"] = osm_id
+
+
+def clip_to_bounds(
+        geojson: dict[str, Any],
+        bounds: Bounds,
+) -> dict[str, Any]:
+    """Clip GeoJSON features to geographic bounds."""
+    clip_geometry = box(
+        bounds.west,
+        bounds.south,
+        bounds.east,
+        bounds.north,
+    )
+
+    features = []
+
+    for feature in geojson["features"]:
+        geometry = feature.get("geometry")
+
+        if not is_valid_geometry(geometry):
+            continue
+
+        clipped_geometry = shape(geometry).intersection(clip_geometry)
+
+        if clipped_geometry.is_empty:
+            continue
+
+        features.append({
+            **feature,
+            "geometry": mapping(clipped_geometry),
+        })
+
+    return {
+        **geojson,
+        "features": features,
+    }
