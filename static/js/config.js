@@ -75,6 +75,16 @@ export const HILLSHADE_CONFIG = {
     exaggeration: 0.15,
 };
 
+// Local mountain infrastructure source settings.
+export const MOUNTAIN_INFRASTRUCTURE_SOURCE_ID =
+    "mountain-infrastructure";
+
+export const MOUNTAIN_INFRASTRUCTURE_CONFIG = {
+    dataPath: "/data/osm/chunks",
+    chunkZoom: TERRAIN_CONFIG.minZoom,
+    bounds: TERRAIN_AREA.bounds,
+};
+
 // Sky and fog settings used in the 3D terrain view.
 export const ATMOSPHERE_CONFIG = {
     skyColor: "#88c6fc",
