@@ -13,7 +13,7 @@ from topoprofile.geo.regions import get_region_bounds
 from topoprofile.geo.tiles import xyz_to_bounds
 from topoprofile.osm.client import OverpassClient, OverpassGeoJSONClient
 from topoprofile.osm.extractors.terrain_surface import TerrainSurfaceExtractor
-from topoprofile.osm.geojson import GeoJSONConverter
+from topoprofile.osm.geojson import GeoJSONConverter, clip_to_bounds
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 OSM_CHUNKS_ROOT = PROJECT_ROOT / "data" / "osm" / "chunks"
@@ -35,8 +35,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def extract_with_retry(
-    extractor: TerrainSurfaceExtractor,
-    bounds: Bounds,
+        extractor: TerrainSurfaceExtractor,
+        bounds: Bounds,
 ) -> dict[str, Any] | None:
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
@@ -87,22 +87,29 @@ def main() -> None:
             )
 
             output_path = (
-                OSM_CHUNKS_ROOT
-                / str(chunk.z)
-                / str(chunk.x)
-                / str(chunk.y)
-                / "terrain_surface.geojson"
+                    OSM_CHUNKS_ROOT
+                    / str(chunk.z)
+                    / str(chunk.x)
+                    / str(chunk.y)
+                    / "terrain_surface.geojson"
             )
 
-            if output_path.is_file():
-                continue
+            # if output_path.is_file():
+            #     continue
+
+            chunk_bounds = xyz_to_bounds(chunk)
 
             geojson = extract_with_retry(
                 extractor,
-                xyz_to_bounds(chunk),
+                chunk_bounds,
             )
             if geojson is None:
                 continue
+
+            geojson = clip_to_bounds(
+                geojson,
+                chunk_bounds,
+            )
 
             output_path.parent.mkdir(parents=True, exist_ok=True)
             output_path.write_text(
