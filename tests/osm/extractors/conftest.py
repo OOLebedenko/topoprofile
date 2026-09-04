@@ -72,7 +72,8 @@ def osm_geojson() -> dict:
             {
                 "properties": {
                     "amenity": "shelter",
-                    "name": "Mountain shelter",
+                    "shelter_type": "weather_shelter",
+                    "name": "RedFox 5300",
                 },
                 "geometry": {
                     "type": "Point",
