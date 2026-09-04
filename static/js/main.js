@@ -7,6 +7,7 @@ import { setupNavigationControls } from "./controls/navigation.js";
 import { setupViewToggle } from "./controls/view-toggle.js";
 
 import { addAtmosphere } from "./features/atmosphere.js";
+import { addHikingRoutes } from "./features/hiking-routes/hiking-routes.js";
 import { addHillshade } from "./features/hillshade.js";
 import { addPeaks } from "./features/peaks/peaks.js";
 import { addTerrainSource } from "./features/terrain.js";
@@ -25,6 +26,7 @@ map.on("load", async () => {
     addTerrainSource(map);
     addHillshade(map);
     await addTerrainFeatures(map);
+    await addHikingRoutes(map);
     addAtmosphere(map);
     addPeaks(map);
     setupViewToggle(map);
