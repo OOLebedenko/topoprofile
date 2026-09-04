@@ -45,6 +45,9 @@ const TEXT_SIZE = [
 const LABEL_LAYOUT = {
     "symbol-placement": "line",
     "text-field": TEXT_FIELD,
+    "text-font": [
+        "Noto Sans Regular",
+    ],
     "text-size": TEXT_SIZE,
     "text-rotation-alignment": "map",
     "text-pitch-alignment": "viewport",

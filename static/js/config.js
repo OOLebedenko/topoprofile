@@ -18,6 +18,18 @@ const TERRAIN_AREA = {
     dataPath: "/data/terrain/tiles",
 };
 
+// Slightly inset bounds used only by raster DEM sources.
+// This prevents MapLibre from requesting neighboring tiles
+// that only touch the exact terrain boundary.
+const SOURCE_BOUNDS_EPSILON = 1e-9;
+
+const TERRAIN_SOURCE_BOUNDS = [
+    TERRAIN_AREA.bounds[0] + SOURCE_BOUNDS_EPSILON,
+    TERRAIN_AREA.bounds[1] + SOURCE_BOUNDS_EPSILON,
+    TERRAIN_AREA.bounds[2] - SOURCE_BOUNDS_EPSILON,
+    TERRAIN_AREA.bounds[3] - SOURCE_BOUNDS_EPSILON,
+];
+
 // Base map and camera settings.
 export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
@@ -47,7 +59,7 @@ export const TERRAIN_CONFIG = {
     maxZoom: 14,
     tileSize: 256,
     encoding: "terrarium",
-    bounds: TERRAIN_AREA.bounds,
+    bounds: TERRAIN_SOURCE_BOUNDS,
 };
 
 // Local terrain feature source settings.

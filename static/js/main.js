@@ -28,9 +28,13 @@ setupNavigationControls(map);
 map.on("load", async () => {
     addTerrainSource(map);
     addHillshade(map);
-    await addTerrainFeatures(map);
-    await addHikingRoutes(map);
-    await addMountainInfrastructure(map);
+
+    await Promise.all([
+        addTerrainFeatures(map),
+        addHikingRoutes(map),
+        addMountainInfrastructure(map),
+    ]);
+
     addAtmosphere(map);
     addPeaks(map);
     setupViewToggle(map);
