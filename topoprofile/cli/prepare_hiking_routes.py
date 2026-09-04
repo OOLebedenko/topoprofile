@@ -12,7 +12,7 @@ from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import get_region_bounds
 from topoprofile.geo.tiles import xyz_to_bounds
 from topoprofile.osm.client import OverpassClient, OverpassGeoJSONClient
-from topoprofile.osm.extractors.terrain_surface import TerrainSurfaceExtractor
+from topoprofile.osm.extractors.hiking_routes import HikingRouteExtractor
 from topoprofile.osm.geojson import GeoJSONConverter, clip_to_bounds
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -24,7 +24,7 @@ RETRY_DELAY_SECONDS = 10
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Prepare terrain surface features from Overpass.",
+        description="Prepare hiking routes from Overpass.",
     )
     parser.add_argument(
         "config",
@@ -35,7 +35,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def extract_with_retry(
-        extractor: TerrainSurfaceExtractor,
+        extractor: HikingRouteExtractor,
         bounds: Bounds,
 ) -> dict[str, Any] | None:
     for attempt in range(1, MAX_ATTEMPTS + 1):
@@ -78,9 +78,9 @@ def main() -> None:
         overpass_client=OverpassClient(),
         converter=GeoJSONConverter(),
     )
-    extractor = TerrainSurfaceExtractor(client)
+    extractor = HikingRouteExtractor(client)
 
-    with tqdm(chunks, desc="Terrain surface", unit="chunk") as progress:
+    with tqdm(chunks, desc="Hiking routes", unit="chunk") as progress:
         for chunk in progress:
             progress.set_postfix_str(
                 f"{chunk.z}/{chunk.x}/{chunk.y}"
@@ -91,11 +91,11 @@ def main() -> None:
                     / str(chunk.z)
                     / str(chunk.x)
                     / str(chunk.y)
-                    / "terrain_surface.geojson"
+                    / "hiking_routes.geojson"
             )
 
-            # if output_path.is_file():
-            #     continue
+            if output_path.is_file():
+                continue
 
             chunk_bounds = xyz_to_bounds(chunk)
 

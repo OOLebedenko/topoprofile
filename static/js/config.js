@@ -59,6 +59,15 @@ export const TERRAIN_FEATURES_CONFIG = {
     bounds: TERRAIN_AREA.bounds,
 };
 
+// Local hiking route source settings.
+export const HIKING_ROUTES_SOURCE_ID = "hiking-routes";
+
+export const HIKING_ROUTES_CONFIG = {
+    dataPath: "/data/osm/chunks",
+    chunkZoom: TERRAIN_CONFIG.minZoom,
+    bounds: TERRAIN_AREA.bounds,
+};
+
 // Local hillshade settings.
 export const HILLSHADE_LAYER_ID = "terrain-hillshade";
 
