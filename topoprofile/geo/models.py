@@ -74,3 +74,9 @@ class XYZTile:
             x=self.x // scale,
             y=self.y // scale,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class Region:
+    bounds: Bounds
+    tiles: tuple[XYZTile, ...]

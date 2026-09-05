@@ -1,6 +1,6 @@
 from topoprofile.config import RegionConfig
 from topoprofile.geo.models import XYZTile
-from topoprofile.geo.regions import RegionToXYZTiles, get_region_bounds
+from topoprofile.geo.regions import RegionToXYZTiles, create_region
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.workers.worker import Worker
 
@@ -46,13 +46,14 @@ class RegionTerrainProcessor:
         self,
         config: RegionConfig,
     ) -> None:
-        bounds = get_region_bounds(
+        region = create_region(
             center=config.center,
             radius_km=config.radius_km,
+            zoom=config.terrain.min_zoom,
         )
 
         chunks = self._chunk_resolver.resolve(
-            bounds=bounds,
+            bounds=region.bounds,
             zoom=config.min_zoom,
         )
 

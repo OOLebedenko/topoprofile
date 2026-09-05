@@ -4,7 +4,7 @@ from shapely.geometry import box
 
 from topoprofile.geo.models import GeoPoint
 from topoprofile.geo.projections import get_utm_epsg
-from topoprofile.geo.regions import get_region_bounds
+from topoprofile.geo.regions import create_region
 
 
 @pytest.mark.parametrize(
@@ -23,20 +23,21 @@ def test_get_utm_epsg(
     assert get_utm_epsg(point) == expected
 
 
-def test_get_region_bounds_contains_center() -> None:
-    """Test that computed bounds contain the center point."""
+def test_create_region_bounds_contain_center() -> None:
+    """Test that region bounds contain the center point."""
     center = GeoPoint(
         lon=42.4361,
         lat=43.3538,
     )
 
-    bounds = get_region_bounds(
+    region = create_region(
         center=center,
         radius_km=70,
+        zoom=8,
     )
 
-    assert bounds.west <= center.lon <= bounds.east
-    assert bounds.south <= center.lat <= bounds.north
+    assert region.bounds.west <= center.lon <= region.bounds.east
+    assert region.bounds.south <= center.lat <= region.bounds.north
 
 
 @pytest.mark.parametrize(
@@ -47,22 +48,30 @@ def test_get_region_bounds_contains_center() -> None:
         (GeoPoint(-122.4194, 37.7749), 30, "EPSG:32610"),
     ],
 )
-def test_get_region_bounds_area(
+def test_create_region_bounds_area(
         center: GeoPoint,
         radius_km: float,
         utm_epsg: str,
 ) -> None:
     """
-    Test that bounding box area matches expected square area (2 * radius)^2
-    within a 5% relative tolerance after UTM projection.
+    Test that region bounding box area matches expected square area
+    (2 * radius)^2 within a 5% relative tolerance after UTM projection.
     """
-    bounds = get_region_bounds(
+    region = create_region(
         center=center,
         radius_km=radius_km,
+        zoom=8,
     )
 
     bounds_geometry = gpd.GeoSeries(
-        [box(bounds.west, bounds.south, bounds.east, bounds.north)],
+        [
+            box(
+                region.bounds.west,
+                region.bounds.south,
+                region.bounds.east,
+                region.bounds.north,
+            )
+        ],
         crs="EPSG:4326",
     )
 
