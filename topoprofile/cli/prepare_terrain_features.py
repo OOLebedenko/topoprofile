@@ -7,9 +7,8 @@ from typing import Any
 from tqdm import tqdm
 
 from topoprofile.config import load_region_config
-from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.models import Bounds
-from topoprofile.geo.regions import get_region_bounds
+from topoprofile.geo.regions import RegionToXYZTiles, get_region_bounds
 from topoprofile.geo.tiles import xyz_to_bounds
 from topoprofile.osm.extractors.terrain_surface import TerrainSurfaceExtractor
 from topoprofile.osm.geojson import GeoJSONConverter, clip_to_bounds
@@ -69,7 +68,7 @@ def main() -> None:
         radius_km=config.radius_km,
     )
 
-    chunks = RegionChunkResolver().resolve(
+    chunks = RegionToXYZTiles().resolve(
         bounds=bounds,
         zoom=config.terrain.min_zoom,
     )
