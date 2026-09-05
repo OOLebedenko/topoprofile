@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from topoprofile.geo.models import Bounds
-from topoprofile.osm.client import OverpassGeoJSONClient
+from topoprofile.osm.overpass.client import OverpassGeoJSONClient
 
 
 @pytest.fixture
