@@ -8,6 +8,16 @@ from topoprofile.geo.models import Bounds
 OverpassJSON = dict[str, Any]
 GeoJSON = dict[str, Any]
 
+POLYGON_GEOMETRY_TYPES = {
+    "Polygon",
+    "MultiPolygon",
+}
+
+LINE_GEOMETRY_TYPES = {
+    "LineString",
+    "MultiLineString",
+}
+
 
 def geometry_type(
     geometry: Any,
