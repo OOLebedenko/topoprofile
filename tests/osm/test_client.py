@@ -20,7 +20,7 @@ def test_download_returns_data_from_first_endpoint() -> None:
         "topoprofile.osm.overpass.client.requests.post",
         return_value=response,
     ) as post:
-        result = client.download("test query")
+        result = client.fetch("test query")
 
     assert result["elements"][0]["id"] == 1
     assert post.call_count == 1
@@ -46,7 +46,7 @@ def test_download_uses_next_endpoint_after_request_error() -> None:
             response,
         ],
     ) as post:
-        result = client.download("test query")
+        result = client.fetch("test query")
 
     assert result["elements"][0]["id"] == 2
     assert post.call_count == 2
@@ -67,4 +67,4 @@ def test_download_raises_if_all_endpoints_fail() -> None:
         RuntimeError,
         match="All Overpass endpoints failed",
     ):
-        client.download("test query")
+        client.fetch("test query")

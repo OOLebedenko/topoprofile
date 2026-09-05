@@ -3,7 +3,11 @@ from typing import Any
 
 import requests
 
-from topoprofile.osm.geojson import GeoJSONConverter
+from topoprofile.osm.geojson import (
+    GeoJSON,
+    GeoJSONConverter,
+    OverpassJSON,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +21,7 @@ REQUEST_TIMEOUT_SECONDS = 240
 
 
 class OverpassClient:
-    """Client for downloading OSM data from the Overpass API."""
+    """Client for fetching OSM data from the Overpass API."""
 
     def __init__(
         self,
@@ -31,33 +35,48 @@ class OverpassClient:
             "Accept": "application/json",
         }
 
-    def download(self, query: str) -> dict[str, Any]:
-        """Download OSM data from the first available Overpass endpoint."""
+    def fetch(
+        self,
+        query: str,
+    ) -> OverpassJSON:
+        """Fetch OSM data from the first available Overpass endpoint."""
         errors: list[str] = []
 
         for endpoint in self.endpoints:
             try:
-                return self._download_from_endpoint(endpoint, query)
+                return self._fetch_from_endpoint(
+                    endpoint,
+                    query,
+                )
             except (requests.RequestException, TypeError) as error:
                 message = f"{endpoint}: {error}"
                 errors.append(message)
-                logger.warning("Overpass request failed: %s", message)
+                logger.warning(
+                    "Overpass request failed: %s",
+                    message,
+                )
 
         raise RuntimeError(
             "All Overpass endpoints failed:\n"
             + "\n".join(errors)
         )
 
-    def _download_from_endpoint(
+    def _fetch_from_endpoint(
         self,
         endpoint: str,
         query: str,
-    ) -> dict[str, Any]:
-        """Download and validate data from a single Overpass endpoint."""
-        logger.info("Requesting OSM data from %s", endpoint)
+    ) -> OverpassJSON:
+        """Fetch and validate data from a single Overpass endpoint."""
+        logger.info(
+            "Requesting OSM data from %s",
+            endpoint,
+        )
 
-        raw_data = self._fetch(endpoint, query)
-        elements = self._extract_elements(raw_data)
+        data = self._request(
+            endpoint,
+            query,
+        )
+        elements = self._extract_elements(data)
 
         logger.info(
             "Received %d elements from %s",
@@ -65,9 +84,9 @@ class OverpassClient:
             endpoint,
         )
 
-        return raw_data
+        return data
 
-    def _fetch(
+    def _request(
         self,
         endpoint: str,
         query: str,
@@ -117,7 +136,10 @@ class OverpassGeoJSONClient:
     def fetch(
             self,
             query: str,
-    ) -> dict[str, Any]:
+    ) -> GeoJSON:
         """Fetch OSM data and convert it to normalized GeoJSON."""
-        osm_json = self.overpass_client.download(query)
-        return self.converter.convert(osm_json)
+        overpass_json = self.overpass_client.fetch(query)
+
+        return self.converter.convert(
+            overpass_json,
+        )
