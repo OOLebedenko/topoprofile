@@ -1,13 +1,13 @@
 from topoprofile.geo.models import Bounds
-from topoprofile.osm.overpass.config import QUERY_TIMEOUT_SECONDS
-from topoprofile.osm.overpass.queries.base import OverpassQuery
+from topoprofile.osm.client.config import QUERY_TIMEOUT_SECONDS
+from topoprofile.osm.client.queries.base import Query
 from topoprofile.osm.tags import (
     MOUNTAIN_HUT_TYPES,
     MOUNTAIN_SHELTER_TYPES,
 )
 
 
-class MountainInfrastructureQuery(OverpassQuery):
+class MountainInfrastructureQuery(Query):
     """Build Overpass queries for mountain infrastructure."""
 
     def build(

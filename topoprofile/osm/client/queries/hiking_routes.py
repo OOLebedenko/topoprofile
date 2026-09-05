@@ -1,13 +1,13 @@
 from topoprofile.geo.models import Bounds
-from topoprofile.osm.overpass.config import QUERY_TIMEOUT_SECONDS
-from topoprofile.osm.overpass.queries.base import OverpassQuery
+from topoprofile.osm.client.config import QUERY_TIMEOUT_SECONDS
+from topoprofile.osm.client.queries.base import Query
 from topoprofile.osm.tags import (
     HIKING_ROUTE_TYPES,
     HIKING_TRAIL_TYPES,
 )
 
 
-class HikingRouteQuery(OverpassQuery):
+class HikingRouteQuery(Query):
     """Build Overpass queries for hiking routes."""
 
     def build(

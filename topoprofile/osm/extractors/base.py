@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from topoprofile.geo.models import Bounds
-from topoprofile.osm.overpass.client import OverpassGeoJSONClient
+from topoprofile.osm.client.overpass import OverpassGeoJSONClient
 
 
 class OverpassExtractor(ABC):

@@ -3,7 +3,7 @@ from pathlib import Path
 
 from topoprofile.config import load_region_config
 from topoprofile.geo.regions import create_region
-from topoprofile.osm.overpass.queries.hiking_routes import HikingRouteQuery
+from topoprofile.osm.client.queries.hiking_routes import HikingRouteQuery
 from topoprofile.osm.task_factory import create_osm_task_manager
 from topoprofile.osm.transformers.hiking_routes import HikingRouteTransformer
 from topoprofile.workers.worker import SequentialWorker

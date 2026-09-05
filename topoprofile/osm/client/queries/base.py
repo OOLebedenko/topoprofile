@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from topoprofile.geo.models import Bounds
 
 
-class OverpassQuery(ABC):
+class Query(ABC):
     """Base interface for Overpass queries."""
 
     @abstractmethod

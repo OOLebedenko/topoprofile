@@ -3,7 +3,7 @@ from pathlib import Path
 
 from topoprofile.config import load_region_config
 from topoprofile.geo.regions import create_region
-from topoprofile.osm.overpass.queries.terrain_surface import TerrainSurfaceQuery
+from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
 from topoprofile.osm.task_factory import create_osm_task_manager
 from topoprofile.osm.transformers.terrain_surface import TerrainSurfaceTransformer
 from topoprofile.workers.worker import SequentialWorker

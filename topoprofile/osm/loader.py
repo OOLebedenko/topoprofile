@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
 from topoprofile.geo.models import Bounds
+from topoprofile.osm.client.overpass import OverpassClient
+from topoprofile.osm.client.queries.base import Query
 from topoprofile.osm.geojson import (
     GeoJSON,
     GeoJSONConverter,
 )
-from topoprofile.osm.overpass.client import OverpassClient
-from topoprofile.osm.overpass.queries.base import OverpassQuery
 
 
 class OSMFeatureLoader(ABC):
@@ -25,7 +25,7 @@ class OverpassFeatureLoader(OSMFeatureLoader):
 
     def __init__(
             self,
-            query: OverpassQuery,
+            query: Query,
             client: OverpassClient,
             converter: GeoJSONConverter,
     ) -> None:
