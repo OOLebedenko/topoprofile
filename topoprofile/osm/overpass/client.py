@@ -1,4 +1,5 @@
 import logging
+import time
 from typing import Any
 
 import requests
@@ -18,6 +19,8 @@ OVERPASS_ENDPOINTS = (
 )
 
 REQUEST_TIMEOUT_SECONDS = 240
+MAX_ATTEMPTS = 3
+RETRY_DELAY_SECONDS = 10
 
 
 class OverpassClient:
@@ -27,9 +30,13 @@ class OverpassClient:
         self,
         endpoints: tuple[str, ...] = OVERPASS_ENDPOINTS,
         timeout: int = REQUEST_TIMEOUT_SECONDS,
+        max_attempts: int = MAX_ATTEMPTS,
+        retry_delay: int = RETRY_DELAY_SECONDS,
     ) -> None:
         self.endpoints = endpoints
         self.timeout = timeout
+        self.max_attempts = max_attempts
+        self.retry_delay = retry_delay
         self._headers = {
             "User-Agent": "topoprofile",
             "Accept": "application/json",
@@ -39,7 +46,32 @@ class OverpassClient:
         self,
         query: str,
     ) -> OverpassJSON:
-        """Fetch OSM data from the first available Overpass endpoint."""
+        """Fetch OSM data from the available Overpass endpoints."""
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                return self._fetch_from_endpoints(query)
+            except RuntimeError:
+                if attempt == self.max_attempts:
+                    raise
+
+                delay = self.retry_delay * attempt
+
+                logger.warning(
+                    "Overpass attempt %d/%d failed. Retrying in %ds.",
+                    attempt,
+                    self.max_attempts,
+                    delay,
+                )
+
+                time.sleep(delay)
+
+        raise RuntimeError("Overpass request failed.")
+
+    def _fetch_from_endpoints(
+        self,
+        query: str,
+    ) -> OverpassJSON:
+        """Fetch data from the first available Overpass endpoint."""
         errors: list[str] = []
 
         for endpoint in self.endpoints:
