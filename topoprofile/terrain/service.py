@@ -1,7 +1,6 @@
 from topoprofile.config import RegionConfig
-from topoprofile.geo.chunks import RegionChunkResolver
-from topoprofile.geo.regions import get_region_bounds
-from topoprofile.geo.tiles import XYZTile
+from topoprofile.geo.models import XYZTile
+from topoprofile.geo.regions import RegionToXYZTiles, create_region
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.workers.worker import Worker
 
@@ -35,7 +34,7 @@ class RegionTerrainProcessor:
 
     def __init__(
         self,
-        chunk_resolver: RegionChunkResolver,
+        chunk_resolver: RegionToXYZTiles,
         chunk_manager: TerrainChunkManager,
         worker: Worker,
     ) -> None:
@@ -47,13 +46,14 @@ class RegionTerrainProcessor:
         self,
         config: RegionConfig,
     ) -> None:
-        bounds = get_region_bounds(
+        region = create_region(
             center=config.center,
             radius_km=config.radius_km,
+            zoom=config.terrain.min_zoom,
         )
 
         chunks = self._chunk_resolver.resolve(
-            bounds=bounds,
+            bounds=region.bounds,
             zoom=config.min_zoom,
         )
 

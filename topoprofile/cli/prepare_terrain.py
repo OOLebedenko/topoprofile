@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 
 from topoprofile.config import load_region_config
-from topoprofile.geo.chunks import RegionChunkResolver
+from topoprofile.geo.regions import RegionToXYZTiles
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.terrain.paths import TerrainStore
 from topoprofile.terrain.service import (
@@ -52,7 +52,7 @@ def main() -> None:
     )
 
     terrain_processor = RegionTerrainProcessor(
-        chunk_resolver=RegionChunkResolver(),
+        chunk_resolver=RegionToXYZTiles(),
         chunk_manager=chunk_manager,
         worker=SequentialWorker(),
     )

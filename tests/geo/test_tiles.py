@@ -1,17 +1,15 @@
 import pytest
 
-from topoprofile.geo.tiles import XYZTile, parent_tile, xyz_to_bounds
+from topoprofile.geo.models import XYZTile
 
 
 def test_xyz_to_bounds_world_tile() -> None:
     """Test bounds of the root XYZ tile covering the whole Web Mercator world."""
-    tile = XYZTile(
+    bounds = XYZTile(
         z=0,
         x=0,
         y=0,
-    )
-
-    bounds = xyz_to_bounds(tile)
+    ).bounds
 
     assert bounds.west == pytest.approx(-180.0)
     assert bounds.south == pytest.approx(-85.05112878)
@@ -21,13 +19,11 @@ def test_xyz_to_bounds_world_tile() -> None:
 
 def test_xyz_to_bounds_southeast_quarter() -> None:
     """Test bounds of a tile in the south-eastern world quadrant."""
-    tile = XYZTile(
+    bounds = XYZTile(
         z=1,
         x=1,
         y=1,
-    )
-
-    bounds = xyz_to_bounds(tile)
+    ).bounds
 
     assert bounds.west == pytest.approx(0.0)
     assert bounds.south == pytest.approx(-85.05112878)
@@ -43,8 +39,7 @@ def test_parent_tile() -> None:
         y=742,
     )
 
-    parent = parent_tile(
-        tile=tile,
+    parent = tile.parent(
         target_zoom=8,
     )
 
@@ -63,8 +58,7 @@ def test_parent_tile_at_same_zoom() -> None:
         y=92,
     )
 
-    parent = parent_tile(
-        tile=tile,
+    parent = tile.parent(
         target_zoom=8,
     )
 
@@ -83,7 +77,6 @@ def test_parent_tile_rejects_higher_target_zoom() -> None:
         ValueError,
         match="Target zoom must not exceed tile zoom",
     ):
-        parent_tile(
-            tile=tile,
+        tile.parent(
             target_zoom=9,
         )

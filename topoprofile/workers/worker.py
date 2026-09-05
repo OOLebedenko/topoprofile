@@ -1,32 +1,64 @@
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 from typing import TypeVar
 
-T = TypeVar("T")
+from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
+
 R = TypeVar("R")
+
+Task = Callable[[], R]
+
+
+class TaskExecutionError(RuntimeError):
+    """Raised when a processing task fails."""
 
 
 class Worker(ABC):
-    """Base interface for processing a collection of items."""
+    """Base interface for executing tasks."""
 
     @abstractmethod
-    def process(
-        self,
-        task: Callable[[T], R],
-        items: Iterable[T],
+    def execute(
+            self,
+            tasks: Iterable[Task[R]],
     ) -> list[R]:
-        """Apply a task to each input item."""
+        """Execute tasks and return their results."""
 
 
 class SequentialWorker(Worker):
-    """Process items sequentially."""
+    """Execute tasks sequentially."""
 
-    def process(
-        self,
-        task: Callable[[T], R],
-        items: Iterable[T],
+    def execute(
+            self,
+            tasks: Iterable[Task[R]],
     ) -> list[R]:
-        return [
-            task(item)
-            for item in items
-        ]
+        tasks = list(tasks)
+
+        results = []
+        failed = 0
+
+        for task in tqdm(
+                tasks,
+                desc="Processing",
+                unit="task",
+        ):
+            try:
+                results.append(
+                    task()
+                )
+            except TaskExecutionError:
+                failed += 1
+                logger.exception(
+                    "Task failed."
+                )
+
+        if failed:
+            logger.warning(
+                "%d of %d tasks failed.",
+                failed,
+                len(tasks),
+            )
+
+        return results

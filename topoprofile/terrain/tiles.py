@@ -3,8 +3,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.models import Bounds
+from topoprofile.geo.regions import RegionToXYZTiles
 
 logger = logging.getLogger(__name__)
 
@@ -90,7 +90,7 @@ def publish_terrain_tiles(
     max_zoom: int,
 ) -> None:
     """Publish only XYZ tiles covering the requested bounds."""
-    resolver = RegionChunkResolver()
+    resolver = RegionToXYZTiles()
 
     for zoom in range(min_zoom, max_zoom + 1):
         tiles = resolver.resolve(

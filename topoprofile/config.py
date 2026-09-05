@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from topoprofile.geo.models import GeoPoint
+from topoprofile.geo.models import LonLat
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,7 +16,7 @@ class RegionTerrainConfig:
 class RegionConfig:
     region_id: str
     name: str
-    center: GeoPoint
+    center: LonLat
     radius_km: float
     terrain: RegionTerrainConfig
 
@@ -30,7 +30,7 @@ def load_region_config(path: Path) -> RegionConfig:
     return RegionConfig(
         region_id=data["region_id"],
         name=data["name"],
-        center=GeoPoint(
+        center=LonLat(
             lon=data["center"]["lon"],
             lat=data["center"]["lat"],
         ),
