@@ -4,16 +4,16 @@ from typing import Any
 
 import requests
 
-from topoprofile.osm.geojson import (
-    GeoJSON,
-    GeoJSONConverter,
-    OverpassJSON,
-)
-from topoprofile.osm.overpass.config import (
+from topoprofile.osm.client.config import (
     MAX_ATTEMPTS,
     OVERPASS_ENDPOINTS,
     REQUEST_TIMEOUT_SECONDS,
     RETRY_DELAY_SECONDS,
+)
+from topoprofile.osm.geojson import (
+    GeoJSON,
+    GeoJSONConverter,
+    OverpassJSON,
 )
 
 logger = logging.getLogger(__name__)

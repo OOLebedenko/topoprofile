@@ -1,7 +1,7 @@
 from functools import partial
 
 from topoprofile.geo.models import Region, XYZTile
-from topoprofile.osm.overpass.loader import OSMFeatureLoader
+from topoprofile.osm.loader import OSMFeatureLoader
 from topoprofile.osm.store import OSMStore
 from topoprofile.osm.transformers.base import OSMFeatureTransformer
 from topoprofile.workers.worker import (
