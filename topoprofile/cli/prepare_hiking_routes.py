@@ -1,24 +1,15 @@
 import argparse
-import json
-import time
 from pathlib import Path
-from typing import Any
-
-from tqdm import tqdm
 
 from topoprofile.config import load_region_config
-from topoprofile.geo.models import Bounds
-from topoprofile.geo.regions import RegionToXYZTiles, get_region_bounds
-from topoprofile.geo.tiles import xyz_to_bounds
-from topoprofile.osm.extractors.hiking_routes import HikingRouteExtractor
-from topoprofile.osm.geojson import GeoJSONConverter, clip_to_bounds
-from topoprofile.osm.overpass.client import OverpassClient, OverpassGeoJSONClient
+from topoprofile.geo.regions import create_region
+from topoprofile.osm.overpass.queries.hiking_routes import HikingRouteQuery
+from topoprofile.osm.task_factory import create_osm_task_manager
+from topoprofile.osm.transformers.hiking_routes import HikingRouteTransformer
+from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 OSM_CHUNKS_ROOT = PROJECT_ROOT / "data" / "osm" / "chunks"
-
-MAX_ATTEMPTS = 3
-RETRY_DELAY_SECONDS = 10
 
 
 def parse_args() -> argparse.Namespace:
@@ -33,28 +24,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def extract_with_retry(
-        extractor: HikingRouteExtractor,
-        bounds: Bounds,
-) -> dict[str, Any] | None:
-    for attempt in range(1, MAX_ATTEMPTS + 1):
-        try:
-            return extractor.extract(bounds)
-        except (RuntimeError, TypeError, ValueError) as error:
-            if attempt == MAX_ATTEMPTS:
-                tqdm.write(f"Failed after {MAX_ATTEMPTS} attempts: {error}")
-                return None
-
-            delay = RETRY_DELAY_SECONDS * attempt
-            tqdm.write(
-                f"Attempt {attempt}/{MAX_ATTEMPTS} failed: {error}. "
-                f"Retrying in {delay}s."
-            )
-            time.sleep(delay)
-
-    return None
-
-
 def main() -> None:
     args = parse_args()
 
@@ -63,62 +32,23 @@ def main() -> None:
         config_path = PROJECT_ROOT / config_path
 
     config = load_region_config(config_path)
-    bounds = get_region_bounds(
+
+    region = create_region(
         center=config.center,
         radius_km=config.radius_km,
-    )
-
-    chunks = RegionToXYZTiles().resolve(
-        bounds=bounds,
         zoom=config.terrain.min_zoom,
     )
 
-    client = OverpassGeoJSONClient(
-        overpass_client=OverpassClient(),
-        converter=GeoJSONConverter(),
+    task_manager = create_osm_task_manager(
+        query=HikingRouteQuery(),
+        response_transformer=HikingRouteTransformer(),
+        output_root=OSM_CHUNKS_ROOT,
+        filename="hiking_routes.geojson",
     )
-    extractor = HikingRouteExtractor(client)
 
-    with tqdm(chunks, desc="Hiking routes", unit="chunk") as progress:
-        for chunk in progress:
-            progress.set_postfix_str(
-                f"{chunk.z}/{chunk.x}/{chunk.y}"
-            )
-
-            output_path = (
-                    OSM_CHUNKS_ROOT
-                    / str(chunk.z)
-                    / str(chunk.x)
-                    / str(chunk.y)
-                    / "hiking_routes.geojson"
-            )
-
-            if output_path.is_file():
-                continue
-
-            chunk_bounds = xyz_to_bounds(chunk)
-
-            geojson = extract_with_retry(
-                extractor,
-                chunk_bounds,
-            )
-            if geojson is None:
-                continue
-
-            geojson = clip_to_bounds(
-                geojson,
-                chunk_bounds,
-            )
-
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            output_path.write_text(
-                json.dumps(
-                    geojson,
-                    ensure_ascii=False,
-                    indent=2,
-                ),
-                encoding="utf-8",
-            )
+    tasks = task_manager.create_tasks(region)
+    worker = SequentialWorker()
+    worker.execute(tasks)
 
 
 if __name__ == "__main__":
