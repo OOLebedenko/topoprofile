@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from topoprofile.geo.models import Bounds
 from topoprofile.osm.geojson import (
     GeoJSON,
@@ -7,7 +9,18 @@ from topoprofile.osm.overpass.client import OverpassClient
 from topoprofile.osm.overpass.queries.base import OverpassQuery
 
 
-class OverpassFeatureSource:
+class OSMFeatureSource(ABC):
+    """Base interface for loading OSM feature data."""
+
+    @abstractmethod
+    def load(
+            self,
+            bounds: Bounds,
+    ) -> GeoJSON:
+        """Load OSM features for the given geographic bounds."""
+
+
+class OverpassFeatureSource(OSMFeatureSource):
     """Load OSM features through the Overpass API."""
 
     def __init__(
