@@ -10,11 +10,7 @@ from topoprofile.osm.client.config import (
     REQUEST_TIMEOUT_SECONDS,
     RETRY_DELAY_SECONDS,
 )
-from topoprofile.osm.geojson import (
-    GeoJSON,
-    GeoJSONConverter,
-    OverpassJSON,
-)
+from topoprofile.osm.geojson import OverpassJSON
 
 logger = logging.getLogger(__name__)
 
@@ -163,28 +159,3 @@ class OverpassClient:
             )
 
         return elements
-
-
-class OverpassGeoJSONClient:
-    """Client for loading OSM data as normalized GeoJSON."""
-
-    def __init__(
-            self,
-            overpass_client: OverpassClient,
-            converter: GeoJSONConverter,
-    ) -> None:
-        self.overpass_client = overpass_client
-        self.converter = converter
-
-    def fetch(
-            self,
-            query: str,
-    ) -> GeoJSON:
-        """Fetch OSM data and convert it to normalized GeoJSON."""
-        overpass_json = self.overpass_client.fetch(
-            query,
-        )
-
-        return self.converter.convert(
-            overpass_json,
-        )
