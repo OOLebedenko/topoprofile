@@ -9,7 +9,7 @@ from topoprofile.osm.overpass.client import OverpassClient
 from topoprofile.osm.overpass.queries.base import OverpassQuery
 
 
-class OSMFeatureSource(ABC):
+class OSMFeatureLoader(ABC):
     """Base interface for loading OSM feature data."""
 
     @abstractmethod
@@ -20,7 +20,7 @@ class OSMFeatureSource(ABC):
         """Load OSM features for the given geographic bounds."""
 
 
-class OverpassFeatureSource(OSMFeatureSource):
+class OverpassFeatureLoader(OSMFeatureLoader):
     """Load OSM features through the Overpass API."""
 
     def __init__(

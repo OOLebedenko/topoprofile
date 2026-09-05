@@ -19,6 +19,10 @@ LINE_GEOMETRY_TYPES = {
 }
 
 
+class GeoJSONConversionError(RuntimeError):
+    """Raised when Overpass JSON cannot be converted to GeoJSON."""
+
+
 def geometry_type(
     geometry: Any,
 ) -> str | None:
@@ -54,24 +58,22 @@ def is_valid_geometry(
 class GeoJSONConverter:
     """Convert Overpass JSON to normalized GeoJSON."""
 
-    def __init__(
-        self,
-        log_level: str = "WARNING",
-    ) -> None:
-        self.log_level = log_level
-
     def convert(
         self,
         overpass_json: OverpassJSON,
     ) -> GeoJSON:
         """Convert Overpass JSON to a normalized GeoJSON FeatureCollection."""
-        geojson = osm2geojson.json2geojson(
-            overpass_json,
-            raise_on_failure=False,
-            log_level=self.log_level,
-        )
-        self._flatten_tags(geojson)
-        return geojson
+        try:
+            geojson = osm2geojson.json2geojson(
+                overpass_json,
+                raise_on_failure=False,
+            )
+            self._flatten_tags(geojson)
+            return geojson
+        except Exception as error:
+            raise GeoJSONConversionError(
+                "Failed to convert Overpass JSON to GeoJSON."
+            ) from error
 
     @staticmethod
     def _flatten_tags(
