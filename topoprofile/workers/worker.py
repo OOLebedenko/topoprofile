@@ -2,31 +2,30 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 from typing import TypeVar
 
-T = TypeVar("T")
 R = TypeVar("R")
+
+Task = Callable[[], R]
 
 
 class Worker(ABC):
-    """Base interface for processing a collection of items."""
+    """Base interface for executing tasks."""
 
     @abstractmethod
-    def process(
-        self,
-        task: Callable[[T], R],
-        items: Iterable[T],
+    def execute(
+            self,
+            tasks: Iterable[Task[R]],
     ) -> list[R]:
-        """Apply a task to each input item."""
+        """Execute tasks and return their results."""
 
 
 class SequentialWorker(Worker):
-    """Process items sequentially."""
+    """Execute tasks sequentially."""
 
-    def process(
-        self,
-        task: Callable[[T], R],
-        items: Iterable[T],
+    def execute(
+            self,
+            tasks: Iterable[Task[R]],
     ) -> list[R]:
         return [
-            task(item)
-            for item in items
+            task()
+            for task in tasks
         ]
