@@ -9,80 +9,84 @@ from topoprofile.osm.geojson import (
     GeoJSONConverter,
     OverpassJSON,
 )
-
-logger = logging.getLogger(__name__)
-
-OVERPASS_ENDPOINTS = (
-    "https://overpass-api.de/api/interpreter",
-    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
-    "https://overpass.private.coffee/api/interpreter",
+from topoprofile.osm.overpass.config import (
+    MAX_ATTEMPTS,
+    OVERPASS_ENDPOINTS,
+    REQUEST_TIMEOUT_SECONDS,
+    RETRY_DELAY_SECONDS,
 )
 
-REQUEST_TIMEOUT_SECONDS = 240
-MAX_ATTEMPTS = 3
-RETRY_DELAY_SECONDS = 10
+logger = logging.getLogger(__name__)
 
 
 class OverpassClient:
     """Client for fetching OSM data from the Overpass API."""
 
     def __init__(
-        self,
-        endpoints: tuple[str, ...] = OVERPASS_ENDPOINTS,
-        timeout: int = REQUEST_TIMEOUT_SECONDS,
-        max_attempts: int = MAX_ATTEMPTS,
-        retry_delay: int = RETRY_DELAY_SECONDS,
+            self,
+            endpoints: tuple[str, ...] = OVERPASS_ENDPOINTS,
+            timeout: int = REQUEST_TIMEOUT_SECONDS,
+            max_attempts: int = MAX_ATTEMPTS,
+            retry_delay: int = RETRY_DELAY_SECONDS,
     ) -> None:
-        self.endpoints = endpoints
-        self.timeout = timeout
-        self.max_attempts = max_attempts
-        self.retry_delay = retry_delay
+        self._endpoints = endpoints
+        self._timeout = timeout
+        self._max_attempts = max_attempts
+        self._retry_delay = retry_delay
         self._headers = {
             "User-Agent": "topoprofile",
             "Accept": "application/json",
         }
 
     def fetch(
-        self,
-        query: str,
+            self,
+            query: str,
     ) -> OverpassJSON:
         """Fetch OSM data from the available Overpass endpoints."""
-        for attempt in range(1, self.max_attempts + 1):
+        for attempt in range(1, self._max_attempts + 1):
             try:
-                return self._fetch_from_endpoints(query)
+                return self._fetch_from_endpoints(
+                    query,
+                )
             except RuntimeError:
-                if attempt == self.max_attempts:
+                if attempt == self._max_attempts:
                     raise
 
-                delay = self.retry_delay * attempt
+                delay = self._retry_delay * attempt
 
                 logger.warning(
                     "Overpass attempt %d/%d failed. Retrying in %ds.",
                     attempt,
-                    self.max_attempts,
+                    self._max_attempts,
                     delay,
                 )
 
                 time.sleep(delay)
 
-        raise RuntimeError("Overpass request failed.")
+        raise RuntimeError(
+            "Overpass request failed."
+        )
 
     def _fetch_from_endpoints(
-        self,
-        query: str,
+            self,
+            query: str,
     ) -> OverpassJSON:
         """Fetch data from the first available Overpass endpoint."""
-        errors: list[str] = []
+        errors = []
 
-        for endpoint in self.endpoints:
+        for endpoint in self._endpoints:
             try:
                 return self._fetch_from_endpoint(
                     endpoint,
                     query,
                 )
-            except (requests.RequestException, TypeError) as error:
+            except (
+                    requests.RequestException,
+                    TypeError,
+            ) as error:
                 message = f"{endpoint}: {error}"
                 errors.append(message)
+
                 logger.warning(
                     "Overpass request failed: %s",
                     message,
@@ -94,9 +98,9 @@ class OverpassClient:
         )
 
     def _fetch_from_endpoint(
-        self,
-        endpoint: str,
-        query: str,
+            self,
+            endpoint: str,
+            query: str,
     ) -> OverpassJSON:
         """Fetch and validate data from a single Overpass endpoint."""
         logger.info(
@@ -108,7 +112,10 @@ class OverpassClient:
             endpoint,
             query,
         )
-        elements = self._extract_elements(data)
+
+        elements = self._extract_elements(
+            data,
+        )
 
         logger.info(
             "Received %d elements from %s",
@@ -119,24 +126,25 @@ class OverpassClient:
         return data
 
     def _request(
-        self,
-        endpoint: str,
-        query: str,
+            self,
+            endpoint: str,
+            query: str,
     ) -> Any:
         """Perform an HTTP request to a single Overpass endpoint."""
         response = requests.post(
             endpoint,
             data={"data": query},
             headers=self._headers,
-            timeout=self.timeout,
+            timeout=self._timeout,
         )
+
         response.raise_for_status()
 
         return response.json()
 
     @staticmethod
     def _extract_elements(
-        data: Any,
+            data: Any,
     ) -> list[Any]:
         """Extract and validate the elements list from an Overpass response."""
         if not isinstance(data, dict):
