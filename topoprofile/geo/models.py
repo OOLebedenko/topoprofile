@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
-class GeoPoint:
+class LonLat:
     lon: float
     lat: float
 

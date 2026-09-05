@@ -5,7 +5,7 @@ from shapely.geometry import Point as ShapelyPoint
 
 from topoprofile.geo.models import (
     Bounds,
-    GeoPoint,
+    LonLat,
     Region,
     XYZTile,
 )
@@ -16,7 +16,7 @@ WEB_MERCATOR_MAX_LAT = 85.05112878
 
 
 def create_region(
-        center: GeoPoint,
+        center: LonLat,
         radius_km: float,
         zoom: int,
 ) -> Region:
@@ -38,7 +38,7 @@ def create_region(
 
 
 def _calculate_region_bounds(
-        center: GeoPoint,
+        center: LonLat,
         radius_km: float,
 ) -> Bounds:
     """

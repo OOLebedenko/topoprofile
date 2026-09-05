@@ -2,7 +2,7 @@ import geopandas as gpd
 import pytest
 from shapely.geometry import box
 
-from topoprofile.geo.models import GeoPoint
+from topoprofile.geo.models import LonLat
 from topoprofile.geo.projections import get_utm_epsg
 from topoprofile.geo.regions import create_region
 
@@ -10,13 +10,13 @@ from topoprofile.geo.regions import create_region
 @pytest.mark.parametrize(
     ("point", "expected"),
     [
-        (GeoPoint(lon=42.4361, lat=43.3538), "EPSG:32638"),
-        (GeoPoint(lon=42.4361, lat=-43.3538), "EPSG:32738"),
-        (GeoPoint(lon=-122.4194, lat=37.7749), "EPSG:32610"),
+        (LonLat(lon=42.4361, lat=43.3538), "EPSG:32638"),
+        (LonLat(lon=42.4361, lat=-43.3538), "EPSG:32738"),
+        (LonLat(lon=-122.4194, lat=37.7749), "EPSG:32610"),
     ],
 )
 def test_get_utm_epsg(
-        point: GeoPoint,
+        point: LonLat,
         expected: str,
 ) -> None:
     """Test UTM EPSG code computation for various coordinates."""
@@ -25,7 +25,7 @@ def test_get_utm_epsg(
 
 def test_create_region_bounds_contain_center() -> None:
     """Test that region bounds contain the center point."""
-    center = GeoPoint(
+    center = LonLat(
         lon=42.4361,
         lat=43.3538,
     )
@@ -43,13 +43,13 @@ def test_create_region_bounds_contain_center() -> None:
 @pytest.mark.parametrize(
     ("center", "radius_km", "utm_epsg"),
     [
-        (GeoPoint(42.4361, 43.3538), 70, "EPSG:32638"),
-        (GeoPoint(42.4361, -43.3538), 50, "EPSG:32738"),
-        (GeoPoint(-122.4194, 37.7749), 30, "EPSG:32610"),
+        (LonLat(42.4361, 43.3538), 70, "EPSG:32638"),
+        (LonLat(42.4361, -43.3538), 50, "EPSG:32738"),
+        (LonLat(-122.4194, 37.7749), 30, "EPSG:32610"),
     ],
 )
 def test_create_region_bounds_area(
-        center: GeoPoint,
+        center: LonLat,
         radius_km: float,
         utm_epsg: str,
 ) -> None:
@@ -86,12 +86,12 @@ def test_create_region_bounds_area(
 @pytest.mark.parametrize(
     "point",
     [
-        GeoPoint(lon=-180.1, lat=0.0),
-        GeoPoint(lon=180.1, lat=0.0),
+        LonLat(lon=-180.1, lat=0.0),
+        LonLat(lon=180.1, lat=0.0),
     ],
 )
 def test_get_utm_epsg_rejects_invalid_longitude(
-        point: GeoPoint,
+        point: LonLat,
 ) -> None:
     """Test that longitude outside [-180, 180] is rejected."""
     with pytest.raises(
@@ -104,12 +104,12 @@ def test_get_utm_epsg_rejects_invalid_longitude(
 @pytest.mark.parametrize(
     "point",
     [
-        GeoPoint(lon=0.0, lat=-80.1),
-        GeoPoint(lon=0.0, lat=84.1),
+        LonLat(lon=0.0, lat=-80.1),
+        LonLat(lon=0.0, lat=84.1),
     ],
 )
 def test_get_utm_epsg_rejects_latitude_outside_utm_range(
-        point: GeoPoint,
+        point: LonLat,
 ) -> None:
     """Test that points outside the UTM latitude range are rejected."""
     with pytest.raises(
