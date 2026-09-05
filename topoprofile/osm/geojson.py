@@ -5,6 +5,9 @@ from shapely.geometry import box, mapping, shape
 
 from topoprofile.geo.models import Bounds
 
+OverpassJSON = dict[str, Any]
+GeoJSON = dict[str, Any]
+
 
 def geometry_type(
     geometry: Any,
@@ -25,7 +28,10 @@ def has_coordinates(
         return False
 
     coordinates = geometry.get("coordinates")
-    return isinstance(coordinates, list) and bool(coordinates)
+    return (
+        isinstance(coordinates, (list, tuple))
+        and bool(coordinates)
+    )
 
 
 def is_valid_geometry(
@@ -46,11 +52,11 @@ class GeoJSONConverter:
 
     def convert(
         self,
-        osm_json: dict[str, Any],
-    ) -> dict[str, Any]:
+        overpass_json: OverpassJSON,
+    ) -> GeoJSON:
         """Convert Overpass JSON to a normalized GeoJSON FeatureCollection."""
         geojson = osm2geojson.json2geojson(
-            osm_json,
+            overpass_json,
             raise_on_failure=False,
             log_level=self.log_level,
         )
@@ -58,7 +64,9 @@ class GeoJSONConverter:
         return geojson
 
     @staticmethod
-    def _flatten_tags(geojson: dict[str, Any]) -> None:
+    def _flatten_tags(
+        geojson: GeoJSON,
+    ) -> None:
         """Flatten OSM tags into feature properties."""
         for feature in geojson["features"]:
             properties = feature.get("properties", {})
@@ -84,9 +92,9 @@ class GeoJSONConverter:
 
 
 def clip_to_bounds(
-        geojson: dict[str, Any],
-        bounds: Bounds,
-) -> dict[str, Any]:
+    geojson: GeoJSON,
+    bounds: Bounds,
+) -> GeoJSON:
     """Clip GeoJSON features to geographic bounds."""
     clip_geometry = box(
         bounds.west,

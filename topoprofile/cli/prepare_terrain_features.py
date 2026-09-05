@@ -11,9 +11,9 @@ from topoprofile.geo.chunks import RegionChunkResolver
 from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import get_region_bounds
 from topoprofile.geo.tiles import xyz_to_bounds
-from topoprofile.osm.client import OverpassClient, OverpassGeoJSONClient
 from topoprofile.osm.extractors.terrain_surface import TerrainSurfaceExtractor
 from topoprofile.osm.geojson import GeoJSONConverter, clip_to_bounds
+from topoprofile.osm.overpass.client import OverpassClient, OverpassGeoJSONClient
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 OSM_CHUNKS_ROOT = PROJECT_ROOT / "data" / "osm" / "chunks"
