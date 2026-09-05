@@ -1,22 +1,44 @@
 import math
-from typing import TypeVar
 
 import geopandas as gpd
-from shapely.geometry import Point
+from shapely.geometry import Point as ShapelyPoint
 
-from topoprofile.geo.models import Bounds, GeoPoint
+from topoprofile.geo.models import (
+    Bounds,
+    LonLat,
+    Region,
+    XYZTile,
+)
 from topoprofile.geo.projections import get_utm_epsg
-from topoprofile.geo.tiles import XYZTile
 
 WGS84_CRS = "EPSG:4326"
 WEB_MERCATOR_MAX_LAT = 85.05112878
 
-T = TypeVar("T")
-R = TypeVar("R")
+
+def create_region(
+        center: LonLat,
+        radius_km: float,
+        zoom: int,
+) -> Region:
+    """Create a geographic region covered by XYZ tiles."""
+    bounds = _calculate_region_bounds(
+        center=center,
+        radius_km=radius_km,
+    )
+
+    tiles = RegionToXYZTiles.resolve(
+        bounds=bounds,
+        zoom=zoom,
+    )
+
+    return Region(
+        bounds=bounds,
+        tiles=tuple(tiles),
+    )
 
 
-def get_region_bounds(
-        center: GeoPoint,
+def _calculate_region_bounds(
+        center: LonLat,
         radius_km: float,
 ) -> Bounds:
     """
@@ -47,7 +69,12 @@ def get_region_bounds(
         raise ValueError("Radius must be positive.")
 
     center_geometry = gpd.GeoDataFrame(
-        geometry=[Point(center.lon, center.lat)],
+        geometry=[
+            ShapelyPoint(
+                center.lon,
+                center.lat,
+            )
+        ],
         crs=WGS84_CRS,
     )
 
