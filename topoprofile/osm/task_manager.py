@@ -4,7 +4,10 @@ from topoprofile.geo.models import Region, XYZTile
 from topoprofile.osm.overpass.loader import OSMFeatureLoader
 from topoprofile.osm.store import OSMStore
 from topoprofile.osm.transformers.base import OSMFeatureTransformer
-from topoprofile.workers.worker import Task
+from topoprofile.workers.worker import (
+    Task,
+    TaskExecutionError,
+)
 
 
 class OSMTaskManager:
@@ -39,16 +42,22 @@ class OSMTaskManager:
             tile: XYZTile,
     ) -> None:
         """Process OSM feature data for an XYZ tile."""
-        response = self._loader.load(
-            tile.bounds,
-        )
+        try:
+            response = self._loader.load(
+                tile.bounds,
+            )
 
-        response = self._response_transformer.transform(
-            response,
-            tile.bounds,
-        )
+            response = self._response_transformer.transform(
+                response,
+                tile.bounds,
+            )
 
-        self._store.save(
-            tile,
-            response,
-        )
+            self._store.save(
+                tile,
+                response,
+            )
+        except Exception as error:
+            raise TaskExecutionError(
+                f"OSM processing failed for tile "
+                f"{tile.z}/{tile.x}/{tile.y}."
+            ) from error

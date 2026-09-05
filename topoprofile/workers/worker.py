@@ -1,10 +1,19 @@
+import logging
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable
 from typing import TypeVar
 
+from tqdm import tqdm
+
+logger = logging.getLogger(__name__)
+
 R = TypeVar("R")
 
 Task = Callable[[], R]
+
+
+class TaskExecutionError(RuntimeError):
+    """Raised when a processing task fails."""
 
 
 class Worker(ABC):
@@ -25,7 +34,31 @@ class SequentialWorker(Worker):
             self,
             tasks: Iterable[Task[R]],
     ) -> list[R]:
-        return [
-            task()
-            for task in tasks
-        ]
+        tasks = list(tasks)
+
+        results = []
+        failed = 0
+
+        for task in tqdm(
+                tasks,
+                desc="Processing",
+                unit="task",
+        ):
+            try:
+                results.append(
+                    task()
+                )
+            except TaskExecutionError:
+                failed += 1
+                logger.exception(
+                    "Task failed."
+                )
+
+        if failed:
+            logger.warning(
+                "%d of %d tasks failed.",
+                failed,
+                len(tasks),
+            )
+
+        return results

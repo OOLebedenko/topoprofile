@@ -19,6 +19,10 @@ from topoprofile.osm.overpass.config import (
 logger = logging.getLogger(__name__)
 
 
+class OverpassClientError(RuntimeError):
+    """Raised when data cannot be fetched from the Overpass API."""
+
+
 class OverpassClient:
     """Client for fetching OSM data from the Overpass API."""
 
@@ -48,7 +52,7 @@ class OverpassClient:
                 return self._fetch_from_endpoints(
                     query,
                 )
-            except RuntimeError:
+            except OverpassClientError:
                 if attempt == self._max_attempts:
                     raise
 
@@ -63,16 +67,13 @@ class OverpassClient:
 
                 time.sleep(delay)
 
-        raise RuntimeError(
-            "Overpass request failed."
-        )
-
     def _fetch_from_endpoints(
             self,
             query: str,
     ) -> OverpassJSON:
         """Fetch data from the first available Overpass endpoint."""
         errors = []
+        last_error = None
 
         for endpoint in self._endpoints:
             try:
@@ -84,18 +85,20 @@ class OverpassClient:
                     requests.RequestException,
                     TypeError,
             ) as error:
+                last_error = error
+
                 message = f"{endpoint}: {error}"
                 errors.append(message)
 
-                logger.warning(
-                    "Overpass request failed: %s",
+                logger.debug(
+                    "Overpass endpoint failed: %s",
                     message,
                 )
 
-        raise RuntimeError(
+        raise OverpassClientError(
             "All Overpass endpoints failed:\n"
             + "\n".join(errors)
-        )
+        ) from last_error
 
     def _fetch_from_endpoint(
             self,
@@ -178,7 +181,9 @@ class OverpassGeoJSONClient:
             query: str,
     ) -> GeoJSON:
         """Fetch OSM data and convert it to normalized GeoJSON."""
-        overpass_json = self.overpass_client.fetch(query)
+        overpass_json = self.overpass_client.fetch(
+            query,
+        )
 
         return self.converter.convert(
             overpass_json,
