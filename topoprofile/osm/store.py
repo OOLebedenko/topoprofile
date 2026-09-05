@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from topoprofile.geo.tiles import XYZTile
+from topoprofile.geo.models import XYZTile
 from topoprofile.osm.geojson import GeoJSON
 from topoprofile.osm.writer import CompactGeoJSONWriter
 

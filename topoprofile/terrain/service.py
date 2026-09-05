@@ -1,6 +1,6 @@
 from topoprofile.config import RegionConfig
+from topoprofile.geo.models import XYZTile
 from topoprofile.geo.regions import RegionToXYZTiles, get_region_bounds
-from topoprofile.geo.tiles import XYZTile
 from topoprofile.terrain.builder import TerrainChunkBuilder
 from topoprofile.workers.worker import Worker
 

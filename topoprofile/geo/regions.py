@@ -4,9 +4,8 @@ from typing import TypeVar
 import geopandas as gpd
 from shapely.geometry import Point
 
-from topoprofile.geo.models import Bounds, GeoPoint
+from topoprofile.geo.models import Bounds, GeoPoint, XYZTile
 from topoprofile.geo.projections import get_utm_epsg
-from topoprofile.geo.tiles import XYZTile
 
 WGS84_CRS = "EPSG:4326"
 WEB_MERCATOR_MAX_LAT = 85.05112878
