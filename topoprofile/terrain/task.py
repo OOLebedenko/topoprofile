@@ -6,8 +6,8 @@ from typing import Protocol
 
 from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import RegionToXYZTiles
+from topoprofile.processing.source import Source
 from topoprofile.terrain.models import DEM
-from topoprofile.terrain.source import Source
 from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
 from topoprofile.terrain.transforms import DEMTransform, TerrainTileTransform
 

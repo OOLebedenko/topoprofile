@@ -1,30 +1,7 @@
-from typing import Protocol, TypeVar
-
 import pygmt
 
 from topoprofile.geo.models import Bounds
 from topoprofile.terrain.models import DEM
-
-KeyT_contra = TypeVar(
-    "KeyT_contra",
-    contravariant=True,
-)
-DataT_co = TypeVar(
-    "DataT_co",
-    covariant=True,
-)
-
-
-class Source(Protocol[KeyT_contra, DataT_co]):
-    """Source of processing data."""
-
-    def load(
-            self,
-            key: KeyT_contra,
-            /,
-    ) -> DataT_co:
-        """Load data by key."""
-        ...
 
 
 class EarthReliefSource:

@@ -3,7 +3,6 @@ from typing import Protocol
 
 from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.osm.models import OverpassData
-from topoprofile.osm.source import Source
 from topoprofile.osm.store import OSMStore
 from topoprofile.osm.transforms.osm import (
     ClipToBounds,
@@ -11,6 +10,7 @@ from topoprofile.osm.transforms.osm import (
     OSMTransform,
 )
 from topoprofile.osm.transforms.overpass import OverpassTransform
+from topoprofile.processing.source import Source
 
 
 class Task[**ParamsT, ResultT](Protocol):
