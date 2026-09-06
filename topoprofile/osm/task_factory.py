@@ -2,35 +2,38 @@ from pathlib import Path
 
 from topoprofile.osm.client.overpass import OverpassClient
 from topoprofile.osm.client.queries.base import Query
-from topoprofile.osm.loader import OverpassFeatureLoader
+from topoprofile.osm.source import OverpassFeatureSource
 from topoprofile.osm.store import OSMStore
+from topoprofile.osm.task import PrepareOSMTask
 from topoprofile.osm.task_manager import OSMTaskManager
-from topoprofile.osm.transformers.base import OSMFeatureTransformer
-from topoprofile.osm.transformers.geojson import GeoJSONTransform
+from topoprofile.osm.transforms.osm import OSMTransform
+from topoprofile.osm.transforms.overpass import GeoJSONTransform
 from topoprofile.osm.writer import CompactGeoJSONWriter
 
 
 def create_osm_task_manager(
         query: Query,
-        response_transformer: OSMFeatureTransformer,
-        output_root: Path,
+        transform: OSMTransform,
+        osm_root: Path,
         filename: str,
 ) -> OSMTaskManager:
-    """Create a configured OSM task manager."""
-    loader = OverpassFeatureLoader(
-        query=query,
-        client=OverpassClient(),
-        converter=GeoJSONTransform(),
-    )
-
+    """Create a configured OSM processing task manager."""
     store = OSMStore(
-        root=output_root,
+        root=osm_root,
         filename=filename,
         writer=CompactGeoJSONWriter(),
     )
 
-    return OSMTaskManager(
-        loader=loader,
-        response_transformer=response_transformer,
+    task = PrepareOSMTask(
+        source=OverpassFeatureSource(
+            query=query,
+            client=OverpassClient(),
+        ),
         store=store,
+        overpass_transform=GeoJSONTransform(),
+        osm_transform=transform,
+    )
+
+    return OSMTaskManager(
+        task=task,
     )
