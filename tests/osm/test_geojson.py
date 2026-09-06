@@ -1,15 +1,15 @@
 from unittest.mock import patch
 
 import pytest
-
-from topoprofile.geo.models import XYZTile
-from topoprofile.osm.geojson import (
-    GeoJSONConverter,
+from topoprofile.osm.transformers.geo_utils import (
     clip_to_bounds,
     geometry_type,
     has_coordinates,
     is_valid_geometry,
 )
+from topoprofile.osm.transformers.geojson import GeoJSONTransform
+
+from topoprofile.geo.models import XYZTile
 
 
 @pytest.fixture
@@ -65,10 +65,10 @@ def test_invalid_geometry() -> None:
 
 def test_converter_flattens_tags(glacier_geojson: dict) -> None:
     with patch(
-            "topoprofile.osm.geojson.osm2geojson.json2geojson",
+            "topoprofile.osm.transforms.geojson.osm2geojson.json2geojson",
             return_value=glacier_geojson,
     ):
-        result = GeoJSONConverter().convert({})
+        result = GeoJSONTransform().convert({})
 
     properties = result["features"][0]["properties"]
 

@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from typing import Any
 
+OverpassJSON = dict[str, Any]
+GeoJSON = dict[str, Any]
+
 
 @dataclass(frozen=True, slots=True)
 class OverpassData:

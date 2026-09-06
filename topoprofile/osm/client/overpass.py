@@ -10,7 +10,7 @@ from topoprofile.osm.client.config import (
     REQUEST_TIMEOUT_SECONDS,
     RETRY_DELAY_SECONDS,
 )
-from topoprofile.osm.geojson import OverpassJSON
+from topoprofile.osm.models import OverpassJSON
 
 logger = logging.getLogger(__name__)
 

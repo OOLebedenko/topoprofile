@@ -2,7 +2,7 @@ import json
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from topoprofile.osm.geojson import GeoJSON
+from topoprofile.osm.models import GeoJSON
 
 
 class GeoJSONWriter(ABC):
