@@ -2,11 +2,11 @@ from topoprofile.geo.models import XYZTile
 from topoprofile.osm.models import OSMFeatureCollection
 from topoprofile.osm.transforms.osm import (
     ClipToBounds,
-    Compose,
     FilterHikingRoutes,
     FilterTerrainSurface,
     PrepareMountainInfrastructure,
 )
+from topoprofile.processing.transforms import Compose
 
 
 def test_filter_hiking_routes_keeps_renderable_routes(

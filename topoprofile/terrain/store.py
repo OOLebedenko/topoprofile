@@ -8,32 +8,40 @@ from topoprofile.geo.models import XYZTile
 from topoprofile.terrain.models import DEM, RasterTile
 
 
-class GeoTIFFDEMStore:
-    """Store digital elevation models as GeoTIFF."""
+class XYZGeoTIFFDEMStore:
+    """Store DEM chunks as GeoTIFF in XYZ tile structure."""
 
     def __init__(
             self,
             root: Path,
+            filename: str = "dem_terrarium.tif",
     ) -> None:
         self._root = root
+        self._filename = filename
 
     def path(
             self,
-            name: str,
+            tile: XYZTile,
     ) -> Path:
-        return self._root / f"{name}.tif"
+        return (
+                self._root
+                / str(tile.z)
+                / str(tile.x)
+                / str(tile.y)
+                / self._filename
+        )
 
     def exists(
             self,
-            name: str,
+            tile: XYZTile,
     ) -> bool:
-        return self.path(name).is_file()
+        return self.path(tile).is_file()
 
     def load(
             self,
-            name: str,
+            tile: XYZTile,
     ) -> DEM:
-        input_path = self.path(name)
+        input_path = self.path(tile)
 
         with rasterio.open(input_path) as dataset:
             if dataset.count == 1:
@@ -50,10 +58,10 @@ class GeoTIFFDEMStore:
 
     def save(
             self,
-            name: str,
+            tile: XYZTile,
             dem: DEM,
     ) -> Path:
-        output_path = self.path(name)
+        output_path = self.path(tile)
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,
@@ -140,7 +148,6 @@ class PNGXYZTileStore:
     ) -> Path:
         """Save a raster XYZ tile as PNG."""
         output_path = self.path(raster_tile.tile)
-
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,

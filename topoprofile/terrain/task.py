@@ -2,26 +2,13 @@ import shutil
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Protocol
 
-from topoprofile.geo.models import Bounds
+from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.geo.regions import RegionToXYZTiles
+from topoprofile.processing.source import Source
 from topoprofile.terrain.models import DEM
-from topoprofile.terrain.source import Source
-from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
-from topoprofile.terrain.transforms import DEMTransform, TerrainTileTransform
-
-
-class Task[**ParamsT, ResultT](Protocol):
-    """Executable processing task."""
-
-    def __call__(
-            self,
-            *args: ParamsT.args,
-            **kwargs: ParamsT.kwargs,
-    ) -> ResultT:
-        """Execute the task."""
-        ...
+from topoprofile.terrain.store import PNGXYZTileStore, XYZGeoTIFFDEMStore
+from topoprofile.terrain.transforms import DEMTransform
 
 
 class PrepareDEMTask:
@@ -30,7 +17,7 @@ class PrepareDEMTask:
     def __init__(
             self,
             source: Source[Bounds, DEM],
-            store: GeoTIFFDEMStore,
+            store: XYZGeoTIFFDEMStore,
             transform: DEMTransform | None = None,
     ) -> None:
         self._source = source
@@ -39,19 +26,18 @@ class PrepareDEMTask:
 
     def __call__(
             self,
-            name: str,
-            bounds: Bounds,
+            chunk: XYZTile,
     ) -> Path:
-        if self._store.exists(name):
-            return self._store.path(name)
+        if self._store.exists(chunk):
+            return self._store.path(chunk)
 
-        dem = self._source.load(bounds)
+        dem = self._source.load(chunk.bounds)
 
         if self._transform is not None:
             dem = self._transform(dem)
 
         return self._store.save(
-            name=name,
+            tile=chunk,
             dem=dem,
         )
 
@@ -61,30 +47,25 @@ class GenerateTilesTask:
 
     def __init__(
             self,
-            source: GeoTIFFDEMStore,
+            source: XYZGeoTIFFDEMStore,
             store: PNGXYZTileStore,
-            transform: TerrainTileTransform | None = None,
     ) -> None:
         self._source = source
         self._store = store
-        self._transform = transform
 
     def __call__(
             self,
-            name: str,
-            bounds: Bounds,
-            min_zoom: int,
+            chunk: XYZTile,
             max_zoom: int,
             processes: int = 4,
     ) -> None:
         if self._tiles_exist(
-                bounds=bounds,
-                min_zoom=min_zoom,
+                chunk=chunk,
                 max_zoom=max_zoom,
         ):
             return
 
-        input_path = self._source.path(name)
+        input_path = self._source.path(chunk)
 
         if not input_path.is_file():
             raise FileNotFoundError(
@@ -99,31 +80,24 @@ class GenerateTilesTask:
             self._generate_tiles(
                 input_path=input_path,
                 output_dir=generated_tiles,
-                min_zoom=min_zoom,
+                min_zoom=chunk.z,
                 max_zoom=max_zoom,
-                processes=processes
+                processes=processes,
             )
             self._publish_tiles(
                 source_dir=generated_tiles,
-                bounds=bounds,
-                min_zoom=min_zoom,
+                chunk=chunk,
                 max_zoom=max_zoom,
-            )
-
-        if self._transform is not None:
-            raise NotImplementedError(
-                "Terrain tile transformations are not implemented yet."
             )
 
     def _tiles_exist(
             self,
-            bounds: Bounds,
-            min_zoom: int,
+            chunk: XYZTile,
             max_zoom: int,
     ) -> bool:
-        for zoom in range(min_zoom, max_zoom + 1):
+        for zoom in range(chunk.z, max_zoom + 1):
             tiles = RegionToXYZTiles.resolve(
-                bounds=bounds,
+                bounds=chunk.bounds,
                 zoom=zoom,
             )
 
@@ -162,13 +136,12 @@ class GenerateTilesTask:
     def _publish_tiles(
             self,
             source_dir: Path,
-            bounds: Bounds,
-            min_zoom: int,
+            chunk: XYZTile,
             max_zoom: int,
     ) -> None:
-        for zoom in range(min_zoom, max_zoom + 1):
+        for zoom in range(chunk.z, max_zoom + 1):
             tiles = RegionToXYZTiles.resolve(
-                bounds=bounds,
+                bounds=chunk.bounds,
                 zoom=zoom,
             )
 

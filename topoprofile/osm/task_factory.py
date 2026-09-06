@@ -1,39 +1,72 @@
 from pathlib import Path
 
 from topoprofile.osm.client.overpass import OverpassClient
-from topoprofile.osm.client.queries.base import Query
+from topoprofile.osm.client.queries.base import UnionQuery
+from topoprofile.osm.client.queries.hiking_routes import HikingRouteQuery
+from topoprofile.osm.client.queries.mountain_infrastructure import (
+    MountainInfrastructureQuery,
+)
+from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
 from topoprofile.osm.source import OverpassFeatureSource
 from topoprofile.osm.store import OSMStore
-from topoprofile.osm.task import PrepareOSMTask
-from topoprofile.osm.task_manager import OSMTaskManager
-from topoprofile.osm.transforms.osm import OSMTransform
+from topoprofile.osm.task import PrepareOSMChunkTask, PrepareOSMTask
+from topoprofile.osm.transforms.osm import (
+    FilterHikingRoutes,
+    FilterTerrainSurface,
+    PrepareMountainInfrastructure,
+)
 from topoprofile.osm.transforms.overpass import GeoJSONTransform
 from topoprofile.osm.writer import CompactGeoJSONWriter
 
 
-def create_osm_task_manager(
-        query: Query,
-        transform: OSMTransform,
+def create_osm_task(
         osm_root: Path,
-        filename: str,
-) -> OSMTaskManager:
-    """Create a configured OSM processing task manager."""
-    store = OSMStore(
-        root=osm_root,
-        filename=filename,
-        writer=CompactGeoJSONWriter(),
-    )
-
-    task = PrepareOSMTask(
-        source=OverpassFeatureSource(
-            query=query,
-            client=OverpassClient(),
+) -> PrepareOSMChunkTask:
+    """Create a configured OSM chunk processing task."""
+    source = OverpassFeatureSource(
+        query=UnionQuery(
+            queries=(
+                HikingRouteQuery(),
+                MountainInfrastructureQuery(),
+                TerrainSurfaceQuery(),
+            ),
         ),
-        store=store,
-        overpass_transform=GeoJSONTransform(),
-        osm_transform=transform,
+        client=OverpassClient(),
     )
 
-    return OSMTaskManager(
-        task=task,
+    hiking_routes_task = PrepareOSMTask(
+        store=OSMStore(
+            root=osm_root,
+            filename="hiking_routes.geojson",
+            writer=CompactGeoJSONWriter(),
+        ),
+        transform=FilterHikingRoutes(),
+    )
+
+    mountain_infrastructure_task = PrepareOSMTask(
+        store=OSMStore(
+            root=osm_root,
+            filename="mountain_infrastructure.geojson",
+            writer=CompactGeoJSONWriter(),
+        ),
+        transform=PrepareMountainInfrastructure(),
+    )
+
+    terrain_surface_task = PrepareOSMTask(
+        store=OSMStore(
+            root=osm_root,
+            filename="terrain_surface.geojson",
+            writer=CompactGeoJSONWriter(),
+        ),
+        transform=FilterTerrainSurface(),
+    )
+
+    return PrepareOSMChunkTask(
+        source=source,
+        overpass_transform=GeoJSONTransform(),
+        tasks=(
+            hiking_routes_task,
+            mountain_infrastructure_task,
+            terrain_surface_task,
+        ),
     )

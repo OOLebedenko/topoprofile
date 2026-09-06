@@ -1,13 +1,10 @@
 import argparse
+from functools import partial
 from pathlib import Path
 
 from topoprofile.config import load_region_config
 from topoprofile.geo.regions import create_region
-from topoprofile.osm.client.queries.mountain_infrastructure import (
-    MountainInfrastructureQuery,
-)
-from topoprofile.osm.task_factory import create_osm_task_manager
-from topoprofile.osm.transforms.osm import PrepareMountainInfrastructure
+from topoprofile.osm.task_factory import create_osm_task
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -16,7 +13,7 @@ OSM_CHUNKS_ROOT = PROJECT_ROOT / "data" / "osm" / "chunks"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Prepare mountain infrastructure from Overpass.",
+        description="Prepare OSM features for a configured region.",
     )
     parser.add_argument(
         "config",
@@ -41,16 +38,13 @@ def main() -> None:
         zoom=config.terrain.min_zoom,
     )
 
-    task_manager = create_osm_task_manager(
-        query=MountainInfrastructureQuery(),
-        transform=PrepareMountainInfrastructure(),
+    task = create_osm_task(
         osm_root=OSM_CHUNKS_ROOT,
-        filename="mountain_infrastructure.geojson",
     )
 
     tasks = [
-        task_manager.create_task(tile)
-        for tile in region.tiles
+        partial(task, chunk)
+        for chunk in region.tiles
     ]
 
     worker = SequentialWorker()

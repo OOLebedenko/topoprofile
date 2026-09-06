@@ -1,5 +1,4 @@
 import logging
-from abc import ABC, abstractmethod
 from typing import Any
 
 from shapely.geometry import box, mapping, shape
@@ -20,41 +19,14 @@ from topoprofile.osm.transforms.utils import (
     geometry_type,
     is_valid_geometry,
 )
+from topoprofile.processing.transforms import Transform
 
 logger = logging.getLogger(__name__)
 
-
-class OSMTransform(ABC):
-    """Transform OSM feature data."""
-
-    @abstractmethod
-    def __call__(
-            self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
-        """Transform OSM features."""
+type OSMTransform = Transform[OSMFeatureCollection]
 
 
-class Compose(OSMTransform):
-    """Apply OSM transformations sequentially."""
-
-    def __init__(
-            self,
-            transforms: tuple[OSMTransform, ...],
-    ) -> None:
-        self._transforms = transforms
-
-    def __call__(
-            self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
-        for transform in self._transforms:
-            features = transform(features)
-
-        return features
-
-
-class ClipToBounds(OSMTransform):
+class ClipToBounds:
     """Clip OSM features to geographic bounds."""
 
     def __init__(
@@ -99,7 +71,7 @@ class ClipToBounds(OSMTransform):
         )
 
 
-class FilterHikingRoutes(OSMTransform):
+class FilterHikingRoutes:
     """Keep renderable hiking route features."""
 
     def __call__(
@@ -149,7 +121,7 @@ class FilterHikingRoutes(OSMTransform):
         )
 
 
-class PrepareMountainInfrastructure(OSMTransform):
+class PrepareMountainInfrastructure:
     """Convert mountain infrastructure to renderable point features."""
 
     def __call__(
@@ -212,7 +184,7 @@ class PrepareMountainInfrastructure(OSMTransform):
         return None
 
 
-class FilterTerrainSurface(OSMTransform):
+class FilterTerrainSurface:
     """Keep renderable terrain surface features."""
 
     def __call__(
