@@ -1,23 +1,33 @@
-from abc import ABC, abstractmethod
+from typing import Protocol, TypeVar
 
 import pygmt
 
 from topoprofile.geo.models import Bounds
 from topoprofile.terrain.models import DEM
 
+KeyT = TypeVar(
+    "KeyT",
+    contravariant=True,
+)
+DataT = TypeVar(
+    "DataT",
+    covariant=True,
+)
 
-class DEMSource(ABC):
-    """Source of digital elevation model data."""
 
-    @abstractmethod
+class Source(Protocol[KeyT, DataT]):
+    """Source of processing data."""
+
     def load(
             self,
-            bounds: Bounds,
-    ) -> DEM:
-        """Load DEM data for geographic bounds."""
+            key: KeyT,
+            /,
+    ) -> DataT:
+        """Load data by key."""
+        ...
 
 
-class EarthReliefDEMSource(DEMSource):
+class EarthReliefSource:
     """Load DEM data from GMT Earth Relief."""
 
     def __init__(

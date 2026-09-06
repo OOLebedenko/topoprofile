@@ -9,7 +9,7 @@ from rasterio.crs import CRS
 from topoprofile.geo.models import Bounds
 from topoprofile.terrain import dem
 from topoprofile.terrain.models import DEM
-from topoprofile.terrain.source import DEMSource
+from topoprofile.terrain.source import Source
 
 
 def test_download_dem_by_bounds(
@@ -47,7 +47,7 @@ def test_download_dem_by_bounds(
 
     crs = CRS.from_epsg(4326)
 
-    source = Mock(spec=DEMSource)
+    source = Mock(spec=Source)
     source.load.return_value = DEM(
         values=values,
         transform=transform,

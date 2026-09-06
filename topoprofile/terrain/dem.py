@@ -6,14 +6,14 @@ from click.testing import CliRunner
 from rio_rgbify.scripts.cli import rgbify
 
 from topoprofile.geo.models import Bounds
-from topoprofile.terrain.source import DEMSource
+from topoprofile.terrain.source import Source
 
 logger = logging.getLogger(__name__)
 
 
 def download_dem_by_bounds(
     bounds: Bounds,
-    source: DEMSource,
+    source: Source,
     output_path: Path,
 ) -> None:
     """
@@ -48,7 +48,7 @@ def download_dem_by_bounds(
 
 def download_dem(
     bounds: Bounds,
-    source: DEMSource,
+    source: Source,
     output_path: Path,
     force_download: bool = False,
 ) -> Path:

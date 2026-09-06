@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from topoprofile.geo.models import Bounds
-from topoprofile.terrain.source import DEMSource
+from topoprofile.terrain.source import Source
 from topoprofile.terrain.store import GeoTIFFDEMStore
 
 
@@ -12,7 +12,7 @@ class DEMProcessor:
 
     def __init__(
             self,
-            source: DEMSource,
+            source: Source,
             store: GeoTIFFDEMStore,
     ) -> None:
         self._source = source

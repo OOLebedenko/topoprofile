@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.terrain.dem import convert_dem_to_terrarium, download_dem
 from topoprofile.terrain.paths import TerrainBuildPaths, TerrainStore
-from topoprofile.terrain.source import DEMSource
+from topoprofile.terrain.source import Source
 from topoprofile.terrain.tiles import generate_terrain_tiles, publish_terrain_tiles
 
 
@@ -14,7 +14,7 @@ class TerrainChunkBuilder:
     def __init__(
         self,
         terrain_store: TerrainStore,
-        dem_source: DEMSource,
+        dem_source: Source,
         max_zoom: int,
     ) -> None:
         self._terrain_store = terrain_store

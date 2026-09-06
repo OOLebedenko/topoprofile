@@ -7,7 +7,7 @@ from rasterio.crs import CRS
 
 from topoprofile.geo.models import Bounds
 from topoprofile.terrain.models import DEM
-from topoprofile.terrain.source import EarthReliefDEMSource
+from topoprofile.terrain.source import EarthReliefSource
 
 
 def test_earth_relief_source_load(
@@ -55,7 +55,7 @@ def test_earth_relief_source_load(
         load_earth_relief,
     )
 
-    source = EarthReliefDEMSource(
+    source = EarthReliefSource(
         resolution="01s",
     )
 

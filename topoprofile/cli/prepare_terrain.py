@@ -9,7 +9,7 @@ from topoprofile.terrain.service import (
     RegionTerrainProcessor,
     TerrainChunkManager,
 )
-from topoprofile.terrain.source import EarthReliefDEMSource
+from topoprofile.terrain.source import EarthReliefSource
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -42,7 +42,7 @@ def main() -> None:
         root=PROJECT_ROOT / "data" / "terrain",
     )
 
-    dem_source = EarthReliefDEMSource(
+    dem_source = EarthReliefSource(
         resolution=config.resolution,
     )
 
