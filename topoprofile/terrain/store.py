@@ -21,26 +21,28 @@ class GeoTIFFDEMStore:
             self,
             name: str,
     ) -> Path:
-        """Return the path of a stored DEM."""
         return self._root / f"{name}.tif"
 
     def exists(
             self,
             name: str,
     ) -> bool:
-        """Return whether a DEM already exists."""
         return self.path(name).is_file()
 
     def load(
             self,
             name: str,
     ) -> DEM:
-        """Load a DEM from GeoTIFF."""
         input_path = self.path(name)
 
         with rasterio.open(input_path) as dataset:
+            if dataset.count == 1:
+                values = dataset.read(1)
+            else:
+                values = dataset.read()
+
             return DEM(
-                values=dataset.read(1),
+                values=values,
                 transform=dataset.transform,
                 crs=dataset.crs,
                 nodata=dataset.nodata,
@@ -51,9 +53,7 @@ class GeoTIFFDEMStore:
             name: str,
             dem: DEM,
     ) -> Path:
-        """Save a DEM as GeoTIFF."""
         output_path = self.path(name)
-
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,
@@ -65,16 +65,19 @@ class GeoTIFFDEMStore:
                 driver="GTiff",
                 height=dem.height,
                 width=dem.width,
-                count=1,
+                count=dem.count,
                 dtype=dem.values.dtype,
                 crs=dem.crs,
                 transform=dem.transform,
                 nodata=dem.nodata,
         ) as dataset:
-            dataset.write(
-                dem.values,
-                1,
-            )
+            if dem.count == 1:
+                dataset.write(
+                    dem.values,
+                    1,
+                )
+            else:
+                dataset.write(dem.values)
 
         return output_path
 
