@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from topoprofile.geo.models import XYZTile
-from topoprofile.osm.geojson import GeoJSON
+from topoprofile.osm.models import OSMFeatureCollection
 from topoprofile.osm.writer import CompactGeoJSONWriter
 
 
@@ -37,9 +37,9 @@ class OSMStore:
     def save(
             self,
             chunk: XYZTile,
-            geojson: GeoJSON,
+            features: OSMFeatureCollection,
     ) -> Path:
-        """Save GeoJSON data for a chunk."""
+        """Save OSM features for a chunk."""
         output_path = self.path(chunk)
 
         output_path.parent.mkdir(
@@ -49,7 +49,10 @@ class OSMStore:
 
         self.writer.write(
             output_path,
-            geojson,
+            {
+                "type": "FeatureCollection",
+                "features": list(features.features),
+            },
         )
 
         return output_path
