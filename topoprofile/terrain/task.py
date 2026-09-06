@@ -1,3 +1,5 @@
+import shutil
+import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Protocol
@@ -73,6 +75,7 @@ class GenerateTilesTask:
             bounds: Bounds,
             min_zoom: int,
             max_zoom: int,
+            processes: int = 4,
     ) -> None:
         if self._tiles_exist(
                 bounds=bounds,
@@ -98,6 +101,7 @@ class GenerateTilesTask:
                 output_dir=generated_tiles,
                 min_zoom=min_zoom,
                 max_zoom=max_zoom,
+                processes=processes
             )
             self._publish_tiles(
                 source_dir=generated_tiles,
@@ -130,3 +134,62 @@ class GenerateTilesTask:
                 return False
 
         return True
+
+    @staticmethod
+    def _generate_tiles(
+            input_path: Path,
+            output_dir: Path,
+            min_zoom: int,
+            max_zoom: int,
+            processes: int,
+    ) -> None:
+        command = [
+            "gdal2tiles.py",
+            "--xyz",
+            "--resampling=near",
+            f"--processes={processes}",
+            "-z",
+            f"{min_zoom}-{max_zoom}",
+            str(input_path),
+            str(output_dir),
+        ]
+
+        subprocess.run(
+            command,
+            check=True,
+        )
+
+    def _publish_tiles(
+            self,
+            source_dir: Path,
+            bounds: Bounds,
+            min_zoom: int,
+            max_zoom: int,
+    ) -> None:
+        for zoom in range(min_zoom, max_zoom + 1):
+            tiles = RegionToXYZTiles.resolve(
+                bounds=bounds,
+                zoom=zoom,
+            )
+
+            for tile in tiles:
+                source_path = (
+                        source_dir
+                        / str(tile.z)
+                        / str(tile.x)
+                        / f"{tile.y}.png"
+                )
+
+                if not source_path.is_file():
+                    continue
+
+                output_path = self._store.path(tile)
+                output_path.parent.mkdir(
+                    parents=True,
+                    exist_ok=True,
+                )
+
+                shutil.copy2(
+                    source_path,
+                    output_path,
+                )
