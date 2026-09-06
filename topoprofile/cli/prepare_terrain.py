@@ -47,8 +47,7 @@ def main() -> None:
     prepare_dem_tasks = [
         partial(
             prepare_dem_task,
-            name=f"{chunk.z}/{chunk.x}/{chunk.y}/dem_terrarium",
-            bounds=chunk.bounds,
+            chunk,
         )
         for chunk in region.tiles
     ]
@@ -57,9 +56,7 @@ def main() -> None:
     generate_tiles_tasks = [
         partial(
             generate_tiles_task,
-            name=f"{chunk.z}/{chunk.x}/{chunk.y}/dem_terrarium",
-            bounds=chunk.bounds,
-            min_zoom=chunk.z,
+            chunk,
             max_zoom=config.terrain.max_zoom,
         )
         for chunk in region.tiles

@@ -1,20 +1,25 @@
 from pathlib import Path
 
 import numpy as np
-import pytest
 from affine import Affine
 from rasterio.crs import CRS
 
 from topoprofile.geo.models import XYZTile
-from topoprofile.terrain.models import DEM, RasterTile
-from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
+from topoprofile.terrain.models import DEM
+from topoprofile.terrain.store import XYZGeoTIFFDEMStore
 
 
 def test_geotiff_dem_store(
         tmp_path: Path,
 ) -> None:
-    store = GeoTIFFDEMStore(
+    store = XYZGeoTIFFDEMStore(
         root=tmp_path,
+    )
+
+    tile = XYZTile(
+        z=8,
+        x=158,
+        y=93,
     )
 
     dem = DEM(
@@ -38,78 +43,25 @@ def test_geotiff_dem_store(
     )
 
     output_path = store.save(
-        name="elbrus",
+        tile=tile,
         dem=dem,
     )
-
-    assert output_path == tmp_path / "elbrus.tif"
-    assert store.exists("elbrus")
-
-    loaded_dem = store.load("elbrus")
-
-    np.testing.assert_array_equal(
-        loaded_dem.values,
-        dem.values,
-    )
-
-    assert loaded_dem.transform == dem.transform
-    assert loaded_dem.crs == dem.crs
-    assert loaded_dem.nodata == dem.nodata
-
-
-@pytest.mark.filterwarnings(
-    "ignore::rasterio.errors.NotGeoreferencedWarning"
-)
-def test_png_xyz_tile_store(
-        tmp_path: Path,
-) -> None:
-    store = PNGXYZTileStore(
-        root=tmp_path,
-    )
-
-    tile = XYZTile(
-        z=8,
-        x=158,
-        y=93,
-    )
-
-    raster_tile = RasterTile(
-        tile=tile,
-        values=np.array(
-            [
-                [
-                    [10, 20],
-                    [30, 40],
-                ],
-                [
-                    [50, 60],
-                    [70, 80],
-                ],
-                [
-                    [90, 100],
-                    [110, 120],
-                ],
-            ],
-            dtype=np.uint8,
-        ),
-    )
-
-    output_path = store.save(raster_tile)
 
     assert output_path == (
             tmp_path
             / "8"
             / "158"
-            / "93.png"
+            / "93"
+            / "dem_terrarium.tif"
     )
-
     assert store.exists(tile)
 
-    loaded_tile = store.load(tile)
-
-    assert loaded_tile.tile == tile
+    loaded = store.load(tile)
 
     np.testing.assert_array_equal(
-        loaded_tile.values,
-        raster_tile.values,
+        loaded.values,
+        dem.values,
     )
+    assert loaded.transform == dem.transform
+    assert loaded.crs == dem.crs
+    assert loaded.nodata == dem.nodata

@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from topoprofile.terrain.source import EarthReliefSource
-from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
+from topoprofile.terrain.store import PNGXYZTileStore, XYZGeoTIFFDEMStore
 from topoprofile.terrain.task import GenerateTilesTask, PrepareDEMTask
 from topoprofile.terrain.transforms import (
     Compose,
@@ -16,20 +16,14 @@ def create_terrain_tasks(
 ) -> tuple[PrepareDEMTask, GenerateTilesTask]:
     """Create configured terrain processing tasks."""
 
-    # Intermediate DEM rasters are stored by XYZ coordinates:
-    # dem/{z}/{x}/{y}/dem_terrarium.tif
-    dem_store = GeoTIFFDEMStore(
+    dem_store = XYZGeoTIFFDEMStore(
         root=terrain_root / "dem",
     )
 
-    # Final terrain tiles form a global XYZ tile pyramid:
-    # tiles/{z}/{x}/{y}.png
     tile_store = PNGXYZTileStore(
         root=terrain_root / "tiles",
     )
 
-    # Download DEM, convert elevations to int16 and then
-    # encode the raster using Terrarium representation.
     prepare_dem_task = PrepareDEMTask(
         source=EarthReliefSource(
             resolution=resolution,
@@ -43,7 +37,6 @@ def create_terrain_tasks(
         ),
     )
 
-    # Generate PNG XYZ tiles from the prepared Terrarium DEM.
     generate_tiles_task = GenerateTilesTask(
         source=dem_store,
         store=tile_store,
