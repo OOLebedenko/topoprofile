@@ -1,6 +1,7 @@
 import pytest
 
 from topoprofile.geo.models import Bounds
+from topoprofile.osm.models import OSMFeatureCollection
 
 
 @pytest.fixture
@@ -14,10 +15,9 @@ def bounds() -> Bounds:
 
 
 @pytest.fixture
-def osm_geojson() -> dict:
-    return {
-        "type": "FeatureCollection",
-        "features": [
+def osm_features() -> OSMFeatureCollection:
+    return OSMFeatureCollection(
+        features=(
             {
                 "properties": {"natural": "glacier"},
                 "geometry": {
@@ -55,12 +55,10 @@ def osm_geojson() -> dict:
                 "properties": {"route": "foot"},
                 "geometry": {
                     "type": "MultiLineString",
-                    "coordinates": [
-                        [
-                            [42.0, 43.0],
-                            [42.1, 43.1],
-                        ],
-                    ],
+                    "coordinates": [[
+                        [42.0, 43.0],
+                        [42.1, 43.1],
+                    ]],
                 },
             },
             {
@@ -114,5 +112,5 @@ def osm_geojson() -> dict:
                     "coordinates": [42.47, 43.33],
                 },
             },
-        ],
-    }
+        ),
+    )
