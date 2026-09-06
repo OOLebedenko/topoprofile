@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from topoprofile.geo.tiles import XYZTile, xyz_to_bounds
+from topoprofile.geo.models import XYZTile
 from topoprofile.osm.geojson import (
     GeoJSONConverter,
     clip_to_bounds,
@@ -80,12 +80,8 @@ def test_converter_flattens_tags(glacier_geojson: dict) -> None:
 
 
 def test_clip_to_bounds_splits_feature_between_adjacent_chunks() -> None:
-    left_bounds = xyz_to_bounds(
-        XYZTile(z=8, x=157, y=93),
-    )
-    right_bounds = xyz_to_bounds(
-        XYZTile(z=8, x=158, y=93),
-    )
+    left_bounds = XYZTile(z=8, x=157, y=93).bounds
+    right_bounds = XYZTile(z=8, x=158, y=93).bounds
 
     geojson = {
         "type": "FeatureCollection",

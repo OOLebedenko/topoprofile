@@ -1,8 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from topoprofile.geo.models import Bounds
-from topoprofile.geo.tiles import XYZTile, xyz_to_bounds
+from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.terrain.dem import convert_dem_to_terrarium, download_dem
 from topoprofile.terrain.paths import TerrainBuildPaths, TerrainStore
 from topoprofile.terrain.tiles import generate_terrain_tiles, publish_terrain_tiles
@@ -33,11 +32,10 @@ class TerrainChunkBuilder:
         self,
         chunk: XYZTile,
     ) -> None:
-        bounds = xyz_to_bounds(chunk)
-        paths = self._terrain_store.chunk_paths(chunk)
+        paths = self._terrain_store.chunk_paths(chunk.bounds)
 
         raw_dem = self._download_dem(
-            bounds=bounds,
+            bounds=chunk.bounds,
             paths=paths,
         )
 
@@ -60,7 +58,7 @@ class TerrainChunkBuilder:
             self._publish_tiles(
                 source_dir=generated_tiles,
                 paths=paths,
-                bounds=bounds,
+                bounds=chunk.bounds,
                 chunk=chunk,
             )
 

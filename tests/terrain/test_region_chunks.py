@@ -1,19 +1,17 @@
 import pytest
 
-from topoprofile.geo.chunks import RegionChunkResolver
-from topoprofile.geo.models import Bounds
-from topoprofile.geo.tiles import XYZTile, xyz_to_bounds
+from topoprofile.geo.models import Bounds, XYZTile
+from topoprofile.geo.regions import RegionToXYZTiles
 
 
 def test_resolve_single_chunk() -> None:
     """Test that exact bounds of one XYZ tile resolve to that tile only."""
-    resolver = RegionChunkResolver()
+    resolver = RegionToXYZTiles()
 
     tile = XYZTile(z=8, x=158, y=93)
-    bounds = xyz_to_bounds(tile)
 
     chunks = resolver.resolve(
-        bounds=bounds,
+        bounds=tile.bounds,
         zoom=8,
     )
 
@@ -22,14 +20,10 @@ def test_resolve_single_chunk() -> None:
 
 def test_resolve_multiple_chunks() -> None:
     """Test that bounds spanning several tiles resolve to all of them."""
-    resolver = RegionChunkResolver()
+    resolver = RegionToXYZTiles()
 
-    northwest = xyz_to_bounds(
-        XYZTile(z=8, x=158, y=93)
-    )
-    southeast = xyz_to_bounds(
-        XYZTile(z=8, x=159, y=94)
-    )
+    northwest = XYZTile(z=8, x=158, y=93).bounds
+    southeast = XYZTile(z=8, x=159, y=94).bounds
 
     bounds = Bounds(
         west=northwest.west,
@@ -53,7 +47,7 @@ def test_resolve_multiple_chunks() -> None:
 
 def test_resolve_rejects_negative_zoom() -> None:
     """Test that negative zoom is rejected."""
-    resolver = RegionChunkResolver()
+    resolver = RegionToXYZTiles()
 
     bounds = Bounds(
         west=42.0,
@@ -74,7 +68,7 @@ def test_resolve_rejects_negative_zoom() -> None:
 
 def test_resolve_rejects_bounds_outside_web_mercator() -> None:
     """Test that bounds outside Web Mercator latitude limits are rejected."""
-    resolver = RegionChunkResolver()
+    resolver = RegionToXYZTiles()
 
     bounds = Bounds(
         west=0.0,

@@ -1,7 +1,7 @@
-from topoprofile.geo.models import GeoPoint
+from topoprofile.geo.models import LonLat
 
 
-def get_utm_epsg(point: GeoPoint) -> str:
+def get_utm_epsg(point: LonLat) -> str:
     """
     Return the EPSG code of the UTM CRS containing the given point.
 
