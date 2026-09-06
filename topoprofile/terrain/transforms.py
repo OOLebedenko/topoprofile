@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -7,40 +6,14 @@ import rasterio
 from click.testing import CliRunner
 from rio_rgbify.scripts.cli import rgbify
 
+from topoprofile.processing.transforms import Transform
 from topoprofile.terrain.models import DEM, RasterTile
 
-
-class DEMTransform(ABC):
-    """Transform a digital elevation model."""
-
-    @abstractmethod
-    def __call__(
-            self,
-            dem: DEM,
-    ) -> DEM:
-        """Transform DEM data."""
+type DEMTransform = Transform[DEM]
+type TerrainTileTransform = Transform[RasterTile]
 
 
-class Compose(DEMTransform):
-    """Apply DEM transformations sequentially."""
-
-    def __init__(
-            self,
-            transforms: tuple[DEMTransform, ...],
-    ) -> None:
-        self._transforms = transforms
-
-    def __call__(
-            self,
-            dem: DEM,
-    ) -> DEM:
-        for transform in self._transforms:
-            dem = transform(dem)
-
-        return dem
-
-
-class ConvertToInt16(DEMTransform):
+class ConvertToInt16:
     """Round DEM elevations and convert them to int16."""
 
     def __call__(
@@ -63,7 +36,7 @@ class TerrariumConversionError(RuntimeError):
     """Raised when Terrarium conversion fails."""
 
 
-class TerrariumTransform(DEMTransform):
+class TerrariumTransform:
     """Convert DEM elevations to Terrarium encoding."""
 
     def __call__(
@@ -159,14 +132,3 @@ class TerrariumTransform(DEMTransform):
                 crs=dataset.crs,
                 nodata=dataset.nodata,
             )
-
-
-class TerrainTileTransform(ABC):
-    """Transform a terrain raster tile."""
-
-    @abstractmethod
-    def __call__(
-            self,
-            tile: RasterTile,
-    ) -> RasterTile:
-        """Transform terrain tile data."""

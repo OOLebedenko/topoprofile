@@ -1,10 +1,10 @@
 from pathlib import Path
 
+from topoprofile.processing.transforms import Compose
 from topoprofile.terrain.source import EarthReliefSource
 from topoprofile.terrain.store import PNGXYZTileStore, XYZGeoTIFFDEMStore
 from topoprofile.terrain.task import GenerateTilesTask, PrepareDEMTask
 from topoprofile.terrain.transforms import (
-    Compose,
     ConvertToInt16,
     TerrariumTransform,
 )
