@@ -2,7 +2,6 @@ import shutil
 import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Protocol
 
 from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import RegionToXYZTiles
@@ -10,18 +9,6 @@ from topoprofile.processing.source import Source
 from topoprofile.terrain.models import DEM
 from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
 from topoprofile.terrain.transforms import DEMTransform, TerrainTileTransform
-
-
-class Task[**ParamsT, ResultT](Protocol):
-    """Executable processing task."""
-
-    def __call__(
-            self,
-            *args: ParamsT.args,
-            **kwargs: ParamsT.kwargs,
-    ) -> ResultT:
-        """Execute the task."""
-        ...
 
 
 class PrepareDEMTask:

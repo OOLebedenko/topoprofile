@@ -1,10 +1,11 @@
 import argparse
+from functools import partial
 from pathlib import Path
 
 from topoprofile.config import load_region_config
 from topoprofile.geo.regions import create_region
 from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
-from topoprofile.osm.task_factory import create_osm_task_manager
+from topoprofile.osm.task_factory import create_osm_task
 from topoprofile.osm.transforms.osm import FilterTerrainSurface
 from topoprofile.workers.worker import SequentialWorker
 
@@ -39,7 +40,7 @@ def main() -> None:
         zoom=config.terrain.min_zoom,
     )
 
-    task_manager = create_osm_task_manager(
+    task = create_osm_task(
         query=TerrainSurfaceQuery(),
         transform=FilterTerrainSurface(),
         osm_root=OSM_CHUNKS_ROOT,
@@ -47,7 +48,7 @@ def main() -> None:
     )
 
     tasks = [
-        task_manager.create_task(tile)
+        partial(task, tile)
         for tile in region.tiles
     ]
 
