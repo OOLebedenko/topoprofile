@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 
-from topoprofile.terrain.models import DEM
+from topoprofile.terrain.models import DEM, RasterTile
 
 
 class DEMTransform(ABC):
@@ -52,3 +52,14 @@ class ConvertToInt16(DEMTransform):
             crs=dem.crs,
             nodata=dem.nodata,
         )
+
+
+class TerrainTileTransform(ABC):
+    """Transform a terrain raster tile."""
+
+    @abstractmethod
+    def __call__(
+            self,
+            tile: RasterTile,
+    ) -> RasterTile:
+        """Transform terrain tile data."""
