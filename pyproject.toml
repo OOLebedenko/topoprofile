@@ -28,3 +28,8 @@ dev = [
 [tool.setuptools.packages.find]
 include = ["topoprofile*"]
 namespaces = false
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]
