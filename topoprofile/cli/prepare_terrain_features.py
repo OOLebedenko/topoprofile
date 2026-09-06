@@ -5,7 +5,7 @@ from topoprofile.config import load_region_config
 from topoprofile.geo.regions import create_region
 from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
 from topoprofile.osm.task_factory import create_osm_task_manager
-from topoprofile.osm.transformers.terrain_surface import TerrainSurfaceTransformer
+from topoprofile.osm.transforms.osm import FilterTerrainSurface
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -41,12 +41,16 @@ def main() -> None:
 
     task_manager = create_osm_task_manager(
         query=TerrainSurfaceQuery(),
-        response_transformer=TerrainSurfaceTransformer(),
-        output_root=OSM_CHUNKS_ROOT,
+        transform=FilterTerrainSurface(),
+        osm_root=OSM_CHUNKS_ROOT,
         filename="terrain_surface.geojson",
     )
 
-    tasks = task_manager.create_tasks(region)
+    tasks = [
+        task_manager.create_task(tile)
+        for tile in region.tiles
+    ]
+
     worker = SequentialWorker()
     worker.execute(tasks)
 

@@ -7,9 +7,7 @@ from topoprofile.osm.client.queries.mountain_infrastructure import (
     MountainInfrastructureQuery,
 )
 from topoprofile.osm.task_factory import create_osm_task_manager
-from topoprofile.osm.transformers.mountain_infrastructure import (
-    MountainInfrastructureTransformer,
-)
+from topoprofile.osm.transforms.osm import PrepareMountainInfrastructure
 from topoprofile.workers.worker import SequentialWorker
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
@@ -45,12 +43,16 @@ def main() -> None:
 
     task_manager = create_osm_task_manager(
         query=MountainInfrastructureQuery(),
-        response_transformer=MountainInfrastructureTransformer(),
-        output_root=OSM_CHUNKS_ROOT,
+        transform=PrepareMountainInfrastructure(),
+        osm_root=OSM_CHUNKS_ROOT,
         filename="mountain_infrastructure.geojson",
     )
 
-    tasks = task_manager.create_tasks(region)
+    tasks = [
+        task_manager.create_task(tile)
+        for tile in region.tiles
+    ]
+
     worker = SequentialWorker()
     worker.execute(tasks)
 
