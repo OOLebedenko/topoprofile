@@ -5,24 +5,24 @@ import pygmt
 from topoprofile.geo.models import Bounds
 from topoprofile.terrain.models import DEM
 
-KeyT = TypeVar(
-    "KeyT",
+KeyT_contra = TypeVar(
+    "KeyT_contra",
     contravariant=True,
 )
-DataT = TypeVar(
-    "DataT",
+DataT_co = TypeVar(
+    "DataT_co",
     covariant=True,
 )
 
 
-class Source(Protocol[KeyT, DataT]):
+class Source(Protocol[KeyT_contra, DataT_co]):
     """Source of processing data."""
 
     def load(
             self,
-            key: KeyT,
+            key: KeyT_contra,
             /,
-    ) -> DataT:
+    ) -> DataT_co:
         """Load data by key."""
         ...
 
