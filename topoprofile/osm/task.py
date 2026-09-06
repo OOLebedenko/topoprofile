@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from topoprofile.geo.models import Bounds, XYZTile
-from topoprofile.osm.models import OverpassData
+from topoprofile.osm.models import OSMFeatureCollection, OverpassData
 from topoprofile.osm.store import OSMStore
 from topoprofile.osm.transforms.osm import ClipToBounds, OSMTransform
 from topoprofile.osm.transforms.overpass import OverpassTransform
@@ -10,39 +10,73 @@ from topoprofile.processing.transforms import Compose
 
 
 class PrepareOSMTask:
-    """Download, transform, and store OSM features."""
+    """Transform and store one OSM dataset."""
 
     def __init__(
             self,
-            source: Source[Bounds, OverpassData],
             store: OSMStore,
-            overpass_transform: OverpassTransform,
-            osm_transform: OSMTransform,
+            transform: OSMTransform,
     ) -> None:
-        self._source = source
         self._store = store
-        self._overpass_transform = overpass_transform
-        self._osm_transform = osm_transform
+        self._transform = transform
+
+    def exists(
+            self,
+            chunk: XYZTile,
+    ) -> bool:
+        return self._store.exists(chunk)
 
     def __call__(
             self,
             chunk: XYZTile,
+            features: OSMFeatureCollection,
     ) -> Path:
-        if self._store.exists(chunk):
-            return self._store.path(chunk)
-
-        data = self._source.load(chunk.bounds)
-        features = self._overpass_transform(data)
-
         transform = Compose(
             transforms=(
-                self._osm_transform,
+                self._transform,
                 ClipToBounds(chunk.bounds),
             ),
         )
+
         features = transform(features)
 
         return self._store.save(
             chunk,
             features,
         )
+
+
+class PrepareOSMChunkTask:
+    """Load OSM data once and prepare all datasets for a chunk."""
+
+    def __init__(
+            self,
+            source: Source[Bounds, OverpassData],
+            overpass_transform: OverpassTransform,
+            tasks: tuple[PrepareOSMTask, ...],
+    ) -> None:
+        self._source = source
+        self._overpass_transform = overpass_transform
+        self._tasks = tasks
+
+    def __call__(
+            self,
+            chunk: XYZTile,
+    ) -> None:
+        tasks = [
+            task
+            for task in self._tasks
+            if not task.exists(chunk)
+        ]
+
+        if not tasks:
+            return
+
+        data = self._source.load(chunk.bounds)
+        features = self._overpass_transform(data)
+
+        for task in tasks:
+            task(
+                chunk,
+                features,
+            )
