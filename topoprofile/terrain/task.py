@@ -1,7 +1,6 @@
-import shutil
-import subprocess
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Protocol
 
 from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import RegionToXYZTiles
@@ -11,8 +10,20 @@ from topoprofile.terrain.store import GeoTIFFDEMStore, PNGXYZTileStore
 from topoprofile.terrain.transforms import DEMTransform, TerrainTileTransform
 
 
-class DEMProcessor:
-    """Process and store digital elevation model data."""
+class Task[**ParamsT, ResultT](Protocol):
+    """Executable processing task."""
+
+    def __call__(
+            self,
+            *args: ParamsT.args,
+            **kwargs: ParamsT.kwargs,
+    ) -> ResultT:
+        """Execute the task."""
+        ...
+
+
+class PrepareDEMTask:
+    """Prepare and store digital elevation model data."""
 
     def __init__(
             self,
@@ -24,7 +35,7 @@ class DEMProcessor:
         self._store = store
         self._transform = transform
 
-    def process(
+    def __call__(
             self,
             name: str,
             bounds: Bounds,
@@ -43,7 +54,7 @@ class DEMProcessor:
         )
 
 
-class GDALTerrainTileProcessor:
+class GenerateTilesTask:
     """Generate and store terrain XYZ tiles using GDAL."""
 
     def __init__(
@@ -56,13 +67,20 @@ class GDALTerrainTileProcessor:
         self._store = store
         self._transform = transform
 
-    def process(
+    def __call__(
             self,
             name: str,
             bounds: Bounds,
             min_zoom: int,
             max_zoom: int,
     ) -> None:
+        if self._tiles_exist(
+                bounds=bounds,
+                min_zoom=min_zoom,
+                max_zoom=max_zoom,
+        ):
+            return
+
         input_path = self._source.path(name)
 
         if not input_path.is_file():
@@ -93,59 +111,22 @@ class GDALTerrainTileProcessor:
                 "Terrain tile transformations are not implemented yet."
             )
 
-    def _generate_tiles(
+    def _tiles_exist(
             self,
-            input_path: Path,
-            output_dir: Path,
-            min_zoom: int,
-            max_zoom: int,
-    ) -> None:
-        command = [
-            "gdal2tiles.py",
-            "--xyz",
-            "--resampling=near",
-            "-z",
-            f"{min_zoom}-{max_zoom}",
-            str(input_path),
-            str(output_dir),
-        ]
-        subprocess.run(
-            command,
-            check=True,
-        )
-
-    def _publish_tiles(
-            self,
-            source_dir: Path,
             bounds: Bounds,
             min_zoom: int,
             max_zoom: int,
-    ) -> None:
-        resolver = RegionToXYZTiles()
-
+    ) -> bool:
         for zoom in range(min_zoom, max_zoom + 1):
-            tiles = resolver.resolve(
+            tiles = RegionToXYZTiles.resolve(
                 bounds=bounds,
                 zoom=zoom,
             )
 
-            for tile in tiles:
-                source_path = (
-                        source_dir
-                        / str(tile.z)
-                        / str(tile.x)
-                        / f"{tile.y}.png"
-                )
+            if not all(
+                    self._store.exists(tile)
+                    for tile in tiles
+            ):
+                return False
 
-                if not source_path.is_file():
-                    continue
-
-                output_path = self._store.path(tile)
-                output_path.parent.mkdir(
-                    parents=True,
-                    exist_ok=True,
-                )
-                shutil.copy2(
-                    source_path,
-                    output_path,
-                )
+        return True
