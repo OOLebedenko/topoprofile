@@ -4,6 +4,7 @@ from tempfile import TemporaryDirectory
 from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.terrain.dem import convert_dem_to_terrarium, download_dem
 from topoprofile.terrain.paths import TerrainBuildPaths, TerrainStore
+from topoprofile.terrain.source import DEMSource
 from topoprofile.terrain.tiles import generate_terrain_tiles, publish_terrain_tiles
 
 
@@ -13,11 +14,11 @@ class TerrainChunkBuilder:
     def __init__(
         self,
         terrain_store: TerrainStore,
-        resolution: str,
+        dem_source: DEMSource,
         max_zoom: int,
     ) -> None:
         self._terrain_store = terrain_store
-        self._resolution = resolution
+        self._dem_source = dem_source
         self._max_zoom = max_zoom
 
     def is_built(
@@ -32,7 +33,7 @@ class TerrainChunkBuilder:
         self,
         chunk: XYZTile,
     ) -> None:
-        paths = self._terrain_store.chunk_paths(chunk.bounds)
+        paths = self._terrain_store.chunk_paths(chunk)
 
         raw_dem = self._download_dem(
             bounds=chunk.bounds,
@@ -71,7 +72,7 @@ class TerrainChunkBuilder:
     ) -> Path:
         return download_dem(
             bounds=bounds,
-            resolution=self._resolution,
+            source=self._dem_source,
             output_path=paths.raw_dem,
         )
 

@@ -1,18 +1,19 @@
 import logging
 from pathlib import Path
 
-import pygmt
+import rasterio
 from click.testing import CliRunner
 from rio_rgbify.scripts.cli import rgbify
 
 from topoprofile.geo.models import Bounds
+from topoprofile.terrain.source import DEMSource
 
 logger = logging.getLogger(__name__)
 
 
 def download_dem_by_bounds(
     bounds: Bounds,
-    resolution: str,
+    source: DEMSource,
     output_path: Path,
 ) -> None:
     """
@@ -20,28 +21,34 @@ def download_dem_by_bounds(
 
     Args:
         bounds: Geographic bounds.
-        resolution: DEM resolution, for example "01s", "03s" or "15s".
+        source: DEM data source.
         output_path: Destination GeoTIFF path.
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    dem = pygmt.datasets.load_earth_relief(
-        resolution=resolution,
-        region=[
-            bounds.west,
-            bounds.east,
-            bounds.south,
-            bounds.north,
-        ],
-    )
+    dem = source.load(bounds)
 
-    dem.rio.write_crs("EPSG:4326", inplace=True)
-    dem.rio.to_raster(output_path)
+    with rasterio.open(
+        output_path,
+        "w",
+        driver="GTiff",
+        height=dem.height,
+        width=dem.width,
+        count=1,
+        dtype=dem.values.dtype,
+        crs=dem.crs,
+        transform=dem.transform,
+        nodata=dem.nodata,
+    ) as dataset:
+        dataset.write(
+            dem.values,
+            1,
+        )
 
 
 def download_dem(
     bounds: Bounds,
-    resolution: str,
+    source: DEMSource,
     output_path: Path,
     force_download: bool = False,
 ) -> Path:
@@ -51,15 +58,14 @@ def download_dem(
         return output_path
 
     logger.info(
-        "Downloading DEM: bounds=%s, resolution=%s",
+        "Downloading DEM: bounds=%s",
         bounds,
-        resolution,
     )
 
     try:
         download_dem_by_bounds(
             bounds=bounds,
-            resolution=resolution,
+            source=source,
             output_path=output_path,
         )
     except Exception:
