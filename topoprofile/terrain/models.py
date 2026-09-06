@@ -19,11 +19,18 @@ class DEM:
 
     @property
     def height(self) -> int:
-        return self.values.shape[0]
+        return self.values.shape[-2]
 
     @property
     def width(self) -> int:
-        return self.values.shape[1]
+        return self.values.shape[-1]
+
+    @property
+    def count(self) -> int:
+        if self.values.ndim == 2:
+            return 1
+
+        return self.values.shape[0]
 
     @property
     def bounds(self) -> Bounds:
