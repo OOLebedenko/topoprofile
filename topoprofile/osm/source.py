@@ -16,14 +16,14 @@ DataT_co = TypeVar(
 
 
 class Source(Protocol[KeyT_contra, DataT_co]):
-    """Source of processing data."""
+    """Source of input data."""
 
     def load(
             self,
             key: KeyT_contra,
             /,
     ) -> DataT_co:
-        """Load data by key."""
+        """Load data for the given key."""
         ...
 
 
@@ -43,7 +43,7 @@ class OverpassFeatureSource:
             bounds: Bounds,
     ) -> OverpassData:
         query = self._query.build(bounds)
-        data = self._client.download(query)
+        data = self._client.fetch(query)
 
         return OverpassData(
             elements=tuple(data["elements"]),
