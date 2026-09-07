@@ -10,7 +10,7 @@ from topoprofile.geo.regions import RegionToXYZTiles
 from topoprofile.processing.source import Source
 from topoprofile.terrain.models import DEM
 from topoprofile.terrain.store import (
-    PNGXYZTileStore,
+    WebPXYZTileStore,
     XYZContourStore,
     XYZGeoTIFFDEMStore,
 )
@@ -176,7 +176,7 @@ class GenerateTilesTask:
     def __init__(
             self,
             source: XYZGeoTIFFDEMStore,
-            store: PNGXYZTileStore,
+            store: WebPXYZTileStore,
     ) -> None:
         self._source = source
         self._store = store
@@ -249,6 +249,8 @@ class GenerateTilesTask:
             "gdal2tiles.py",
             "--xyz",
             "--resampling=near",
+            "--tiledriver=WEBP",
+            "--webp-lossless",
             f"--processes={processes}",
             "-z",
             f"{min_zoom}-{max_zoom}",
@@ -278,7 +280,7 @@ class GenerateTilesTask:
                         source_dir
                         / str(tile.z)
                         / str(tile.x)
-                        / f"{tile.y}.png"
+                        / f"{tile.y}.webp"
                 )
 
                 if not source_path.is_file():
