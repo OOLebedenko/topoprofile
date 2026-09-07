@@ -65,6 +65,7 @@ body {
 
     cursor: pointer;
 }
+
 .map-control-button:hover {
     background: #fff;
 }
@@ -142,4 +143,79 @@ body {
 .view-toggle-button {
     font-size: 14px;
     font-weight: 600;
+}
+
+/* Map loading indicator */
+.map-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(245, 248, 246, 0.98);
+
+    opacity: 1;
+    visibility: visible;
+
+    transition:
+        opacity 0.4s ease,
+        visibility 0.4s ease;
+
+    pointer-events: all;
+}
+
+.map-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.map-loading-image {
+    display: block;
+
+    width: 420px;
+    max-width: 70vw;
+    height: auto;
+
+    mask-image:
+        linear-gradient(
+            to right,
+            transparent 0%,
+            transparent 100%
+        );
+
+    -webkit-mask-image:
+        linear-gradient(
+            to right,
+            transparent 0%,
+            transparent 100%
+        );
+
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+}
+
+.map-loading-title {
+    margin-top: 6px;
+
+    color: #425d2e;
+    font-family:
+        "Arial Rounded MT Bold",
+        "Trebuchet MS",
+        Arial,
+        sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+}
+
+.map-loading.hidden {
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
 }
