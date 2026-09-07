@@ -11,6 +11,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 CONTOUR_INTERVAL = 100
 SIMPLIFY_TOLERANCE = 0.0002
+RESOLUTION = "03s"
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -43,6 +45,7 @@ def main() -> None:
         terrain_root=PROJECT_ROOT / "data" / "terrain",
         contour_interval=CONTOUR_INTERVAL,
         simplify_tolerance=SIMPLIFY_TOLERANCE,
+        resolution=RESOLUTION,
     )
 
     tasks = [
