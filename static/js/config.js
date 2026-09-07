@@ -63,7 +63,7 @@ export const HILLSHADE_SOURCE_ID = "hillshade-dem";
 
 export const TERRAIN_CONFIG = {
     tiles: [
-        `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.png`,
+        `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.webp`,
     ],
 
     minZoom: 8,
