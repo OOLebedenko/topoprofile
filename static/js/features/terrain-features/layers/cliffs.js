@@ -3,13 +3,17 @@
  */
 
 import { TERRAIN_FEATURES_SOURCE_ID } from "../../../config.js";
-import { createNaturalFilter } from "./shared.js";
+import {
+    createNaturalFilter,
+    SOURCE_LAYER,
+} from "./shared.js";
 
 // Cliffs are rendered as distinct dark terrain lines.
 export const CLIFF_LAYER = {
     id: "terrain-cliffs",
     type: "line",
     source: TERRAIN_FEATURES_SOURCE_ID,
+    "source-layer": SOURCE_LAYER,
     filter: createNaturalFilter("cliff"),
     paint: {
         "line-color": "#8f8175",
