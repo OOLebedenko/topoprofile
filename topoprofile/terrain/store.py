@@ -90,8 +90,8 @@ class XYZGeoTIFFDEMStore:
         return output_path
 
 
-class PNGXYZTileStore:
-    """Store raster XYZ tiles as PNG."""
+class WebPXYZTileStore:
+    """Store raster XYZ tiles as lossless WebP."""
 
     def __init__(
             self,
@@ -103,26 +103,26 @@ class PNGXYZTileStore:
             self,
             tile: XYZTile,
     ) -> Path:
-        """Return the path of a stored PNG tile."""
+        """Return the path of a stored WebP tile."""
         return (
                 self._root
                 / str(tile.z)
                 / str(tile.x)
-                / f"{tile.y}.png"
+                / f"{tile.y}.webp"
         )
 
     def exists(
             self,
             tile: XYZTile,
     ) -> bool:
-        """Return whether a PNG tile already exists."""
+        """Return whether a WebP tile already exists."""
         return self.path(tile).is_file()
 
     def load(
             self,
             tile: XYZTile,
     ) -> RasterTile:
-        """Load a PNG tile."""
+        """Load a WebP tile."""
         input_path = self.path(tile)
 
         with Image.open(input_path) as image:
@@ -146,7 +146,7 @@ class PNGXYZTileStore:
             self,
             raster_tile: RasterTile,
     ) -> Path:
-        """Save a raster XYZ tile as PNG."""
+        """Save a raster XYZ tile as lossless WebP."""
         output_path = self.path(raster_tile.tile)
         output_path.parent.mkdir(
             parents=True,
@@ -165,7 +165,8 @@ class PNGXYZTileStore:
         image = Image.fromarray(values)
         image.save(
             output_path,
-            format="PNG",
+            format="WEBP",
+            lossless=True,
         )
 
         return output_path

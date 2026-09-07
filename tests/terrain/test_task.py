@@ -8,7 +8,7 @@ from topoprofile.geo.models import Bounds
 from topoprofile.geo.regions import RegionToXYZTiles
 from topoprofile.processing.source import Source
 from topoprofile.terrain.models import DEM
-from topoprofile.terrain.store import PNGXYZTileStore, XYZGeoTIFFDEMStore
+from topoprofile.terrain.store import WebPXYZTileStore, XYZGeoTIFFDEMStore
 from topoprofile.terrain.transforms import DEMTransform, TerrainTileTransform
 
 
@@ -62,7 +62,7 @@ class GenerateTilesTask:
     def __init__(
             self,
             source: XYZGeoTIFFDEMStore,
-            store: PNGXYZTileStore,
+            store: WebPXYZTileStore,
             transform: TerrainTileTransform | None = None,
     ) -> None:
         self._source = source

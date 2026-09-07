@@ -3,7 +3,7 @@ from pathlib import Path
 from topoprofile.processing.transforms import Compose
 from topoprofile.terrain.source import EarthReliefSource
 from topoprofile.terrain.store import (
-    PNGXYZTileStore,
+    WebPXYZTileStore,
     XYZContourStore,
     XYZGeoTIFFDEMStore,
 )
@@ -28,7 +28,7 @@ def create_terrain_tasks(
         root=terrain_root / "dem",
     )
 
-    tile_store = PNGXYZTileStore(
+    tile_store = WebPXYZTileStore(
         root=terrain_root / "tiles",
     )
 

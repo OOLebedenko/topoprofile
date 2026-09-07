@@ -56,7 +56,7 @@ export const TERRAIN_CONFIG = {
     ],
 
     minZoom: 8,
-    maxZoom: 14,
+    maxZoom: 12,
     tileSize: 256,
     encoding: "terrarium",
     bounds: TERRAIN_SOURCE_BOUNDS,
