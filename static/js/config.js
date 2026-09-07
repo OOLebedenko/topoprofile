@@ -87,6 +87,15 @@ export const HILLSHADE_CONFIG = {
     exaggeration: 0.15,
 };
 
+// Local terrain contour source settings.
+export const CONTOURS_SOURCE_ID = "terrain-contours";
+
+export const CONTOURS_CONFIG = {
+    dataPath: "/data/terrain/contours",
+    chunkZoom: TERRAIN_CONFIG.minZoom,
+    bounds: TERRAIN_AREA.bounds,
+};
+
 // Local mountain infrastructure source settings.
 export const MOUNTAIN_INFRASTRUCTURE_SOURCE_ID =
     "mountain-infrastructure";
