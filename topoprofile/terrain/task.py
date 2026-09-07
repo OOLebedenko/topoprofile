@@ -57,12 +57,14 @@ class PrepareContoursTask:
             store: XYZContourStore,
             interval: int,
             simplify_tolerance: float,
+            coordinate_precision: int,
             transform: DEMTransform | None = None,
     ) -> None:
         self._source = source
         self._store = store
         self._interval = interval
         self._simplify_tolerance = simplify_tolerance
+        self._coordinate_precision = coordinate_precision
         self._transform = transform
 
     def __call__(
@@ -160,6 +162,8 @@ class PrepareContoursTask:
             "ogr2ogr",
             "-simplify",
             str(self._simplify_tolerance),
+            "-lco",
+            f"COORDINATE_PRECISION={self._coordinate_precision}",
             str(output_path),
             str(input_path),
         ]

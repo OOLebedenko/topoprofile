@@ -59,10 +59,12 @@ def create_terrain_tasks(
 def create_contours_task(
         terrain_root: Path,
         contour_interval: int,
-        simplify_tolerance: float = 0.0001,
-        resolution: str = "03s",
+        simplify_tolerance: float,
+        coordinate_precision: int,
+        resolution: str,
 ) -> PrepareContoursTask:
     """Create terrain contour preparation task."""
+
     contour_store = XYZContourStore(
         root=terrain_root / "contours",
     )
@@ -75,4 +77,5 @@ def create_contours_task(
         transform=ConvertToInt16(),
         interval=contour_interval,
         simplify_tolerance=simplify_tolerance,
+        coordinate_precision=coordinate_precision,
     )

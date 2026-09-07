@@ -7,10 +7,19 @@ from topoprofile.geo.regions import create_region
 from topoprofile.terrain.task_factory import create_contours_task
 from topoprofile.workers.worker import SequentialWorker
 
+# Project root used to resolve config and data paths.
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
+# Vertical distance between neighboring contour lines, in meters.
 CONTOUR_INTERVAL = 100
+
+# Geometry simplification tolerance in geographic coordinate units.
 SIMPLIFY_TOLERANCE = 0.0002
+
+# Number of decimal places retained in GeoJSON coordinates.
+COORDINATE_PRECISION = 5
+
+# Earth relief DEM resolution used for contour generation.
 RESOLUTION = "03s"
 
 
@@ -45,6 +54,7 @@ def main() -> None:
         terrain_root=PROJECT_ROOT / "data" / "terrain",
         contour_interval=CONTOUR_INTERVAL,
         simplify_tolerance=SIMPLIFY_TOLERANCE,
+        coordinate_precision=COORDINATE_PRECISION,
         resolution=RESOLUTION,
     )
 
