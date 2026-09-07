@@ -1,5 +1,6 @@
 import {
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 const HIKING_LABELS_LAYER_ID = "hiking-route-labels";
@@ -61,6 +62,7 @@ export function addHikingRouteLabels(map) {
         id: HIKING_LABELS_LAYER_ID,
         type: "symbol",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         filter: HIKING_LABEL_FILTER,
         layout: LABEL_LAYOUT,
 
@@ -75,6 +77,7 @@ export function addHikingRouteLabels(map) {
         id: AERIALWAY_LABELS_LAYER_ID,
         type: "symbol",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         filter: AERIALWAY_LABEL_FILTER,
         layout: LABEL_LAYOUT,
 

@@ -1,6 +1,7 @@
 import {
     LINE_LAYOUT,
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 const AERIALWAY_CASING_LAYER_ID = "hiking-aerialway-casing";
@@ -16,6 +17,7 @@ export function addAerialwayLayers(map) {
         id: AERIALWAY_CASING_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         filter: AERIALWAY_FILTER,
         layout: LINE_LAYOUT,
 
@@ -37,6 +39,7 @@ export function addAerialwayLayers(map) {
         id: AERIALWAY_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         filter: AERIALWAY_FILTER,
         layout: LINE_LAYOUT,
 

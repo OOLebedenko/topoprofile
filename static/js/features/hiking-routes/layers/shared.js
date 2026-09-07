@@ -3,6 +3,7 @@ import {
 } from "../../../config.js";
 
 export const SOURCE_ID = HIKING_ROUTES_SOURCE_ID;
+export const SOURCE_LAYER = "hiking_routes";
 
 export const LINE_LAYOUT = {
     "line-cap": "round",
