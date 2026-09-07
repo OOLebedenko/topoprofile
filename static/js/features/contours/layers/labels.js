@@ -22,6 +22,10 @@ export function addContourLabels(map) {
                 " m",
             ],
 
+            "text-font": [
+                "Noto Sans Regular",
+            ],
+
             "text-size": [
                 "interpolate",
                 ["linear"],
