@@ -18,6 +18,14 @@ const TERRAIN_AREA = {
     dataPath: "/data/terrain/tiles",
 };
 
+// Area available for map navigation.
+const MAP_BOUNDS = [
+    42.00,
+    42.55,
+    44.95,
+    43.75,
+];
+
 // Slightly inset bounds used only by raster DEM sources.
 // This prevents MapLibre from requesting neighboring tiles
 // that only touch the exact terrain boundary.
@@ -35,6 +43,8 @@ export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
     center: TERRAIN_AREA.center,
     zoom: 10,
+    minZoom: 10,
+    maxBounds: MAP_BOUNDS,
     minPitch: 0,
     maxPitch: 85,
     pitchStep: 10,
