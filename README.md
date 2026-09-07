@@ -51,9 +51,22 @@ Store
 Tasks operate on geographic XYZ chunks, allowing prepared datasets to be
 generated independently and reused by the frontend.
 
-## Installation
+## System requirements
 
-TopoProfile requires Python 3.12 and system GDAL dependencies.
+Tested on Ubuntu 24.04 with Python 3.12.
+
+Terrain and contour preprocessing requires GMT and GDAL system tools:
+
+```bash
+sudo apt update
+
+sudo apt install -y \
+    gmt \
+    libgmt-dev \
+    gdal-bin
+```
+
+## Installation
 
 ```bash
 git clone https://github.com/OOLebedenko/topoprofile.git
@@ -62,7 +75,7 @@ cd topoprofile
 python3.12 -m venv .venv
 source .venv/bin/activate
 
-pip install -e ".[dev]"
+pip install -e .
 ```
 
 ## Data preparation
@@ -157,7 +170,10 @@ prepared geospatial datasets directly from their XYZ-based storage layout.
 
 ## Tests
 
+Install development dependencies and run the test suite:
+
 ```bash
+pip install -e ".[dev]"
 pytest
 ```
 
