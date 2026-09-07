@@ -169,3 +169,33 @@ class PNGXYZTileStore:
         )
 
         return output_path
+
+
+class XYZContourStore:
+    """Store terrain contours as GeoJSON in XYZ chunk structure."""
+
+    def __init__(
+            self,
+            root: Path,
+            filename: str = "contours.geojson",
+    ) -> None:
+        self._root = root
+        self._filename = filename
+
+    def path(
+            self,
+            chunk: XYZTile,
+    ) -> Path:
+        return (
+                self._root
+                / str(chunk.z)
+                / str(chunk.x)
+                / str(chunk.y)
+                / self._filename
+        )
+
+    def exists(
+            self,
+            chunk: XYZTile,
+    ) -> bool:
+        return self.path(chunk).is_file()

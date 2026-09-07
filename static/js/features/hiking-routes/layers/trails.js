@@ -21,17 +21,17 @@ export function addTrailLayers(map) {
         layout: LINE_LAYOUT,
 
         paint: {
-            "line-color": "#9a7564",
+            "line-color": "#a86b5b",
             "line-width": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                8, 0.7,
-                11, 1.0,
-                14, 1.5,
+                8, 1.0,
+                11, 1.5,
+                14, 2.1,
             ],
             "line-dasharray": [3, 2],
-            "line-opacity": 0.75,
+            "line-opacity": 0.8,
         },
     });
 
@@ -51,14 +51,14 @@ export function addTrailLayers(map) {
         layout: LINE_LAYOUT,
 
         paint: {
-            "line-color": "#a66f60",
+            "line-color": "#b45f4f",
             "line-width": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                8, 0.8,
-                11, 1.1,
-                14, 1.6,
+                8, 1.1,
+                11, 1.7,
+                14, 2.4,
             ],
             "line-dasharray": [4, 2.5],
             "line-opacity": 0.9,
