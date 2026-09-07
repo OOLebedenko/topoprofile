@@ -35,13 +35,13 @@ export function addContourLabels(map) {
             "text-pitch-alignment": "map",
             "text-keep-upright": true,
             "text-allow-overlap": false,
-            "text-ignore-placement": true,
+            "text-ignore-placement": false,
         },
 
         paint: {
-            "text-color": "#5f5043",
+            "text-color": "#606967",
             "text-halo-color": "#ffffff",
-            "text-halo-width": 1.5,
+            "text-halo-width": 1.7,
             "text-opacity": 0.9,
         },
     });

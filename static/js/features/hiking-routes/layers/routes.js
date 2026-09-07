@@ -22,14 +22,14 @@ export function addRouteLayers(map) {
         layout: LINE_LAYOUT,
 
         paint: {
-            "line-color": "#945f55",
+            "line-color": "#ad5548",
             "line-width": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                8, 0.9,
-                11, 1.2,
-                14, 1.8,
+                8, 1.2,
+                11, 1.8,
+                14, 2.6,
             ],
             "line-dasharray": [5, 2.5],
             "line-opacity": 0.95,

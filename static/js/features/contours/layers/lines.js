@@ -10,7 +10,7 @@ export function addContourLines(map) {
         minzoom: 9,
 
         paint: {
-            "line-color": "#715f4d",
+            "line-color": "#7f8987",
             "line-width": [
                 "interpolate",
                 ["linear"],
@@ -19,7 +19,7 @@ export function addContourLines(map) {
                 12, 0.7,
                 15, 1.0,
             ],
-            "line-opacity": 0.55,
+            "line-opacity": 0.4,
         },
     });
 }

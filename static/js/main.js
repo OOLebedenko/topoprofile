@@ -30,13 +30,10 @@ map.on("load", async () => {
     addTerrainSource(map);
     addHillshade(map);
 
-    await Promise.all([
-        addTerrainFeatures(map),
-        addHikingRoutes(map),
-    ]);
-
-    await addContours(map)
-    await addMountainInfrastructure(map)
+    await addTerrainFeatures(map);
+    await addHikingRoutes(map);
+    await addContours(map);
+    await addMountainInfrastructure(map);
 
     addAtmosphere(map);
     addPeaks(map);
