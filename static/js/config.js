@@ -43,15 +43,16 @@ export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
     center: TERRAIN_AREA.center,
     zoom: 10,
+    zoom3D: 11,
     minZoom: 10,
     maxBounds: MAP_BOUNDS,
     minPitch: 0,
     maxPitch: 85,
     pitchStep: 10,
     pitch: 0,
-    pitch3D: 60,
+    pitch3D: 80,
     rotationStep: 20,
-    viewTransitionDuration: 1000,
+    viewTransitionDuration: 1400,
 };
 
 // Local terrain DEM source settings.

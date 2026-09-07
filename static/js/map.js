@@ -34,6 +34,7 @@ export function createMap(container) {
         minZoom: MAP_CONFIG.minZoom,
         maxBounds: MAP_CONFIG.maxBounds,
         pitch: MAP_CONFIG.pitch,
+        minPitch: MAP_CONFIG.minPitch,
         maxPitch: MAP_CONFIG.maxPitch,
     });
 
