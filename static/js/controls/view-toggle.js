@@ -15,9 +15,18 @@ function updateViewToggleButton(button, is3D) {
     );
 }
 
-function animatePitch(map, targetPitch, duration) {
+function animateView(
+    map,
+    targetPitch,
+    targetZoom,
+    duration,
+) {
     const startPitch = map.getPitch();
     const pitchDifference = targetPitch - startPitch;
+
+    const startZoom = map.getZoom();
+    const zoomDifference = targetZoom - startZoom;
+
     const startTime = performance.now();
 
     function animate(currentTime) {
@@ -35,6 +44,10 @@ function animatePitch(map, targetPitch, duration) {
             startPitch + pitchDifference * easedProgress,
         );
 
+        map.setZoom(
+            startZoom + zoomDifference * easedProgress,
+        );
+
         if (progress < 1) {
             requestAnimationFrame(animate);
         }
@@ -50,9 +63,10 @@ export function setupViewToggle(map) {
 
     viewToggleButton.addEventListener("click", () => {
         if (is3D) {
-            animatePitch(
+            animateView(
                 map,
                 MAP_CONFIG.pitch,
+                MAP_CONFIG.zoom,
                 MAP_CONFIG.viewTransitionDuration,
             );
 
@@ -60,9 +74,10 @@ export function setupViewToggle(map) {
         } else {
             enableTerrain(map);
 
-            animatePitch(
+            animateView(
                 map,
                 MAP_CONFIG.pitch3D,
+                MAP_CONFIG.zoom3D,
                 MAP_CONFIG.viewTransitionDuration,
             );
         }
