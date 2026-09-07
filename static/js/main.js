@@ -3,6 +3,9 @@
  * Initializes the map, controls, and map features.
  */
 
+import {
+    createMapLoadingIndicator,
+} from "./controls/loading.js";
 import { setupNavigationControls } from "./controls/navigation.js";
 import { setupViewToggle } from "./controls/view-toggle.js";
 
@@ -21,6 +24,7 @@ import { createMap } from "./map.js";
 
 // Create the main MapLibre map instance.
 const map = createMap("map");
+const loading = createMapLoadingIndicator();
 
 // Navigation controls can be connected immediately after map creation.
 setupNavigationControls(map);
@@ -31,11 +35,22 @@ map.on("load", async () => {
     addHillshade(map);
 
     await addTerrainFeatures(map);
+    loading.setProgress(25);
+
     await addHikingRoutes(map);
+    loading.setProgress(50);
+
     await addContours(map);
+    loading.setProgress(75);
+
     await addMountainInfrastructure(map);
+    loading.setProgress(100);
 
     addAtmosphere(map);
     addPeaks(map);
     setupViewToggle(map);
+
+    map.once("idle", () => {
+        loading.hide();
+    });
 });
