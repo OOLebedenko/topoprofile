@@ -8,7 +8,7 @@ from topoprofile.osm.client.queries.mountain_infrastructure import (
 )
 from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
 from topoprofile.osm.source import OverpassFeatureSource
-from topoprofile.osm.store import OSMStore
+from topoprofile.osm.store import MVTStore
 from topoprofile.osm.task import PrepareOSMChunkTask, PrepareOSMTask
 from topoprofile.osm.transforms.osm import (
     FilterHikingRoutes,
@@ -17,7 +17,7 @@ from topoprofile.osm.transforms.osm import (
     RemoveNodeReferences,
 )
 from topoprofile.osm.transforms.overpass import GeoJSONTransform
-from topoprofile.osm.writer import CompactGeoJSONWriter
+from topoprofile.osm.writer import MVTWriter
 from topoprofile.processing.transforms import Compose
 
 
@@ -37,10 +37,12 @@ def create_osm_task(
     )
 
     hiking_routes_task = PrepareOSMTask(
-        store=OSMStore(
+        store=MVTStore(
             root=osm_root,
-            filename="hiking_routes.geojson",
-            writer=CompactGeoJSONWriter(),
+            filename="hiking_routes.pbf",
+            writer=MVTWriter(
+                layer_name="hiking_routes",
+            ),
         ),
         transform=Compose(
             transforms=(
@@ -51,10 +53,12 @@ def create_osm_task(
     )
 
     mountain_infrastructure_task = PrepareOSMTask(
-        store=OSMStore(
+        store=MVTStore(
             root=osm_root,
-            filename="mountain_infrastructure.geojson",
-            writer=CompactGeoJSONWriter(),
+            filename="mountain_infrastructure.pbf",
+            writer=MVTWriter(
+                layer_name="mountain_infrastructure",
+            ),
         ),
         transform=Compose(
             transforms=(
@@ -65,10 +69,12 @@ def create_osm_task(
     )
 
     terrain_surface_task = PrepareOSMTask(
-        store=OSMStore(
+        store=MVTStore(
             root=osm_root,
-            filename="terrain_surface.geojson",
-            writer=CompactGeoJSONWriter(),
+            filename="terrain_surface.pbf",
+            writer=MVTWriter(
+                layer_name="terrain_surface",
+            ),
         ),
         transform=Compose(
             transforms=(
