@@ -71,6 +71,30 @@ class ClipToBounds:
         )
 
 
+class RemoveNodeReferences:
+    """Remove source OSM node references not required for rendering."""
+
+    def __call__(
+            self,
+            features: OSMFeatureCollection,
+            /,
+    ) -> OSMFeatureCollection:
+        transformed = []
+
+        for feature in features.features:
+            properties = dict(feature.get("properties", {}))
+            properties.pop("nodes", None)
+
+            transformed.append({
+                **feature,
+                "properties": properties,
+            })
+
+        return OSMFeatureCollection(
+            features=tuple(transformed),
+        )
+
+
 class FilterHikingRoutes:
     """Keep renderable hiking route features."""
 

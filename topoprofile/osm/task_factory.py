@@ -14,9 +14,11 @@ from topoprofile.osm.transforms.osm import (
     FilterHikingRoutes,
     FilterTerrainSurface,
     PrepareMountainInfrastructure,
+    RemoveNodeReferences,
 )
 from topoprofile.osm.transforms.overpass import GeoJSONTransform
 from topoprofile.osm.writer import CompactGeoJSONWriter
+from topoprofile.processing.transforms import Compose
 
 
 def create_osm_task(
@@ -40,7 +42,12 @@ def create_osm_task(
             filename="hiking_routes.geojson",
             writer=CompactGeoJSONWriter(),
         ),
-        transform=FilterHikingRoutes(),
+        transform=Compose(
+            transforms=(
+                FilterHikingRoutes(),
+                RemoveNodeReferences(),
+            ),
+        ),
     )
 
     mountain_infrastructure_task = PrepareOSMTask(
@@ -49,7 +56,12 @@ def create_osm_task(
             filename="mountain_infrastructure.geojson",
             writer=CompactGeoJSONWriter(),
         ),
-        transform=PrepareMountainInfrastructure(),
+        transform=Compose(
+            transforms=(
+                PrepareMountainInfrastructure(),
+                RemoveNodeReferences(),
+            ),
+        ),
     )
 
     terrain_surface_task = PrepareOSMTask(
@@ -58,7 +70,12 @@ def create_osm_task(
             filename="terrain_surface.geojson",
             writer=CompactGeoJSONWriter(),
         ),
-        transform=FilterTerrainSurface(),
+        transform=Compose(
+            transforms=(
+                FilterTerrainSurface(),
+                RemoveNodeReferences(),
+            ),
+        ),
     )
 
     return PrepareOSMChunkTask(
