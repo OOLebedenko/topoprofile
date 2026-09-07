@@ -8,11 +8,12 @@ import {
 } from "../../../config.js";
 
 export const SOURCE_ID = MOUNTAIN_INFRASTRUCTURE_SOURCE_ID;
+export const SOURCE_LAYER = "mountain_infrastructure";
 
 // Registered MapLibre image used for mountain huts.
 export const HUT_ICON_ID = "mountain-hut";
 
-// Icon size for infrastructure loaded from local GeoJSON.
+// Icon size for local mountain infrastructure.
 export const HUT_ICON_SIZE = [
     "interpolate",
     ["linear"],

@@ -6,6 +6,7 @@ import {
     NAME_FIELD,
     NAMED_FEATURE_FILTER,
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 export function addMountainInfrastructureLabels(map) {
@@ -13,6 +14,7 @@ export function addMountainInfrastructureLabels(map) {
         id: "mountain-infrastructure-labels",
         type: "symbol",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         minzoom: 10,
         filter: NAMED_FEATURE_FILTER,
 
