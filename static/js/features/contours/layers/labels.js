@@ -36,7 +36,7 @@ export function addContourLabels(map) {
             ],
 
             "text-rotation-alignment": "map",
-            "text-pitch-alignment": "map",
+            "text-pitch-alignment": "viewport",
             "text-keep-upright": true,
             "text-allow-overlap": false,
             "text-ignore-placement": false,

@@ -122,7 +122,7 @@ export const ATMOSPHERE_CONFIG = {
     skyColor: "#88c6fc",
     horizonColor: "#ffffff",
     fogColor: "#ffffff",
-    skyHorizonBlend: 0.8,
+    skyHorizonBlend: 0.5,
     horizonFogBlend: 0.2,
-    fogGroundBlend: 0.05,
+    fogGroundBlend: 0.02,
 };
