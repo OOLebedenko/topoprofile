@@ -12,6 +12,6 @@
   "terrain": {
     "resolution": "01s",
     "min_zoom": 8,
-    "max_zoom": 14
+    "max_zoom": 12
   }
 }
