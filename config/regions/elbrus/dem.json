@@ -1,0 +1,17 @@
+{
+  "region_id": "elbrus",
+  "name": "Elbrus",
+
+  "center": {
+    "lon": 42.4361,
+    "lat": 43.3538
+  },
+
+  "radius_km": 100,
+
+  "terrain": {
+    "resolution": "01s",
+    "min_zoom": 8,
+    "max_zoom": 12
+  }
+}
