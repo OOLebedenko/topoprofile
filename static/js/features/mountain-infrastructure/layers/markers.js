@@ -6,6 +6,7 @@ import {
     HUT_ICON_ID,
     HUT_ICON_SIZE,
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 export function addMountainInfrastructureMarkers(map) {
@@ -13,6 +14,7 @@ export function addMountainInfrastructureMarkers(map) {
         id: "mountain-infrastructure-markers",
         type: "symbol",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         minzoom: 10,
 
         layout: {

@@ -7,6 +7,7 @@ export function addContourLabels(map) {
         id: "terrain-contour-labels",
         type: "symbol",
         source: CONTOURS_SOURCE_ID,
+        "source-layer": "contours",
         minzoom: 10,
 
         layout: {

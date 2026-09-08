@@ -2,7 +2,7 @@ from pathlib import Path
 
 from topoprofile.geo.models import Bounds, XYZTile
 from topoprofile.osm.models import OSMFeatureCollection, OverpassData
-from topoprofile.osm.store import OSMStore
+from topoprofile.osm.store import MVTStore, OSMStore
 from topoprofile.osm.transforms.osm import ClipToBounds, OSMTransform
 from topoprofile.osm.transforms.overpass import OverpassTransform
 from topoprofile.processing.source import Source
@@ -14,7 +14,7 @@ class PrepareOSMTask:
 
     def __init__(
             self,
-            store: OSMStore,
+            store: OSMStore | MVTStore,
             transform: OSMTransform,
     ) -> None:
         self._store = store

@@ -49,7 +49,7 @@ class PrepareDEMTask:
 
 
 class PrepareContoursTask:
-    """Prepare and store terrain contour lines."""
+    """Prepare and store terrain contour vector tiles."""
 
     def __init__(
             self,
@@ -68,26 +68,23 @@ class PrepareContoursTask:
     def __call__(
             self,
             chunk: XYZTile,
-    ) -> Path:
+    ) -> None:
         if self._store.exists(chunk):
-            return self._store.path(chunk)
+            return
 
         dem = self._source.load(chunk.bounds)
 
         if self._transform is not None:
             dem = self._transform(dem)
 
-        output_path = self._store.path(chunk)
-        output_path.parent.mkdir(
-            parents=True,
-            exist_ok=True,
-        )
-
         with TemporaryDirectory(
                 prefix="topoprofile-contours-",
         ) as temp_dir:
-            input_path = Path(temp_dir) / "dem.tif"
-            contours_path = Path(temp_dir) / "contours.geojson"
+            temp_path = Path(temp_dir)
+
+            input_path = temp_path / "dem.tif"
+            contours_path = temp_path / "contours.geojson"
+            mvt_dir = temp_path / "mvt"
 
             self._write_dem(
                 dem=dem,
@@ -97,12 +94,15 @@ class PrepareContoursTask:
                 input_path=input_path,
                 output_path=contours_path,
             )
-            self._simplify_contours(
+            self._generate_mvt(
                 input_path=contours_path,
-                output_path=output_path,
+                output_dir=mvt_dir,
+                zoom=chunk.z,
             )
-
-        return output_path
+            self._publish_mvt_tile(
+                source_dir=mvt_dir,
+                chunk=chunk,
+            )
 
     @staticmethod
     def _write_dem(
@@ -151,22 +151,61 @@ class PrepareContoursTask:
             check=True,
         )
 
-    def _simplify_contours(
+    def _generate_mvt(
             self,
             input_path: Path,
-            output_path: Path,
+            output_dir: Path,
+            zoom: int,
     ) -> None:
         command = [
             "ogr2ogr",
+            "-f",
+            "MVT",
             "-simplify",
             str(self._simplify_tolerance),
-            str(output_path),
+            "-dsco",
+            f"MINZOOM={zoom}",
+            "-dsco",
+            f"MAXZOOM={zoom}",
+            "-dsco",
+            "COMPRESS=NO",
+            "-lco",
+            "NAME=contours",
+            str(output_dir),
             str(input_path),
         ]
 
         subprocess.run(
             command,
             check=True,
+        )
+
+    def _publish_mvt_tile(
+            self,
+            source_dir: Path,
+            chunk: XYZTile,
+    ) -> None:
+        source_path = (
+                source_dir
+                / str(chunk.z)
+                / str(chunk.x)
+                / f"{chunk.y}.pbf"
+        )
+
+        if not source_path.is_file():
+            raise FileNotFoundError(
+                f"Generated contour tile not found: {source_path}"
+            )
+
+        output_path = self._store.path(chunk)
+        output_path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        shutil.copy2(
+            source_path,
+            output_path,
         )
 
 
@@ -184,7 +223,7 @@ class GenerateTilesTask:
     def __call__(
             self,
             chunk: XYZTile,
-            max_zoom: int,
+            max_zoom: int = 12,
             processes: int = 4,
     ) -> None:
         if self._tiles_exist(

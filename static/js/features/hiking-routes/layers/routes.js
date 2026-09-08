@@ -1,6 +1,7 @@
 import {
     LINE_LAYOUT,
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 const ROUTE_LAYER_ID = "hiking-route";
@@ -18,6 +19,7 @@ export function addRouteLayers(map) {
         id: ROUTE_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
         filter: ROUTE_FILTER,
         layout: LINE_LAYOUT,
 

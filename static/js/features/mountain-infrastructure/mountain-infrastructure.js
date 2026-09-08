@@ -28,68 +28,6 @@ const BASE_INFRASTRUCTURE_SUBCLASSES = [
     "shelter",
 ];
 
-function lonToTileX(lon, zoom) {
-    return ((lon + 180) / 360) * 2 ** zoom;
-}
-
-function latToTileY(lat, zoom) {
-    const latRad = lat * Math.PI / 180;
-
-    return (
-        (1 - Math.asinh(Math.tan(latRad)) / Math.PI)
-        / 2
-        * 2 ** zoom
-    );
-}
-
-// Return all XYZ chunks intersecting the configured terrain area.
-function getChunks(bounds, zoom) {
-    const [west, south, east, north] = bounds;
-
-    const minX = Math.floor(lonToTileX(west, zoom));
-    const maxX = Math.ceil(lonToTileX(east, zoom)) - 1;
-    const minY = Math.floor(latToTileY(north, zoom));
-    const maxY = Math.ceil(latToTileY(south, zoom)) - 1;
-
-    const chunks = [];
-
-    for (let x = minX; x <= maxX; x += 1) {
-        for (let y = minY; y <= maxY; y += 1) {
-            chunks.push({
-                z: zoom,
-                x,
-                y,
-            });
-        }
-    }
-
-    return chunks;
-}
-
-// Load mountain infrastructure prepared for one XYZ chunk.
-async function loadChunk(chunk) {
-    const { dataPath } = MOUNTAIN_INFRASTRUCTURE_CONFIG;
-
-    const url = (
-        `${dataPath}/${chunk.z}/${chunk.x}/${chunk.y}`
-        + "/mountain_infrastructure.geojson"
-    );
-
-    const response = await fetch(url);
-
-    if (response.status === 404) {
-        return null;
-    }
-
-    if (!response.ok) {
-        throw new Error(
-            `Failed to load mountain infrastructure: ${url}`
-        );
-    }
-
-    return response.json();
-}
-
 // Load and register a custom map icon.
 function loadIcon(map, id, url) {
     return new Promise((resolve, reject) => {
@@ -182,29 +120,27 @@ function customizeBaseInfrastructure(map) {
     });
 }
 
-// Load prepared infrastructure chunks and add all related map layers.
+// Register prepared infrastructure vector tiles and related map layers.
 export async function addMountainInfrastructure(map) {
     const {
+        dataPath,
         bounds,
         chunkZoom,
     } = MOUNTAIN_INFRASTRUCTURE_CONFIG;
 
-    const chunks = getChunks(bounds, chunkZoom);
-
-    const collections = await Promise.all(
-        chunks.map(loadChunk)
+    const tileUrl = (
+        `${window.location.origin}`
+        + `${dataPath}/{z}/{x}/{y}/mountain_infrastructure.pbf`
     );
 
-    const features = collections
-        .filter(collection => collection !== null)
-        .flatMap(collection => collection.features);
-
     map.addSource(MOUNTAIN_INFRASTRUCTURE_SOURCE_ID, {
-        type: "geojson",
-        data: {
-            type: "FeatureCollection",
-            features,
-        },
+        type: "vector",
+        tiles: [
+            tileUrl,
+        ],
+        bounds,
+        minzoom: chunkZoom,
+        maxzoom: chunkZoom,
     });
 
     await loadIcon(

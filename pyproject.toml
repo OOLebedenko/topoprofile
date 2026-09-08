@@ -8,6 +8,7 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "geopandas==1.1.4",
+    "mapbox-vector-tile==2.2.0",
     "osm2geojson==1.0.0rc1",
     "pillow==12.3.0",
     "pygmt==0.19.0",

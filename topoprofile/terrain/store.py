@@ -178,7 +178,7 @@ class XYZContourStore:
     def __init__(
             self,
             root: Path,
-            filename: str = "contours.geojson",
+            filename: str = "contours.pbf",
     ) -> None:
         self._root = root
         self._filename = filename

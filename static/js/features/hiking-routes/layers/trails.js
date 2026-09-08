@@ -1,6 +1,7 @@
 import {
     LINE_LAYOUT,
     SOURCE_ID,
+    SOURCE_LAYER,
 } from "./shared.js";
 
 const TRAILS_LAYER_ID = "hiking-trails";
@@ -11,6 +12,7 @@ export function addTrailLayers(map) {
         id: TRACKS_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
 
         filter: [
             "==",
@@ -39,6 +41,7 @@ export function addTrailLayers(map) {
         id: TRAILS_LAYER_ID,
         type: "line",
         source: SOURCE_ID,
+        "source-layer": SOURCE_LAYER,
 
         filter: [
             "match",
