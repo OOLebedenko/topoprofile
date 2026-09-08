@@ -3,6 +3,14 @@
  */
 
 import {
+    MOBILE_LAYER_CONFIG,
+} from "../../../config.js";
+
+import {
+    getResponsiveScale,
+} from "../../../viewport.js";
+
+import {
     PEAK_LABEL,
     PEAKS_SOURCE_ID,
     PEAKS_SOURCE_LAYER,
@@ -10,6 +18,10 @@ import {
     RANK1_FILTER,
     VALID_NAME_FILTER,
 } from "./shared.js";
+
+const LABEL_SCALE = getResponsiveScale(
+    MOBILE_LAYER_CONFIG.peaks.labelScale,
+);
 
 // Higher features receive higher placement priority.
 const ELEVATION_SORT_KEY = [
@@ -71,21 +83,29 @@ function createRank1LabelLayer(id, peakClass) {
         "source-layer": PEAKS_SOURCE_LAYER,
         minzoom: 7,
         filter: createRank1Filter(peakClass),
+
         layout: {
             ...BASE_LABEL_LAYOUT,
+
             "text-max-width": 12,
             "text-letter-spacing": 0.015,
             "text-offset": [0, -0.15],
+
             "text-size": [
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                7, 12.0,
-                11, 14.2,
-                14, 16.0,
-                17, 17.0,
+                7,
+                12.0 * LABEL_SCALE,
+                11,
+                14.2 * LABEL_SCALE,
+                14,
+                16.0 * LABEL_SCALE,
+                17,
+                17.0 * LABEL_SCALE,
             ],
         },
+
         paint: LABEL_PAINT,
     };
 }
@@ -97,6 +117,7 @@ export const SADDLE_LABEL_LAYER = {
     source: PEAKS_SOURCE_ID,
     "source-layer": PEAKS_SOURCE_LAYER,
     minzoom: 13,
+
     filter: [
         "all",
         POINT_GEOMETRY_FILTER,
@@ -107,19 +128,26 @@ export const SADDLE_LABEL_LAYER = {
         ],
         VALID_NAME_FILTER,
     ],
+
     layout: {
         ...BASE_LABEL_LAYOUT,
+
         "text-max-width": 10,
         "text-offset": [0, -0.1],
+
         "text-size": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            13, 12.4,
-            15, 13.5,
-            17, 14.5,
+            13,
+            12.4 * LABEL_SCALE,
+            15,
+            13.5 * LABEL_SCALE,
+            17,
+            14.5 * LABEL_SCALE,
         ],
     },
+
     paint: LABEL_PAINT,
 };
 

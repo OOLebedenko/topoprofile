@@ -3,6 +3,14 @@
  */
 
 import {
+    MOBILE_LAYER_CONFIG,
+} from "../../../config.js";
+
+import {
+    getResponsiveScale,
+} from "../../../viewport.js";
+
+import {
     PEAKS_SOURCE_ID,
     PEAKS_SOURCE_LAYER,
     POINT_GEOMETRY_FILTER,
@@ -10,27 +18,41 @@ import {
     VALID_NAME_FILTER,
 } from "./shared.js";
 
+const MARKER_SCALE = getResponsiveScale(
+    MOBILE_LAYER_CONFIG.peaks.markerScale,
+);
+
 // Visual style of peak and volcano markers.
 const MARKER_PAINT = {
     "circle-radius": [
         "interpolate",
         ["linear"],
         ["zoom"],
-        7, 3.4,
-        11, 4.6,
-        14, 5.9,
-        17, 6.6,
+        7,
+        3.4 * MARKER_SCALE,
+        11,
+        4.6 * MARKER_SCALE,
+        14,
+        5.9 * MARKER_SCALE,
+        17,
+        6.6 * MARKER_SCALE,
     ],
+
     "circle-color": "#263238",
     "circle-stroke-color": "#ffffff",
+
     "circle-stroke-width": [
         "interpolate",
         ["linear"],
         ["zoom"],
-        7, 1.5,
-        14, 2.2,
-        17, 2.4,
+        7,
+        1.5 * MARKER_SCALE,
+        14,
+        2.2 * MARKER_SCALE,
+        17,
+        2.4 * MARKER_SCALE,
     ],
+
     "circle-opacity": 0.98,
 };
 

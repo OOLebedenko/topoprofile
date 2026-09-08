@@ -2,6 +2,18 @@ import {
     CONTOURS_SOURCE_ID,
 } from "../../../config.js";
 
+import {
+    MOBILE_LAYER_CONFIG,
+} from "../../../config.js";
+
+import {
+    getResponsiveScale,
+} from "../../../viewport.js";
+
+const LABEL_SCALE = getResponsiveScale(
+    MOBILE_LAYER_CONFIG.contours.labelScale,
+);
+
 export function addContourLabels(map) {
     map.addLayer({
         id: "terrain-contour-labels",
@@ -31,9 +43,12 @@ export function addContourLabels(map) {
                 "interpolate",
                 ["linear"],
                 ["zoom"],
-                10, 10,
-                12, 12,
-                15, 14,
+                10,
+                10 * LABEL_SCALE,
+                12,
+                12 * LABEL_SCALE,
+                15,
+                14 * LABEL_SCALE,
             ],
 
             "text-rotation-alignment": "map",

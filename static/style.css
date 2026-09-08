@@ -41,8 +41,8 @@ body {
 .map-control-button {
     position: relative;
 
-    width: 48px;
-    height: 48px;
+    width: 62px;
+    height: 62px;
     padding: 0;
 
     display: flex;
@@ -59,7 +59,7 @@ body {
 
     color: #333;
     font-family: Arial, sans-serif;
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 400;
     line-height: 1;
 
@@ -116,8 +116,8 @@ body {
 
 /* Compass */
 .compass-icon {
-    width: 32px;
-    height: 36px;
+    width: 36px;
+    height: 40px;
 }
 
 .compass-north {
@@ -130,8 +130,8 @@ body {
 
 /* Rotate / tilt icons */
 .control-icon {
-    width: 28px;
-    height: 28px;
+    width: 31px;
+    height: 31px;
 
     fill: none;
     stroke: #666;
@@ -141,7 +141,7 @@ body {
 }
 
 .view-toggle-button {
-    font-size: 14px;
+    font-size: 20px;
     font-weight: 600;
 }
 

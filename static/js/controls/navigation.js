@@ -1,4 +1,6 @@
-import { MAP_CONFIG } from "../config.js";
+import {
+    getCameraConfig,
+} from "../viewport.js";
 
 export function setupNavigationControls(map) {
     const resetNorthButton = document.getElementById("reset-north");
@@ -17,31 +19,45 @@ export function setupNavigationControls(map) {
     });
 
     rotateLeftButton.addEventListener("click", () => {
+        const cameraConfig = getCameraConfig();
+
         map.easeTo({
-            bearing: map.getBearing() - MAP_CONFIG.rotationStep,
+            bearing: (
+                map.getBearing()
+                - cameraConfig.rotationStep
+            ),
         });
     });
 
     rotateRightButton.addEventListener("click", () => {
+        const cameraConfig = getCameraConfig();
+
         map.easeTo({
-            bearing: map.getBearing() + MAP_CONFIG.rotationStep,
+            bearing: (
+                map.getBearing()
+                + cameraConfig.rotationStep
+            ),
         });
     });
 
     tiltUpButton.addEventListener("click", () => {
+        const cameraConfig = getCameraConfig();
+
         map.easeTo({
             pitch: Math.min(
-                map.getPitch() + MAP_CONFIG.pitchStep,
-                MAP_CONFIG.maxPitch,
+                map.getPitch() + cameraConfig.pitchStep,
+                cameraConfig.maxPitch,
             ),
         });
     });
 
     tiltDownButton.addEventListener("click", () => {
+        const cameraConfig = getCameraConfig();
+
         map.easeTo({
             pitch: Math.max(
-                map.getPitch() - MAP_CONFIG.pitchStep,
-                MAP_CONFIG.minPitch,
+                map.getPitch() - cameraConfig.pitchStep,
+                cameraConfig.minPitch,
             ),
         });
     });

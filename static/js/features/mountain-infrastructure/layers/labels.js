@@ -3,11 +3,23 @@
  */
 
 import {
+    MOBILE_LAYER_CONFIG,
+} from "../../../config.js";
+
+import {
+    getResponsiveScale,
+} from "../../../viewport.js";
+
+import {
     NAME_FIELD,
     NAMED_FEATURE_FILTER,
     SOURCE_ID,
     SOURCE_LAYER,
 } from "./shared.js";
+
+const LABEL_SCALE = getResponsiveScale(
+    MOBILE_LAYER_CONFIG.mountainInfrastructure.labelScale,
+);
 
 export function addMountainInfrastructureLabels(map) {
     map.addLayer({
@@ -29,11 +41,11 @@ export function addMountainInfrastructureLabels(map) {
                 ["linear"],
                 ["zoom"],
                 10,
-                10,
+                10.5 * LABEL_SCALE,
                 12,
-                11.5,
+                12 * LABEL_SCALE,
                 14,
-                13,
+                13.5 * LABEL_SCALE,
             ],
 
             // Place labels above the hut marker.
