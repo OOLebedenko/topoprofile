@@ -19,10 +19,8 @@ export function getCameraConfig() {
         : CAMERA_CONFIG.desktop;
 
     return {
+        ...CAMERA_CONFIG.common,
         ...viewportConfig,
-        pitchStep: CAMERA_CONFIG.pitchStep,
-        rotationStep: CAMERA_CONFIG.rotationStep,
-        viewTransitionDuration: CAMERA_CONFIG.viewTransitionDuration,
     };
 }
 

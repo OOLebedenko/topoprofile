@@ -19,13 +19,13 @@ export function createMap(container) {
 
     const map = new MapLibreMap({
         container,
-        center: MAP_CONFIG.center,
+        center: cameraConfig.center,
         zoom: cameraConfig.zoom,
-        minZoom: MAP_CONFIG.minZoom,
-        maxBounds: MAP_CONFIG.maxBounds,
+        minZoom: cameraConfig.minZoom,
+        maxBounds: cameraConfig.maxBounds,
         pitch: cameraConfig.pitch,
-        minPitch: MAP_CONFIG.minPitch,
-        maxPitch: MAP_CONFIG.maxPitch,
+        minPitch: cameraConfig.minPitch,
+        maxPitch: cameraConfig.maxPitch,
     });
 
     map.setStyle(
