@@ -7,6 +7,7 @@ export function addContourLines(map) {
         id: "terrain-contours",
         type: "line",
         source: CONTOURS_SOURCE_ID,
+        "source-layer": "contours",
         minzoom: 9,
 
         paint: {
