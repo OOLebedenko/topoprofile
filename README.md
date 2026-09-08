@@ -5,6 +5,8 @@ mountain terrain and OpenStreetMap data in an interactive 2D/3D web map.
 
 The current implementation is a regional demo centered around the Elbrus area.
 
+**Online map:** https://topoprofile.org
+
 <p align="center">
   <img
     src="docs/images/topoprofile-demo.png"
