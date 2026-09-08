@@ -7,11 +7,23 @@ import {
     MOUNTAIN_INFRASTRUCTURE_SOURCE_ID,
 } from "../../../config.js";
 
+import {
+    MOBILE_LAYER_CONFIG,
+} from "../../../responsive/config.js";
+
+import {
+    getResponsiveScale,
+} from "../../../responsive/viewport.js";
+
 export const SOURCE_ID = MOUNTAIN_INFRASTRUCTURE_SOURCE_ID;
 export const SOURCE_LAYER = "mountain_infrastructure";
 
 // Registered MapLibre image used for mountain huts.
 export const HUT_ICON_ID = "mountain-hut";
+
+const HUT_ICON_SCALE = getResponsiveScale(
+    MOBILE_LAYER_CONFIG.mountainInfrastructure.iconScale,
+);
 
 // Icon size for local mountain infrastructure.
 export const HUT_ICON_SIZE = [
@@ -19,11 +31,11 @@ export const HUT_ICON_SIZE = [
     ["linear"],
     ["zoom"],
     10,
-    0.45,
+    0.45 * HUT_ICON_SCALE,
     12,
-    0.55,
+    0.55 * HUT_ICON_SCALE,
     14,
-    0.7,
+    0.7 * HUT_ICON_SCALE,
 ];
 
 // Base-map POIs use a slightly smaller icon
@@ -33,11 +45,11 @@ export const BASE_HUT_ICON_SIZE = [
     ["linear"],
     ["zoom"],
     10,
-    0.43,
+    0.5 * HUT_ICON_SCALE,
     12,
-    0.53,
+    0.6 * HUT_ICON_SCALE,
     14,
-    0.68,
+    0.75 * HUT_ICON_SCALE,
 ];
 
 // Prefer a localized Russian name when available.

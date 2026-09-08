@@ -20,7 +20,7 @@ const TERRAIN_AREA = {
 
 // Area available for map navigation.
 const MAP_BOUNDS = [
-    42.00,
+    41.00,
     42.55,
     44.95,
     43.75,
@@ -38,21 +38,14 @@ const TERRAIN_SOURCE_BOUNDS = [
     TERRAIN_AREA.bounds[3] - SOURCE_BOUNDS_EPSILON,
 ];
 
-// Base map and camera settings.
+// Base map settings shared by all viewport sizes.
 export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
     center: TERRAIN_AREA.center,
-    zoom: 10,
-    zoom3D: 11,
     minZoom: 10,
     maxBounds: MAP_BOUNDS,
     minPitch: 0,
     maxPitch: 85,
-    pitchStep: 10,
-    pitch: 0,
-    pitch3D: 80,
-    rotationStep: 20,
-    viewTransitionDuration: 1400,
 };
 
 // Local terrain DEM source settings.

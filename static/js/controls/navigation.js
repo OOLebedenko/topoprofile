@@ -1,5 +1,9 @@
 import { MAP_CONFIG } from "../config.js";
 
+import {
+    CAMERA_CONFIG,
+} from "../responsive/config.js";
+
 export function setupNavigationControls(map) {
     const resetNorthButton = document.getElementById("reset-north");
 
@@ -18,20 +22,20 @@ export function setupNavigationControls(map) {
 
     rotateLeftButton.addEventListener("click", () => {
         map.easeTo({
-            bearing: map.getBearing() - MAP_CONFIG.rotationStep,
+            bearing: map.getBearing() - CAMERA_CONFIG.rotationStep,
         });
     });
 
     rotateRightButton.addEventListener("click", () => {
         map.easeTo({
-            bearing: map.getBearing() + MAP_CONFIG.rotationStep,
+            bearing: map.getBearing() + CAMERA_CONFIG.rotationStep,
         });
     });
 
     tiltUpButton.addEventListener("click", () => {
         map.easeTo({
             pitch: Math.min(
-                map.getPitch() + MAP_CONFIG.pitchStep,
+                map.getPitch() + CAMERA_CONFIG.pitchStep,
                 MAP_CONFIG.maxPitch,
             ),
         });
@@ -40,7 +44,7 @@ export function setupNavigationControls(map) {
     tiltDownButton.addEventListener("click", () => {
         map.easeTo({
             pitch: Math.max(
-                map.getPitch() - MAP_CONFIG.pitchStep,
+                map.getPitch() - CAMERA_CONFIG.pitchStep,
                 MAP_CONFIG.minPitch,
             ),
         });

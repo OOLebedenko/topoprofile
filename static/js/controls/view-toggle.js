@@ -1,8 +1,11 @@
-import { MAP_CONFIG } from "../config.js";
 import {
     disableTerrain,
     enableTerrain,
 } from "../features/terrain.js";
+
+import {
+    getCameraConfig,
+} from "../responsive/viewport.js";
 
 function updateViewToggleButton(button, is3D) {
     const targetView = is3D ? "2D" : "3D";
@@ -62,12 +65,14 @@ export function setupViewToggle(map) {
     let is3D = false;
 
     viewToggleButton.addEventListener("click", () => {
+        const cameraConfig = getCameraConfig();
+
         if (is3D) {
             animateView(
                 map,
-                MAP_CONFIG.pitch,
-                MAP_CONFIG.zoom,
-                MAP_CONFIG.viewTransitionDuration,
+                cameraConfig.pitch,
+                cameraConfig.zoom,
+                cameraConfig.viewTransitionDuration,
             );
 
             disableTerrain(map);
@@ -76,9 +81,9 @@ export function setupViewToggle(map) {
 
             animateView(
                 map,
-                MAP_CONFIG.pitch3D,
-                MAP_CONFIG.zoom3D,
-                MAP_CONFIG.viewTransitionDuration,
+                cameraConfig.pitch3D,
+                cameraConfig.zoom3D,
+                cameraConfig.viewTransitionDuration,
             );
         }
 

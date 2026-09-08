@@ -9,15 +9,21 @@ import { setupMissingImageFallback } from "./base-map/images.js";
 import { transformBaseMapStyle } from "./base-map/style.js";
 import { MAP_CONFIG } from "./config.js";
 
+import {
+    getCameraConfig,
+} from "./responsive/viewport.js";
+
 // Creates and returns the main application map.
 export function createMap(container) {
+    const cameraConfig = getCameraConfig();
+
     const map = new MapLibreMap({
         container,
         center: MAP_CONFIG.center,
-        zoom: MAP_CONFIG.zoom,
+        zoom: cameraConfig.zoom,
         minZoom: MAP_CONFIG.minZoom,
         maxBounds: MAP_CONFIG.maxBounds,
-        pitch: MAP_CONFIG.pitch,
+        pitch: cameraConfig.pitch,
         minPitch: MAP_CONFIG.minPitch,
         maxPitch: MAP_CONFIG.maxPitch,
     });
