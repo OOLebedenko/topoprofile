@@ -6,6 +6,7 @@ import { Map as MapLibreMap } from
     "https://unpkg.com/maplibre-gl@6.0.0/dist/maplibre-gl.mjs";
 
 import { setupMissingImageFallback } from "./base-map/images.js";
+import { transformBaseMapRequest } from "./base-map/requests.js";
 import { transformBaseMapStyle } from "./base-map/style.js";
 import { MAP_CONFIG } from "./config.js";
 
@@ -26,6 +27,7 @@ export function createMap(container) {
         pitch: cameraConfig.pitch,
         minPitch: cameraConfig.minPitch,
         maxPitch: cameraConfig.maxPitch,
+        transformRequest: transformBaseMapRequest,
     });
 
     map.setStyle(
