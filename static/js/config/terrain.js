@@ -1,5 +1,5 @@
 /**
- * Terrain, hillshade, and contour source configuration.
+ * Terrain, hillshade, and contour configuration.
  */
 
 // Geographic area currently available as local terrain tiles.
@@ -32,9 +32,6 @@ const TERRAIN_SOURCE_BOUNDS = [
 // Local terrain DEM source settings.
 export const TERRAIN_SOURCE_ID = "terrain-dem";
 
-// Local hillshade DEM source settings.
-export const HILLSHADE_SOURCE_ID = "hillshade-dem";
-
 export const TERRAIN_CONFIG = {
     tiles: [
         `${TERRAIN_AREA.dataPath}/{z}/{x}/{y}.webp`,
@@ -47,7 +44,10 @@ export const TERRAIN_CONFIG = {
     bounds: TERRAIN_SOURCE_BOUNDS,
 };
 
-// Local hillshade settings.
+// Local hillshade DEM source settings.
+export const HILLSHADE_SOURCE_ID = "hillshade-dem";
+
+// Local hillshade layer settings.
 export const HILLSHADE_LAYER_ID = "terrain-hillshade";
 
 export const HILLSHADE_CONFIG = {

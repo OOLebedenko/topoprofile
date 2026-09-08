@@ -1,5 +1,5 @@
 /**
- * Base map, camera, responsive layer, and atmosphere configuration.
+ * Base map, camera, and atmosphere configuration.
  */
 
 import {
@@ -14,17 +14,13 @@ const MAP_BOUNDS = [
     43.75,
 ];
 
-// Base map settings independent of viewport size.
+// Base map settings.
 export const MAP_CONFIG = {
     style: "https://tiles.openfreemap.org/styles/liberty",
 };
 
-// Viewport breakpoint shared by responsive JavaScript behavior.
-export const MOBILE_VIEWPORT_CONFIG = {
-    maxWidth: 700,
-};
-
-// Camera settings shared by and specialized for each viewport.
+// Camera settings shared by and specialized
+// for desktop and mobile viewports.
 export const CAMERA_CONFIG = {
     common: {
         center: TERRAIN_AREA.center,
@@ -49,23 +45,6 @@ export const CAMERA_CONFIG = {
         zoom3D: 11,
         pitch: 0,
         pitch3D: 76,
-    },
-};
-
-// Scale factors applied to the existing desktop layer styles.
-export const MOBILE_LAYER_CONFIG = {
-    mountainInfrastructure: {
-        iconScale: 0.72,
-        labelScale: 0.8,
-    },
-
-    peaks: {
-        markerScale: 0.8,
-        labelScale: 0.78,
-    },
-
-    contours: {
-        labelScale: 0.82,
     },
 };
 

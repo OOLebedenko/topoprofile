@@ -4,11 +4,11 @@ import {
 
 import {
     MOBILE_LAYER_CONFIG,
-} from "../../../responsive/config.js";
+} from "../../../config.js";
 
 import {
     getResponsiveScale,
-} from "../../../responsive/viewport.js";
+} from "../../../viewport.js";
 
 const LABEL_SCALE = getResponsiveScale(
     MOBILE_LAYER_CONFIG.contours.labelScale,

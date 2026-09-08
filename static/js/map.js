@@ -11,7 +11,7 @@ import { MAP_CONFIG } from "./config.js";
 
 import {
     getCameraConfig,
-} from "./responsive/viewport.js";
+} from "./viewport.js";
 
 // Creates and returns the main application map.
 export function createMap(container) {

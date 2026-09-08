@@ -1,6 +1,6 @@
 import {
     getCameraConfig,
-} from "../responsive/viewport.js";
+} from "../viewport.js";
 
 export function setupNavigationControls(map) {
     const resetNorthButton = document.getElementById("reset-north");

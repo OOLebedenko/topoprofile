@@ -5,7 +5,7 @@ import {
 
 import {
     getCameraConfig,
-} from "../responsive/viewport.js";
+} from "../viewport.js";
 
 function updateViewToggleButton(button, is3D) {
     const targetView = is3D ? "2D" : "3D";

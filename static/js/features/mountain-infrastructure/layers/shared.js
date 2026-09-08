@@ -9,11 +9,11 @@ import {
 
 import {
     MOBILE_LAYER_CONFIG,
-} from "../../../responsive/config.js";
+} from "../../../config.js";
 
 import {
     getResponsiveScale,
-} from "../../../responsive/viewport.js";
+} from "../../../viewport.js";
 
 export const SOURCE_ID = MOUNTAIN_INFRASTRUCTURE_SOURCE_ID;
 export const SOURCE_LAYER = "mountain_infrastructure";
