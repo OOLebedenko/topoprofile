@@ -24,7 +24,7 @@ export const MAP_CONFIG = {
 export const CAMERA_CONFIG = {
     common: {
         center: TERRAIN_AREA.center,
-        minZoom: 10,
+        minZoom: 9,
         maxBounds: MAP_BOUNDS,
         minPitch: 0,
         maxPitch: 85,
