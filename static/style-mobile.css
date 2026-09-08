@@ -1,3 +1,20 @@
+#map-title {
+    top: 12px;
+    left: 12px;
+
+    padding: 7px 11px;
+    border-radius: 14px;
+}
+
+.map-title-main {
+    font-size: 12px;
+}
+
+.map-title-subtitle {
+    margin-top: 3px;
+    font-size: 10px;
+}
+
 #map-controls {
     top: 12px;
     right: 12px;
