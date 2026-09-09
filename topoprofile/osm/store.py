@@ -7,6 +7,7 @@ from topoprofile.osm.writer import (
     CompactGeoJSONWriter,
     MVTWriter,
 )
+from topoprofile.processing.atomic import atomic_path
 
 
 @dataclass(frozen=True, slots=True)
@@ -50,13 +51,14 @@ class OSMStore:
             exist_ok=True,
         )
 
-        self.writer.write(
-            output_path,
-            {
-                "type": "FeatureCollection",
-                "features": list(features.features),
-            },
-        )
+        with atomic_path(output_path) as temporary_path:
+            self.writer.write(
+                temporary_path,
+                {
+                    "type": "FeatureCollection",
+                    "features": list(features.features),
+                },
+            )
 
         return output_path
 
@@ -102,13 +104,14 @@ class MVTStore:
             exist_ok=True,
         )
 
-        self.writer.write(
-            path=output_path,
-            geojson={
-                "type": "FeatureCollection",
-                "features": list(features.features),
-            },
-            bounds=chunk.bounds,
-        )
+        with atomic_path(output_path) as temporary_path:
+            self.writer.write(
+                path=temporary_path,
+                geojson={
+                    "type": "FeatureCollection",
+                    "features": list(features.features),
+                },
+                bounds=chunk.bounds,
+            )
 
         return output_path

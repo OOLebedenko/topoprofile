@@ -44,6 +44,17 @@ def test_store_saves_feature_collection(
 ) -> None:
     writer = Mock()
 
+    def write(
+            path: Path,
+            data: dict,
+    ) -> None:
+        path.write_text(
+            "",
+            encoding="utf-8",
+        )
+
+    writer.write.side_effect = write
+
     store = OSMStore(
         root=tmp_path,
         filename="hiking_routes.geojson",
@@ -87,13 +98,18 @@ def test_store_saves_feature_collection(
             / "hiking_routes.geojson"
     )
 
-    assert result == expected_path
-    assert expected_path.parent.is_dir()
+    expected_data = {
+        "type": "FeatureCollection",
+        "features": list(features.features),
+    }
 
-    writer.write.assert_called_once_with(
-        expected_path,
-        {
-            "type": "FeatureCollection",
-            "features": list(features.features),
-        },
-    )
+    assert result == expected_path
+    assert expected_path.is_file()
+
+    writer.write.assert_called_once()
+
+    temporary_path, data = writer.write.call_args.args
+
+    assert temporary_path != expected_path
+    assert temporary_path.parent == expected_path.parent
+    assert data == expected_data
