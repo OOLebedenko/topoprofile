@@ -38,15 +38,16 @@ class GeoJSONTransform(OverpassTransform):
                 },
                 raise_on_failure=False,
             )
-            self._flatten_tags(geojson)
-
-            return OSMFeatureCollection(
-                features=tuple(geojson["features"]),
-            )
         except Exception as error:
             raise GeoJSONTransformError(
                 "Failed to convert Overpass data to GeoJSON."
             ) from error
+
+        self._flatten_tags(geojson)
+
+        return OSMFeatureCollection(
+            features=tuple(geojson["features"]),
+        )
 
     @staticmethod
     def _flatten_tags(
