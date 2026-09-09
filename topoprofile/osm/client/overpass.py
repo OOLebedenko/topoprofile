@@ -112,7 +112,7 @@ class OverpassClient:
     ) -> OverpassJSON:
         """Fetch data from the first available Overpass endpoint."""
         errors = []
-        last_error = None
+        last_error: Exception | None = None
 
         for endpoint in self._endpoints:
             try:
