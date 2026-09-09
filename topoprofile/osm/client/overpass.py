@@ -29,6 +29,14 @@ class OverpassClient:
             max_attempts: int = MAX_ATTEMPTS,
             retry_delay: int = RETRY_DELAY_SECONDS,
     ) -> None:
+
+        self._validate_config(
+            endpoints=endpoints,
+            timeout=timeout,
+            max_attempts=max_attempts,
+            retry_delay=retry_delay,
+        )
+
         self._endpoints = endpoints
         self._timeout = timeout
         self._max_attempts = max_attempts
@@ -37,6 +45,33 @@ class OverpassClient:
             "User-Agent": "topoprofile",
             "Accept": "application/json",
         }
+
+    @staticmethod
+    def _validate_config(
+            endpoints: tuple[str, ...],
+            timeout: int,
+            max_attempts: int,
+            retry_delay: int,
+    ) -> None:
+        if not endpoints:
+            raise ValueError(
+                "At least one Overpass endpoint is required."
+            )
+
+        if timeout <= 0:
+            raise ValueError(
+                "Request timeout must be greater than zero."
+            )
+
+        if max_attempts < 1:
+            raise ValueError(
+                "Maximum attempts must be at least one."
+            )
+
+        if retry_delay < 0:
+            raise ValueError(
+                "Retry delay cannot be negative."
+            )
 
     def fetch(
             self,
