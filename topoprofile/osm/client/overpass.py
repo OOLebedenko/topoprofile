@@ -19,6 +19,10 @@ class OverpassClientError(RuntimeError):
     """Raised when data cannot be fetched from the Overpass API."""
 
 
+class _RetryableOverpassError(OverpassClientError):
+    """Raised when an Overpass request may succeed on retry."""
+
+
 class OverpassClient:
     """Client for fetching OSM data from the Overpass API."""
 
@@ -29,7 +33,6 @@ class OverpassClient:
             max_attempts: int = MAX_ATTEMPTS,
             retry_delay: int = RETRY_DELAY_SECONDS,
     ) -> None:
-
         self._validate_config(
             endpoints=endpoints,
             timeout=timeout,
@@ -83,7 +86,8 @@ class OverpassClient:
                 return self._fetch_from_endpoints(
                     query,
                 )
-            except OverpassClientError:
+
+            except _RetryableOverpassError:
                 if attempt == self._max_attempts:
                     raise
 
@@ -97,6 +101,10 @@ class OverpassClient:
                 )
 
                 time.sleep(delay)
+
+        raise RuntimeError(
+            "Overpass request attempts were exhausted."
+        )
 
     def _fetch_from_endpoints(
             self,
@@ -112,6 +120,29 @@ class OverpassClient:
                     endpoint,
                     query,
                 )
+
+            except requests.HTTPError as error:
+                response = error.response
+
+                if (
+                        response is not None
+                        and response.status_code == 400
+                ):
+                    raise OverpassClientError(
+                        f"Overpass query rejected by {endpoint}: "
+                        "HTTP 400."
+                    ) from error
+
+                last_error = error
+
+                message = f"{endpoint}: {error}"
+                errors.append(message)
+
+                logger.debug(
+                    "Overpass endpoint failed: %s",
+                    message,
+                )
+
             except (
                     requests.RequestException,
                     TypeError,
@@ -126,7 +157,7 @@ class OverpassClient:
                     message,
                 )
 
-        raise OverpassClientError(
+        raise _RetryableOverpassError(
             "All Overpass endpoints failed:\n"
             + "\n".join(errors)
         ) from last_error
