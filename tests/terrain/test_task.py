@@ -346,3 +346,26 @@ def test_generate_tiles_task_runs_generation_and_publish(
     assert publish_call["source_dir"] == generate_call["output_dir"]
     assert publish_call["chunk"] == chunk
     assert publish_call["max_zoom"] == 10
+
+
+def test_generate_tiles_task_raises_if_generated_tile_is_missing(
+        tmp_path: Path,
+        chunk: XYZTile,
+) -> None:
+    source = MagicMock()
+    store = MagicMock()
+
+    task = GenerateTilesTask(
+        source=source,
+        store=store,
+    )
+
+    with pytest.raises(
+            FileNotFoundError,
+            match="Generated terrain tile not found",
+    ):
+        task._publish_tiles(
+            source_dir=tmp_path,
+            chunk=chunk,
+            max_zoom=chunk.z,
+        )
