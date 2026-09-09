@@ -323,7 +323,9 @@ class GenerateTilesTask:
                 )
 
                 if not source_path.is_file():
-                    continue
+                    raise FileNotFoundError(
+                        f"Generated terrain tile not found: {source_path}"
+                    )
 
                 output_path = self._store.path(tile)
                 output_path.parent.mkdir(
