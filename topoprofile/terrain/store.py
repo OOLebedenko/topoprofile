@@ -5,6 +5,7 @@ import rasterio
 from PIL import Image
 
 from topoprofile.geo.models import XYZTile
+from topoprofile.processing.atomic import atomic_path
 from topoprofile.terrain.models import DEM, RasterTile
 
 
@@ -67,8 +68,8 @@ class XYZGeoTIFFDEMStore:
             exist_ok=True,
         )
 
-        with rasterio.open(
-                output_path,
+        with atomic_path(output_path) as temporary_path, rasterio.open(
+                temporary_path,
                 "w",
                 driver="GTiff",
                 height=dem.height,
@@ -85,7 +86,9 @@ class XYZGeoTIFFDEMStore:
                     1,
                 )
             else:
-                dataset.write(dem.values)
+                dataset.write(
+                    dem.values,
+                )
 
         return output_path
 
@@ -147,7 +150,10 @@ class WebPXYZTileStore:
             raster_tile: RasterTile,
     ) -> Path:
         """Save a raster XYZ tile as lossless WebP."""
-        output_path = self.path(raster_tile.tile)
+        output_path = self.path(
+            raster_tile.tile,
+        )
+
         output_path.parent.mkdir(
             parents=True,
             exist_ok=True,
@@ -162,12 +168,16 @@ class WebPXYZTileStore:
                 -1,
             )
 
-        image = Image.fromarray(values)
-        image.save(
-            output_path,
-            format="WEBP",
-            lossless=True,
+        image = Image.fromarray(
+            values,
         )
+
+        with atomic_path(output_path) as temporary_path:
+            image.save(
+                temporary_path,
+                format="WEBP",
+                lossless=True,
+            )
 
         return output_path
 
