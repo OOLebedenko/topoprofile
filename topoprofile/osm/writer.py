@@ -5,7 +5,7 @@ from pathlib import Path
 
 import mapbox_vector_tile
 from pyproj import Transformer
-from shapely.geometry import shape
+from shapely.geometry import GeometryCollection, shape
 from shapely.geometry.base import BaseGeometry
 
 from topoprofile.geo.models import Bounds
@@ -117,7 +117,7 @@ class MVTWriter:
         if geometry.is_empty:
             return
 
-        if geometry.geom_type == "GeometryCollection":
+        if isinstance(geometry, GeometryCollection):
             for part in geometry.geoms:
                 yield from cls._iter_geometries(part)
 

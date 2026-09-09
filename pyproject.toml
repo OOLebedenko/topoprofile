@@ -21,10 +21,15 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "mypy",
     "pytest",
     "pytest-cov",
     "pytest-sugar",
     "ruff",
+    "types-geopandas",
+    "types-shapely",
+    "types-rasterio",
+    "types-tqdm",
 ]
 
 [tool.setuptools.packages.find]
@@ -35,3 +40,17 @@ namespaces = false
 addopts = [
     "--import-mode=importlib",
 ]
+
+[tool.mypy]
+python_version = "3.12"
+
+[[tool.mypy.overrides]]
+module = [
+    "mapbox_vector_tile",
+    "mapbox_vector_tile.*",
+    "pygmt",
+    "pygmt.*",
+    "rio_rgbify",
+    "rio_rgbify.*",
+]
+ignore_missing_imports = true

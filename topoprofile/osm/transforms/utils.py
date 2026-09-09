@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, TypeGuard
 
 POLYGON_GEOMETRY_TYPES = {
     "Polygon",
@@ -40,9 +40,10 @@ def has_coordinates(
 
 def is_valid_geometry(
         geometry: Any,
-) -> bool:
+) -> TypeGuard[dict[str, Any]]:
     """Return whether a GeoJSON geometry has a type and coordinates."""
     return (
-            geometry_type(geometry) is not None
+            isinstance(geometry, dict)
+            and geometry_type(geometry) is not None
             and has_coordinates(geometry)
     )
