@@ -74,3 +74,26 @@ def test_geojson_transform_raises_conversion_error() -> None:
                 elements=(),
             ),
         )
+
+
+def test_geojson_transform_propagates_normalization_error(
+        glacier_geojson: dict,
+) -> None:
+    transform = GeoJSONTransform()
+
+    with patch(
+            "topoprofile.osm.transforms.overpass.osm2geojson.json2geojson",
+            return_value=glacier_geojson,
+    ), patch.object(
+        transform,
+        "_flatten_tags",
+        side_effect=RuntimeError("normalization failed"),
+    ), pytest.raises(
+        RuntimeError,
+        match="normalization failed",
+    ):
+        transform(
+            OverpassData(
+                elements=(),
+            ),
+        )
