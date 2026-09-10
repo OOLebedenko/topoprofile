@@ -105,12 +105,10 @@ class FilterHikingRoutes:
 
         route = properties.get("route")
         highway = properties.get("highway")
-        aerialway = properties.get("aerialway")
 
         return (
                 route in HIKING_ROUTE_TYPES
                 or highway in HIKING_TRAIL_TYPES
-                or aerialway is not None
         )
 
 
