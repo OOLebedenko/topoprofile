@@ -1,12 +1,14 @@
 from pathlib import Path
 
 from topoprofile.geo.models import Bounds, XYZTile
-from topoprofile.osm.models import OSMFeatureCollection, OverpassData
+from topoprofile.osm.models import (
+    OSMFeatureChunkCollection,
+    OverpassData,
+)
 from topoprofile.osm.store import MVTStore, OSMStore
-from topoprofile.osm.transforms.osm import ClipToBounds, OSMTransform
+from topoprofile.osm.transforms.osm import OSMChunkTransform
 from topoprofile.osm.transforms.overpass import OverpassTransform
 from topoprofile.processing.source import Source
-from topoprofile.processing.transforms import Compose
 
 
 class PrepareOSMTask:
@@ -15,7 +17,7 @@ class PrepareOSMTask:
     def __init__(
             self,
             store: OSMStore | MVTStore,
-            transform: OSMTransform,
+            transform: OSMChunkTransform,
     ) -> None:
         self._store = store
         self._transform = transform
@@ -28,20 +30,12 @@ class PrepareOSMTask:
 
     def __call__(
             self,
-            chunk: XYZTile,
-            features: OSMFeatureCollection,
+            features: OSMFeatureChunkCollection,
     ) -> Path:
-        transform = Compose(
-            transforms=(
-                self._transform,
-                ClipToBounds(chunk.bounds),
-            ),
-        )
-
-        features = transform(features)
+        features = self._transform(features)
 
         return self._store.save(
-            chunk,
+            features.chunk,
             features,
         )
 
@@ -75,8 +69,10 @@ class PrepareOSMChunkTask:
         data = self._source.load(chunk.bounds)
         features = self._overpass_transform(data)
 
+        chunk_features = OSMFeatureChunkCollection(
+            features=features.features,
+            chunk=chunk,
+        )
+
         for task in tasks:
-            task(
-                chunk,
-                features,
-            )
+            task(chunk_features)
