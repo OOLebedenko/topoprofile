@@ -17,9 +17,8 @@ def test_filter_hiking_routes_keeps_renderable_routes(
 ) -> None:
     result = FilterHikingRoutes()(osm_features)
 
-    assert len(result.features) == 2
+    assert len(result.features) == 1
     assert result.features[0]["properties"]["route"] == "hiking"
-    assert result.features[1]["properties"]["route"] == "foot"
 
 
 def test_filter_terrain_surface_keeps_renderable_features(

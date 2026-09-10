@@ -41,10 +41,6 @@ class HikingRouteQuery(Query):
   way
     ["highway"~"^({trail_values})$"]
     ({bbox});
-
-  way
-    ["aerialway"]
-    ({bbox});
 );
 
 out body geom;

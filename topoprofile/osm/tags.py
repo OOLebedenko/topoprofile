@@ -1,14 +1,9 @@
 HIKING_ROUTE_TYPES = {
-    "foot",
     "hiking",
-    "walking",
 }
 
 HIKING_TRAIL_TYPES = {
-    "footway",
     "path",
-    "steps",
-    "track",
 }
 
 TERRAIN_AREA_TYPES = {
