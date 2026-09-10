@@ -2,7 +2,11 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 from topoprofile.geo.models import XYZTile
-from topoprofile.osm.models import OSMFeatureCollection, OverpassData
+from topoprofile.osm.models import (
+    OSMFeatureChunkCollection,
+    OSMFeatureCollection,
+    OverpassData,
+)
 from topoprofile.osm.task import PrepareOSMChunkTask, PrepareOSMTask
 
 
@@ -13,12 +17,14 @@ def test_prepare_osm_task_runs_processing_pipeline() -> None:
         y=93,
     )
 
-    features = OSMFeatureCollection(
+    features = OSMFeatureChunkCollection(
         features=(),
+        chunk=chunk,
     )
 
-    transformed_features = OSMFeatureCollection(
+    transformed_features = OSMFeatureChunkCollection(
         features=(),
+        chunk=chunk,
     )
 
     store = MagicMock()
@@ -33,13 +39,13 @@ def test_prepare_osm_task_runs_processing_pipeline() -> None:
         transform=transform,
     )
 
-    output_path = task(
-        chunk,
-        features,
-    )
+    output_path = task(features)
 
     transform.assert_called_once_with(features)
-    store.save.assert_called_once()
+    store.save.assert_called_once_with(
+        chunk,
+        transformed_features,
+    )
 
     assert output_path == Path("output.geojson")
 
@@ -85,6 +91,11 @@ def test_prepare_osm_chunk_task_loads_data_once() -> None:
         features=(),
     )
 
+    chunk_features = OSMFeatureChunkCollection(
+        features=features.features,
+        chunk=chunk,
+    )
+
     source = MagicMock()
     source.load.return_value = data
 
@@ -116,18 +127,9 @@ def test_prepare_osm_chunk_task_loads_data_once() -> None:
     source.load.assert_called_once_with(chunk.bounds)
     overpass_transform.assert_called_once_with(data)
 
-    first_task.assert_called_once_with(
-        chunk,
-        features,
-    )
-    second_task.assert_called_once_with(
-        chunk,
-        features,
-    )
-    third_task.assert_called_once_with(
-        chunk,
-        features,
-    )
+    first_task.assert_called_once_with(chunk_features)
+    second_task.assert_called_once_with(chunk_features)
+    third_task.assert_called_once_with(chunk_features)
 
 
 def test_prepare_osm_chunk_task_skips_existing_dataset() -> None:
@@ -143,6 +145,11 @@ def test_prepare_osm_chunk_task_skips_existing_dataset() -> None:
 
     features = OSMFeatureCollection(
         features=(),
+    )
+
+    chunk_features = OSMFeatureChunkCollection(
+        features=features.features,
+        chunk=chunk,
     )
 
     source = MagicMock()
@@ -172,7 +179,4 @@ def test_prepare_osm_chunk_task_skips_existing_dataset() -> None:
     source.load.assert_called_once_with(chunk.bounds)
 
     existing_task.assert_not_called()
-    missing_task.assert_called_once_with(
-        chunk,
-        features,
-    )
+    missing_task.assert_called_once_with(chunk_features)

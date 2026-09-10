@@ -11,6 +11,7 @@ from topoprofile.osm.source import OverpassFeatureSource
 from topoprofile.osm.store import MVTStore
 from topoprofile.osm.task import PrepareOSMChunkTask, PrepareOSMTask
 from topoprofile.osm.transforms.osm import (
+    ClipToBounds,
     FilterHikingRoutes,
     FilterTerrainSurface,
     PrepareMountainInfrastructure,
@@ -48,6 +49,7 @@ def create_osm_task(
             transforms=(
                 FilterHikingRoutes(),
                 RemoveNodeReferences(),
+                ClipToBounds(),
             ),
         ),
     )
@@ -64,6 +66,7 @@ def create_osm_task(
             transforms=(
                 PrepareMountainInfrastructure(),
                 RemoveNodeReferences(),
+                ClipToBounds(),
             ),
         ),
     )
@@ -80,6 +83,7 @@ def create_osm_task(
             transforms=(
                 FilterTerrainSurface(),
                 RemoveNodeReferences(),
+                ClipToBounds(),
             ),
         ),
     )

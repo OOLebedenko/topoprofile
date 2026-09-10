@@ -1,10 +1,13 @@
 import logging
-from typing import Any
+from dataclasses import replace
+from typing import Any, TypeVar
 
 from shapely.geometry import box, mapping, shape
 
-from topoprofile.geo.models import Bounds
-from topoprofile.osm.models import OSMFeatureCollection
+from topoprofile.osm.models import (
+    OSMFeatureChunkCollection,
+    OSMFeatureCollection,
+)
 from topoprofile.osm.tags import (
     HIKING_ROUTE_TYPES,
     HIKING_TRAIL_TYPES,
@@ -23,52 +26,16 @@ from topoprofile.processing.transforms import Transform
 
 logger = logging.getLogger(__name__)
 
+OSMFeatureCollectionT = TypeVar(
+    "OSMFeatureCollectionT",
+    bound=OSMFeatureCollection,
+)
+
 type OSMTransform = Transform[OSMFeatureCollection]
+type OSMChunkTransform = Transform[OSMFeatureChunkCollection]
 
 
-class ClipToBounds:
-    """Clip OSM features to geographic bounds."""
-
-    def __init__(
-            self,
-            bounds: Bounds,
-    ) -> None:
-        self._bounds = bounds
-
-    def __call__(
-            self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
-        clip_geometry = box(
-            self._bounds.west,
-            self._bounds.south,
-            self._bounds.east,
-            self._bounds.north,
-        )
-
-        clipped_features = []
-
-        for feature in features.features:
-            geometry = feature.get("geometry")
-
-            if not is_valid_geometry(geometry):
-                continue
-
-            clipped_geometry = shape(geometry).intersection(
-                clip_geometry,
-            )
-
-            if clipped_geometry.is_empty:
-                continue
-
-            clipped_features.append({
-                **feature,
-                "geometry": mapping(clipped_geometry),
-            })
-
-        return OSMFeatureCollection(
-            features=tuple(clipped_features),
-        )
+# OSM feature collection transforms.
 
 
 class RemoveNodeReferences:
@@ -76,9 +43,9 @@ class RemoveNodeReferences:
 
     def __call__(
             self,
-            features: OSMFeatureCollection,
+            features: OSMFeatureCollectionT,
             /,
-    ) -> OSMFeatureCollection:
+    ) -> OSMFeatureCollectionT:
         transformed = []
 
         for feature in features.features:
@@ -90,7 +57,8 @@ class RemoveNodeReferences:
                 "properties": properties,
             })
 
-        return OSMFeatureCollection(
+        return replace(
+            features,
             features=tuple(transformed),
         )
 
@@ -100,8 +68,8 @@ class FilterHikingRoutes:
 
     def __call__(
             self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
+            features: OSMFeatureCollectionT,
+    ) -> OSMFeatureCollectionT:
         filtered = [
             feature
             for feature in features.features
@@ -115,7 +83,8 @@ class FilterHikingRoutes:
             len(features.features) - len(filtered),
         )
 
-        return OSMFeatureCollection(
+        return replace(
+            features,
             features=tuple(filtered),
         )
 
@@ -150,8 +119,8 @@ class PrepareMountainInfrastructure:
 
     def __call__(
             self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
+            features: OSMFeatureCollectionT,
+    ) -> OSMFeatureCollectionT:
         transformed = []
 
         for feature in features.features:
@@ -167,7 +136,8 @@ class PrepareMountainInfrastructure:
             len(features.features) - len(transformed),
         )
 
-        return OSMFeatureCollection(
+        return replace(
+            features,
             features=tuple(transformed),
         )
 
@@ -213,8 +183,8 @@ class FilterTerrainSurface:
 
     def __call__(
             self,
-            features: OSMFeatureCollection,
-    ) -> OSMFeatureCollection:
+            features: OSMFeatureCollectionT,
+    ) -> OSMFeatureCollectionT:
         filtered = [
             feature
             for feature in features.features
@@ -228,7 +198,8 @@ class FilterTerrainSurface:
             len(features.features) - len(filtered),
         )
 
-        return OSMFeatureCollection(
+        return replace(
+            features,
             features=tuple(filtered),
         )
 
@@ -252,3 +223,48 @@ class FilterTerrainSurface:
             return feature_geometry in LINE_GEOMETRY_TYPES
 
         return False
+
+
+# OSM feature chunk collection transforms.
+
+
+class ClipToBounds:
+    """Clip OSM features to geographic bounds."""
+
+    def __call__(
+            self,
+            features: OSMFeatureChunkCollection,
+    ) -> OSMFeatureChunkCollection:
+        bounds = features.chunk.bounds
+
+        clip_geometry = box(
+            bounds.west,
+            bounds.south,
+            bounds.east,
+            bounds.north,
+        )
+
+        clipped_features = []
+
+        for feature in features.features:
+            geometry = feature.get("geometry")
+
+            if not is_valid_geometry(geometry):
+                continue
+
+            clipped_geometry = shape(geometry).intersection(
+                clip_geometry,
+            )
+
+            if clipped_geometry.is_empty:
+                continue
+
+            clipped_features.append({
+                **feature,
+                "geometry": mapping(clipped_geometry),
+            })
+
+        return replace(
+            features,
+            features=tuple(clipped_features),
+        )
