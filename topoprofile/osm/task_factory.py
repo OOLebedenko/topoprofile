@@ -7,11 +7,13 @@ from topoprofile.osm.client.queries.mountain_infrastructure import (
     MountainInfrastructureQuery,
 )
 from topoprofile.osm.client.queries.terrain_surface import TerrainSurfaceQuery
+from topoprofile.osm.exclusions import load_hiking_exclusions
 from topoprofile.osm.source import OverpassFeatureSource
 from topoprofile.osm.store import MVTStore
 from topoprofile.osm.task import PrepareOSMChunkTask, PrepareOSMTask
 from topoprofile.osm.transforms.osm import (
     ClipToBounds,
+    FilterExcludedHikingRoutes,
     FilterHikingRoutes,
     FilterTerrainSurface,
     PrepareMountainInfrastructure,
@@ -24,6 +26,7 @@ from topoprofile.processing.transforms import Compose
 
 def create_osm_task(
         osm_root: Path,
+        hiking_exclusions_path: Path,
 ) -> PrepareOSMChunkTask:
     """Create a configured OSM chunk processing task."""
     source = OverpassFeatureSource(
@@ -37,6 +40,10 @@ def create_osm_task(
         client=OverpassClient(),
     )
 
+    hiking_exclusions = load_hiking_exclusions(
+        hiking_exclusions_path,
+    )
+
     hiking_routes_task = PrepareOSMTask(
         store=MVTStore(
             root=osm_root,
@@ -48,6 +55,9 @@ def create_osm_task(
         transform=Compose(
             transforms=(
                 FilterHikingRoutes(),
+                FilterExcludedHikingRoutes(
+                    exclusions=hiking_exclusions,
+                ),
                 RemoveNodeReferences(),
                 ClipToBounds(),
             ),

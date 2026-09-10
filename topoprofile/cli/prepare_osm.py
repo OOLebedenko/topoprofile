@@ -40,8 +40,14 @@ def main() -> None:
 
     task = create_osm_task(
         osm_root=OSM_CHUNKS_ROOT,
+        hiking_exclusions_path=(
+                PROJECT_ROOT
+                / "config"
+                / "regions"
+                / "elbrus"
+                / "hiking_exclusions.json"
+        ),
     )
-
     tasks = [
         partial(task, chunk)
         for chunk in region.tiles

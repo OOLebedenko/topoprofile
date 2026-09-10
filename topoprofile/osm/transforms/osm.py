@@ -223,6 +223,57 @@ class FilterTerrainSurface:
         return False
 
 
+class FilterExcludedHikingRoutes:
+    """Remove manually excluded hiking route features."""
+
+    def __init__(
+            self,
+            exclusions: frozenset[tuple[str, str]],
+    ) -> None:
+        self._exclusions = exclusions
+
+    def __call__(
+            self,
+            features: OSMFeatureCollectionT,
+    ) -> OSMFeatureCollectionT:
+        filtered = [
+            feature
+            for feature in features.features
+            if not self._is_excluded(feature)
+        ]
+
+        logger.info(
+            "Hiking exclusions: total=%d, kept=%d, excluded=%d",
+            len(features.features),
+            len(filtered),
+            len(features.features) - len(filtered),
+        )
+
+        return replace(
+            features,
+            features=tuple(filtered),
+        )
+
+    def _is_excluded(
+            self,
+            feature: dict[str, Any],
+    ) -> bool:
+        properties = feature.get("properties", {})
+
+        osm_type = properties.get("osm_type")
+        osm_id = properties.get("osm_id")
+
+        if osm_type is None or osm_id is None:
+            return False
+
+        key = (
+            str(osm_type),
+            str(osm_id),
+        )
+
+        return key in self._exclusions
+
+
 # OSM feature chunk collection transforms.
 
 
