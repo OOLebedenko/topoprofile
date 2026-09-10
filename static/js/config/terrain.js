@@ -44,7 +44,8 @@ export const TERRAIN_CONFIG = {
     bounds: TERRAIN_SOURCE_BOUNDS,
 };
 
-// Local hillshade layer settings.
+// Local hillshade source and layer settings.
+export const HILLSHADE_SOURCE_ID = "hillshade-dem";
 export const HILLSHADE_LAYER_ID = "terrain-hillshade";
 
 export const HILLSHADE_CONFIG = {
