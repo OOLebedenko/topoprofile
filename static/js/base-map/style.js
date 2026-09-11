@@ -8,6 +8,11 @@ const ROAD_SHIELD_LAYER_IDS = new Set([
     "road_shield_us",
 ]);
 
+const TRANSPORTATION_SOURCE_LAYERS = new Set([
+    "transportation",
+    "transportation_name",
+]);
+
 const VALID_REF_LENGTH_FILTER = [
     "all",
     ["has", "ref_length"],
@@ -23,28 +28,61 @@ const VALID_REF_LENGTH_FILTER = [
     ],
 ];
 
-// Filters invalid road shield features while preserving
-// the original base-map filters.
+const HIDE_TRAILS_FILTER = [
+    "!=",
+    ["get", "class"],
+    "path",
+];
+
+function addFilter(
+        layer,
+        filter,
+) {
+    return {
+        ...layer,
+
+        filter: layer.filter
+            ? [
+                "all",
+                filter,
+                layer.filter,
+            ]
+            : filter,
+    };
+}
+
+// Adapts base-map transportation layers and filters
+// invalid road shield features.
 export function transformBaseMapStyle(previousStyle, nextStyle) {
     return {
         ...nextStyle,
 
         layers: nextStyle.layers.map(layer => {
-            if (!ROAD_SHIELD_LAYER_IDS.has(layer.id)) {
-                return layer;
+            let transformedLayer = layer;
+
+            if (
+                TRANSPORTATION_SOURCE_LAYERS.has(
+                    layer["source-layer"]
+                )
+            ) {
+                transformedLayer = addFilter(
+                    transformedLayer,
+                    HIDE_TRAILS_FILTER,
+                );
             }
 
-            return {
-                ...layer,
+            if (
+                ROAD_SHIELD_LAYER_IDS.has(
+                    layer.id
+                )
+            ) {
+                transformedLayer = addFilter(
+                    transformedLayer,
+                    VALID_REF_LENGTH_FILTER,
+                );
+            }
 
-                filter: layer.filter
-                    ? [
-                        "all",
-                        VALID_REF_LENGTH_FILTER,
-                        layer.filter,
-                    ]
-                    : VALID_REF_LENGTH_FILTER,
-            };
+            return transformedLayer;
         }),
     };
 }

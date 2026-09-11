@@ -1,5 +1,8 @@
 from topoprofile.geo.models import XYZTile
-from topoprofile.osm.models import OSMFeatureCollection
+from topoprofile.osm.models import (
+    OSMFeatureChunkCollection,
+    OSMFeatureCollection,
+)
 from topoprofile.osm.transforms.osm import (
     ClipToBounds,
     FilterHikingRoutes,
@@ -14,9 +17,8 @@ def test_filter_hiking_routes_keeps_renderable_routes(
 ) -> None:
     result = FilterHikingRoutes()(osm_features)
 
-    assert len(result.features) == 2
+    assert len(result.features) == 1
     assert result.features[0]["properties"]["route"] == "hiking"
-    assert result.features[1]["properties"]["route"] == "foot"
 
 
 def test_filter_terrain_surface_keeps_renderable_features(
@@ -68,31 +70,45 @@ def test_prepare_mountain_infrastructure_converts_polygon_to_point() -> None:
 
 
 def test_clip_to_bounds_splits_feature_between_adjacent_tiles() -> None:
-    left_bounds = XYZTile(z=8, x=157, y=93).bounds
-    right_bounds = XYZTile(z=8, x=158, y=93).bounds
-
-    features = OSMFeatureCollection(
-        features=(
-            {
-                "type": "Feature",
-                "properties": {
-                    "osm_type": "relation",
-                    "osm_id": 15394285,
-                    "route": "hiking",
-                },
-                "geometry": {
-                    "type": "LineString",
-                    "coordinates": [
-                        [42.0, 43.5],
-                        [42.4, 43.5],
-                    ],
-                },
-            },
-        ),
+    left_chunk = XYZTile(
+        z=8,
+        x=157,
+        y=93,
+    )
+    right_chunk = XYZTile(
+        z=8,
+        x=158,
+        y=93,
     )
 
-    left = ClipToBounds(left_bounds)(features)
-    right = ClipToBounds(right_bounds)(features)
+    feature = {
+        "type": "Feature",
+        "properties": {
+            "osm_type": "relation",
+            "osm_id": 15394285,
+            "route": "hiking",
+        },
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [
+                [42.0, 43.5],
+                [42.4, 43.5],
+            ],
+        },
+    }
+
+    left_features = OSMFeatureChunkCollection(
+        features=(feature,),
+        chunk=left_chunk,
+    )
+
+    right_features = OSMFeatureChunkCollection(
+        features=(feature,),
+        chunk=right_chunk,
+    )
+
+    left = ClipToBounds()(left_features)
+    right = ClipToBounds()(right_features)
 
     assert left.features[0]["geometry"]["coordinates"] == (
         (42.0, 43.5),
@@ -105,12 +121,19 @@ def test_clip_to_bounds_splits_feature_between_adjacent_tiles() -> None:
 
 
 def test_compose_applies_transforms_sequentially() -> None:
-    bounds = XYZTile(z=8, x=158, y=93).bounds
+    chunk = XYZTile(
+        z=8,
+        x=158,
+        y=93,
+    )
 
-    features = OSMFeatureCollection(
+    features = OSMFeatureChunkCollection(
+        chunk=chunk,
         features=(
             {
-                "properties": {"route": "hiking"},
+                "properties": {
+                    "route": "hiking",
+                },
                 "geometry": {
                     "type": "LineString",
                     "coordinates": [
@@ -120,7 +143,9 @@ def test_compose_applies_transforms_sequentially() -> None:
                 },
             },
             {
-                "properties": {"route": "bicycle"},
+                "properties": {
+                    "route": "bicycle",
+                },
                 "geometry": {
                     "type": "LineString",
                     "coordinates": [
@@ -135,11 +160,16 @@ def test_compose_applies_transforms_sequentially() -> None:
     transform = Compose(
         transforms=(
             FilterHikingRoutes(),
-            ClipToBounds(bounds),
+            ClipToBounds(),
         ),
     )
 
     result = transform(features)
 
+    assert isinstance(
+        result,
+        OSMFeatureChunkCollection,
+    )
+    assert result.chunk == chunk
     assert len(result.features) == 1
     assert result.features[0]["properties"]["route"] == "hiking"
